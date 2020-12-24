@@ -1,4 +1,23 @@
-ENV For running this as dev:
+# Djitsu - Reactive Editor
+
+## Advanced Editor, Development Environment, Application and Execution Platform
+
+> This repository is the live source-code for [djit.su](https://djit.su)
+
+![Djitsu - Reactive Editor](https://raw.githubusercontent.com/elis/djit.su/main/public/assets/github-cover.png)
+
+# Getting Started with Djitsu
+
+Djitsu is an editor, application, and an execution platform all rolled into one - it allows you to write regular good-old Javascript (for now, later it will support more languages), without any platform-specific APIs or other platform lockins, so you can be sure that any code written out-side of djitsu will work on djitsu, and any code written in djitsu is just regular code you can use anywhere else.
+
+A great place to start is:
+
+- [Getting Started with Djitsu](https://djit.su/@elis/djitsu-101) - getting to know the basics of how to use djitsu 
+- [Javascript in Djitsu](https://djit.su/@elis/javascript-in-djitsu) - diving a bit deeper on how to interact with the javascript code in djitsu
+
+# Install
+
+## Add .env files
 
 1. Add `.env.development.local` to project root
 2. Add this to the file:
@@ -16,3 +35,11 @@ RAZZLE_USER_CONTENT_URL="http://localhost:3000/user-content"
 RAZZLE_DV=lion
 ```
 
+# Connect
+
+- Join us on reddit: https://www.reddit.com/r/djitsu/
+- Join the Facebook group: https://www.facebook.com/groups/djitsu
+- Follow the Facebook page: https://www.facebook.com/djitty
+- Join the discord server: https://discord.gg/bnYZ7MpJzT
+- Follow our Twitter: https://twitter.com/Djitsu1
+- Follow our github profile: https://github.com/djits
