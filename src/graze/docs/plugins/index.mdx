@@ -1,0 +1,75 @@
+---
+name: Introduction
+route: /plugins
+menu: Plugins
+icon: alert
+---
+
+# Graze Plugins
+
+Graze provides a simple but powerful plugins system.
+
+Unlike components that you might create on a per site or app the plugins system is designed to access the low-level APIs to easily modify the functionality of Graze at the different life-cycle stages of your project.
+
+## Configuration File
+
+The configuration file for Graze allows different functionality to be added to a project.
+
+The configuration file should be named `graze.config.js` and placed at the root of your project and contain the relevant named exports.
+
+Currently the only supported export is `plugins`.
+
+Example `graze.config.js`:
+
+```js
+export const plugins = [
+  require('./src/plugins/graze-styled-components'),
+  require('./src/plugins/graze-material-ui'),
+  require('./src/plugins/graze-tutorial'),
+  require('./src/plugins/graze-graphcms'),
+  {
+    module: require('./src/plugins/graze-ga'),
+    trackingId: 'UA-138092593-2',
+    gaOptions: { name: 'graze-setup' }
+  }
+]
+
+```
+
+`plugins` export should be an array containing objects or require
+statements like in the above example.
+
+When passing a `require('...')` statement the loaded module will be
+used.
+
+When passing an object, it must contain a `module` property with the 
+plugin module as value. The rest of the properties are passed in as the plugins `options`, as canbe be see in the `react-ga` example.
+
+## Plugin Structure
+
+A Graze plugin is composed of three directives: **server**, **client**, and **app**, each of which is executed according to the plugins needs.
+
+A plugin module is expected to export one or more directives to function properly.
+
+Each of the directives contains an **activation function** that will signal to graze that the plugin needs to do something, and depending on the directive it will contain **Wrapper** components, **wrapper** functions, and **output** functions.
+
+export const MyMenus = props => {
+  const plugins = false
+  return (
+    <>
+      <h3>Learn more about graze plugins:</h3>
+      <div>
+        <ul>
+          {plugins && plugins.menu && plugins.menu.length && (
+            plugins.menu
+              .map(item => (
+                <li key={`items ${item.name}`}><Link to={item.route}>{item.name}</Link></li>
+              ))
+          )}
+        </ul>
+      </div>
+    </>
+  )
+}
+
+<MyMenus />

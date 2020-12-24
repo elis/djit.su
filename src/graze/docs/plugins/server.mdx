@@ -1,0 +1,114 @@
+---
+name: Server Plugins
+route: /plugins/server
+menu: Plugins
+---
+
+# Server Plugins
+
+The server plugin is executed on each request to the server.
+
+The **onRequest** property is required to activate any of the server plugin functions.
+
+```js
+export const server = {
+  onRequest: (req, res, options) => {
+    const someOtherResource = require('my-resource')
+    return { someOtherResource }
+  },
+  wrapper: (wrapped, { fields: { someOtherResource } }) => {
+    const wrapper = someOtherResource.withResource
+    return wrapper(wrapped)
+  },
+  Wrapper: ({ fields: { someOtherResource }, children }) => {
+    const MyAwesomeProvider = require('./store')
+    return (
+      <MyAwesomeProvider store={someOtherResource.store}>
+        {children}
+      </ApolloProvider>
+    )
+  },
+  output: ({ fields: { someOtherResource } }) => {
+    const extracted = someOtherResource.extract()
+    return `<meta name='my-awesome-meta' content='${extracted.comment}' />`
+  }
+}
+```
+
+## `onRequest`
+
+- Parameters
+  - `req`: expressjs `Request` object
+  - `res`: expressjs `Response` object
+  - `options`: `object` — additional options passed to the plugin
+- Return `object` — pass in any values needed in wrapper/output functions
+
+Use the `onRequest` to do any perliminary work like loading external resources or connecting to APIs. Anything return by the `onRequest` function will be passed in as part of the `Plugin.fields` property later on to `Wrapper`, `wrapper`, and `output`.
+
+```js
+export const server = {
+  onRequest: (req, res, options) => {
+    const someOtherResource = require('my-resource')
+    return { someOtherResource }
+  }
+}
+```
+
+## `Wrapper`
+
+- Props
+  - `children` — React children `object` that should be wrapped by the wrapper
+  - `fields` — `Object` passed by [**onRerequest**](#onrequest) function
+  - `options` — `Object` contains any additional properties passed to the plugins' configuration in [**graze.config.js**](#config)
+
+Use the `Wrapper` to wrap the app with any providers you might want.
+
+```js
+export const server = {
+  Wrapper: ({ fields: { someOtherResource }, children }) => {
+    const MyAwesomeProvider = require('./store')
+    return (
+      <MyAwesomeProvider store={someOtherResource.store}>
+        {children}
+      </ApolloProvider>
+    )
+  }
+}
+```
+
+## `wrapper`
+
+- Parameters
+  - `wrapped` — the wrapped component
+  - `plugin` — `Object` containing the plugin options, directives
+
+The `wrapper` is used to wrap components functionally ala `withRouter(component)`.
+
+
+```js
+export const server = {
+  wrapper: (wrapped, { fields: { someOtherResource } }) => {
+    const wrapper = someOtherResource.withResource
+    return wrapper(wrapped)
+  }
+}
+```
+
+## `output`
+
+- Parameters
+  - `plugin` — `Object` containing the plugin options, directives
+
+The `output` hook allows to tap into the server generated HTML output for plugins that need to generate server-side content.
+
+```js
+export const server = {
+  output: ({ fields: { someOtherResource }, options: { myValue } }) => {
+    const extracted = someOtherResource.extract()
+    return `
+    <meta name='my-awesome-meta' content='${extracted.comment}' />
+    <meta name='my-awesome-value' content='${myValue}' />
+    `
+  }
+}
+```

@@ -1,0 +1,153 @@
+---
+name: App Plugins
+route: /plugins/app
+menu: Plugins
+menuOrder: 3
+---
+
+# App Plugins
+
+Graze app plugin directive allows you to wrap the application itself regardless of client- or server-side execution.
+
+The app directive supports either a **Wrapper** component that wraps the applications or a **Addon** component that is added alongside the application. Each of those have a different *activation function* and can be used in different situtations.
+
+Additionally the **app** directive also supports a function that can `expose` plugin functionality to be used anywhere in your application by importing `@graze`.
+
+```jsx
+export const app = {
+  // Wrapper
+  onLoad: ({ configValue }) => {
+    const someOtherResource = require('my-resource')
+    const resource = someOtherResource.getResource(configValue)
+    return { resource }
+  },
+  Wrapper: ({ fields: { resource }, children }) => {
+    const MyAwesomeProvider = require('./store')
+    return (
+      <MyAwesomeProvider store={resource}>
+        {children}
+      </ApolloProvider>
+    )
+  },
+
+  // Addon
+  onRender: ({ configValue }) => {
+    const someOtherResource = require('my-resource')
+    const resource = someOtherResource.getResource(configValue)
+    return { resource }
+  },
+  Addon: ({ fields: { someValue } }) => {
+    const MyAwesomeAddon = require('./my-addon')
+    return (
+      <MyAwesomeAddon store={someOtherResource.store} />
+    )
+  },
+
+  // Expose
+  expose: (plugin) => {
+    const useAwesomePlugin = require('./plugin-context')
+    return { useAwesomePlugin }
+  }
+}
+```
+
+
+## `onLoad`
+
+- Parameters
+  - `options`: `object` — additional options passed to the plugin
+- Return `object` — pass in any values needed in wrapper functions
+
+Use the `onLoad` to do any perliminary work like loading external resources or connecting to APIs. Anything return by the `onLoad` function will be passed in as part of the `Plugin.fields` property later on to `Wrapper`.
+
+```jsx
+export const app = {
+  onLoad: ({ configValue }) => {
+    const someOtherResource = require('my-resource')
+    const resource = someOtherResource.getResource(configValue)
+    return { resource }
+  }
+}
+```
+
+## `Wrapper`
+
+- Props
+  - `children` — React children `object` that should be wrapped by the wrapper
+  - `fields` — `Object` passed by [**onLoad**](#onload) function
+  - `options` — `Object` contains any additional properties passed to the plugins' configuration in [**graze.config.js**](/plugins/#config)
+
+Use the `Wrapper` to wrap the app with any providers you might want.
+
+```jsx
+export const app = {
+  Wrapper: ({ fields: { resource }, children }) => {
+    const MyAwesomeProvider = require('./store')
+    return (
+      <MyAwesomeProvider store={resource}>
+        {children}
+      </ApolloProvider>
+    )
+  }
+}
+```
+
+## `onRender`
+
+- Parameters
+  - `options`: `object` — additional options passed to the plugin
+- Return `object` — pass in any values needed in wrapper functions
+
+Use the `onRender` to do any perliminary work like loading external resources or connecting to APIs. Anything return by the `onLoad` function will be passed in as part of the `Plugin.fields` property later on to `Wrapper`.
+
+```jsx
+export const app = {
+  onRender: ({ configValue }) => {
+    const someOtherResource = require('my-resource')
+    const resource = someOtherResource.getResource(configValue)
+    return { resource }
+  }
+}
+```
+
+## `Addon`
+
+- Props
+  - `children` — React children `object` that should be wrapped by the wrapper
+  - `fields` — `Object` passed by [**onLoad**](#onload) function
+  - `options` — `Object` contains any additional properties passed to the plugins' configuration in [**graze.config.js**](/plugins/#config)
+
+Use the `Addon` to add any sibling components alongside your app.
+
+```jsx
+export const app = {
+  Addon: ({ fields: { someValue } }) => {
+    const MyAwesomeAddon = require('./my-addon')
+    return (
+      <MyAwesomeAddon store={someOtherResource.store} />
+    )
+  }
+}
+```
+
+## `expose`
+
+- Parameters
+  - `Plugin`: `object` — {fields: {...}, options: {...}, ...}
+- Return `object` — values to expose to the application
+
+To allow plugins and other components to communicate Graze allows plugins to expose to the application specific values to simplify access to context and other plugin resources.
+
+
+```jsx
+export const app = {
+  expose: (plugin) => {
+    const useAwesomePlugin = require('./plugin-context')
+    return { useAwesomePlugin }
+  }
+}
+```
+
+import { MyMenus } from './index.mdx'
+
+<MyMenus current='/plugins/server' />

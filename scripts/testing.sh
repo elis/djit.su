@@ -1,0 +1,1 @@
+echo "WELCOME TO THE NEW $RAZZLE_DV"

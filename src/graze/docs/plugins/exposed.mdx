@@ -1,0 +1,38 @@
+---
+name: Exposed Plugins
+route: /plugins/exposed
+menu: Plugins
+---
+
+# Accessing Exposed Plugins
+
+When plugins [expose](/plugins/app#expose) part of their functionality you as a developer can access those exposed properties by simply importing/requiring the `@graze` psuedo-module.
+
+By adding `NODE_PATH=src` to our `.env.local` file automatically when setting up the Graze project we allow Node and webpack to quickly lookup modules from import and require statements and attempt to load them from the defined path, allowing us to easily import components, pages, and plugins.
+
+When `import`ing/`require`ing `@graze` the default export will contain any properties exposed by ay of the plugins as configured in `graze.config.js` (see [Configuration File](plugins#configuration-file)).
+
+Example usage:
+
+```js
+export default (props) => {
+  const { useSite } = require('@graze').default
+  const { state: site } = (useSite && useSite()) || {}
+
+  const Comp = useMemo(() => {
+    const comp = site && site.attributes && site.attributes.pageComponent
+    return comp
+      ? require('../' + comp.split(':')[0])[comp.split(':')[1] || 'default']
+      : require('./base-page').default
+  }, [site && site.attributes && site.attributes.pageComponent])
+
+  return <Comp>{props.children}</Comp>
+}
+```
+
+The component will attempt to invoke `useSite()` after the require statement, and provide different functionality if such an export is found. The `useSite()` function is a context hook create by the `graze-graphcms` plugin.
+
+
+import { MyMenus } from './index.mdx'
+
+<MyMenus current='/plugins/server' />

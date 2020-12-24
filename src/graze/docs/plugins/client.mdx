@@ -1,0 +1,77 @@
+---
+name: Client Plugins
+route: /plugins/client
+menu: Plugins
+menuOrder: 3
+---
+
+# Client Plugins
+
+Graze client plugin directive allows you to wrap the application exclusively on the client side, allowing the plugin to execute client specific bootstrapping and cleanup any server-side outputs.
+
+The **onLoad** property is required to activate any of the client directives functions.
+
+```js
+export const client = {
+  onLoad: () => {
+    const { myAwesomeModule } = require('./my-module')
+    const client = myAwesomeModule.getClient()
+    return {
+      client
+    }
+  },
+  Wrapper: ({ fields: { client }, children }) => {
+    const { Provider } = require('./my-module')
+
+    return (
+      <Provider client={client}>
+        {children}
+      </Provider>
+    )
+  }
+}
+```
+
+## `onLoad`
+
+- Parameters
+  - `options`: `object` — additional options passed to the plugin
+- Return `object` — pass in any values needed in wrapper functions
+
+Use the `onLoad` to do any perliminary work like loading external resources or connecting to APIs. Anything return by the `onLoad` function will be passed in as part of the `Plugin.fields` property later on to `Wrapper`.
+
+```js
+export const client = {
+  onLoad: ({ configValue }) => {
+    const someOtherResource = require('my-resource')
+    const resource = someOtherResource.getResource(configValue)
+    return { resource }
+  }
+}
+```
+
+## `Wrapper`
+
+- Props
+  - `children` — React children `object` that should be wrapped by the wrapper
+  - `fields` — `Object` passed by [**onLoad**](#onload) function
+  - `options` — `Object` contains any additional properties passed to the plugins' configuration in [**graze.config.js**](/plugins/#config)
+
+Use the `Wrapper` to wrap the app with any providers you might want.
+
+```js
+export const client = {
+  Wrapper: ({ fields: { resource }, children }) => {
+    const MyAwesomeProvider = require('./store')
+    return (
+      <MyAwesomeProvider store={resource}>
+        {children}
+      </ApolloProvider>
+    )
+  }
+}
+```
+
+import { MyMenus } from './index.mdx'
+
+<MyMenus current='/plugins/server' />

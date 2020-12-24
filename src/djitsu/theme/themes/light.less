@@ -1,0 +1,35 @@
+@import '~antd/dist/antd.compact.less';
+
+@import './variables-light.less';
+
+@import '../colors.less';
+@import '../data-colors.less';
+
+@import '../card.less';
+@import '../button.less';
+
+
+body {
+  min-height: 100vh;
+  background: var(--background-color);
+  color: var(--font-body-color);
+  #root {
+    min-height: 100vh;
+  }
+}
+.djs-theme {
+  min-height: 100vh;
+  color: var(--font-body-color);
+  
+
+  &.light {
+    @import './shared.less';
+
+    each(@colors, {
+      --@{key}: @@key;
+    })
+    each(@variables, {
+      --@{key}: @value;
+    })
+  }
+}

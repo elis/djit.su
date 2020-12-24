@@ -1,0 +1,9 @@
+{
+  "name": "djitsu-deploy",
+  "version": "20.0.20",
+  "license": "private",
+  "scripts": {
+    "start:prod": ". ./prerun.sh && NODE_ENV=production node build/server.js",
+    "start:prod-mon": ". ./prerun.sh && NODE_ENV=production nodemon build/server.js"
+  }
+}

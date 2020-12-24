@@ -1,0 +1,90 @@
+{
+  "parser": "@typescript-eslint/parser", // Specifies the ESLint parser
+  "plugins": [
+    "jest",
+    "prettier",
+    "react"
+  ],
+  "extends": [
+    "prettier",
+    "eslint:recommended",
+    "plugin:jest/recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended" // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true 
+  },
+  "overrides": [
+    {
+      "files": ["*.js"],
+      "rules": {
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off"
+      }
+    },
+    {
+      "files": ["*.ts", ".tsx"],
+      "rules": {
+        "@typescript-eslint/no-use-before-define": ["error", { "variables": false }]
+      }
+    },
+    {
+      "files": ["*.(test|spec).js"],
+      "rules": {
+        "no-undef": "off"
+      }
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "no-unused-vars": "off"
+      }
+    }
+  ],
+  "rules": {
+    "prettier/prettier": "warn",
+    "@typescript-eslint/no-use-before-define": ["error", { "variables": false }],
+    // "@typescript-eslint/no-unused-vars": ["warn", { "args": "after-used", "ignoreRestSiblings": true  }]
+    "@typescript-eslint/member-delimiter-style": [
+      "error",
+      {
+        "multiline": {
+          "delimiter": "none",
+          "requireLast": false
+        },
+        "singleline": {
+          "delimiter": "comma",
+          "requireLast": false
+        }
+      }
+    ],
+    "jsx-quotes": ["error", "prefer-single"],
+    "react/display-name": "off",
+    "react/prop-types": "off",
+    "@typescript-eslint/no-unused-vars": ["warn", { "args": "after-used", "ignoreRestSiblings": true }],
+    "no-unused-vars": ["warn", { "args": "after-used", "ignoreRestSiblings": true  }]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "parserOptions": {
+    "ecmaVersion": 9,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true
+    }
+  }
+}
