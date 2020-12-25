@@ -14,6 +14,7 @@ A great place to start is:
 
 - [Getting Started with Djitsu](https://djit.su/@elis/djitsu-101) - getting to know the basics of how to use djitsu 
 - [Javascript in Djitsu](https://djit.su/@elis/javascript-in-djitsu) - diving a bit deeper on how to interact with the javascript code in djitsu
+- A quick example of how I'm [using djitsu to update djit.su's homepage](https://www.youtube.com/watch?v=gVe3nfXauJs) - basic hands-on real-world example
 
 # Install
 
