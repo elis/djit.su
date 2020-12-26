@@ -1,8 +1,5 @@
 
 # echo "LOADING ENV $1 $PWD"
-echo "1. -> RAZZLE_HASH $RAZZLE_HASH"
-
-
 env="development"
 if [ $1 ]
 then
@@ -40,5 +37,3 @@ else
     set -o allexport; source .env.development.local; set +o allexport
   fi
 fi
-
-echo "2. -> RAZZLE_HASH $RAZZLE_HASH"

@@ -144,23 +144,30 @@ export const doOnRequest = async (req, res, voidResponse) => {
     voidResponse
   ])
   const { pre: preProcess } = getServerWrappers(results, <></>)
-  const presults = await preProcess({}, req, res, voidResponse)
-  // console.log('RESULTS RESULTS:', results)
-  // console.log('PRESULTS PRESULTS:', presults)
+  try {
+    const presults = await preProcess({}, req, res, voidResponse)
+    // console.log('RESULTS RESULTS:', results)
+    // console.log('PRESULTS PRESULTS:', presults)
 
-  return {
-    results,
-    wrap: (Wrapped) => {
-      const { pre, ...wrapResults } = getServerWrappers(
-        results,
-        Wrapped,
-        presults
-      )
+    return {
+      results,
+      wrap: (Wrapped) => {
+        const { pre, ...wrapResults } = getServerWrappers(
+          results,
+          Wrapped,
+          presults
+        )
 
-      if (pre) pre
+        if (pre) pre
 
-      return { ...wrapResults }
+        return { ...wrapResults }
+      }
     }
+  } catch (error) {
+    console.log('PRE ERROR!', error)
+    voidResponse()
+    res.status(503)
+    res.send('Error loading app')
   }
 }
 
