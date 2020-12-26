@@ -21,8 +21,6 @@ export const initialize = async (
   appName = '[DEFAULT]'
 ): Promise<FirebaseServices> => {
   const initialized: FirebaseServices = {}
-  console.log('🔥 Firebase Options:', options, { appName })
-
   // Handle hot-reload code
   let aapp
   try {
@@ -42,8 +40,6 @@ export const initialize = async (
 
   if (status.apps[appName]) return status.apps[appName]
   status.apps[appName] = initialized
-
-  console.log('🔥 Firebase Options:', options, { appName })
 
   if (!options.apiKey) throw new Error('Missing Firebase API Key')
 

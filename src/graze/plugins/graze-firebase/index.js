@@ -22,8 +22,6 @@ export const client = {
 export const server = {
   onRequest: () => ({}),
   pre: async ({ options: { config, services } }, req, res) => {
-    console.log('⭐️ FIREBASE PRE', { config, services })
-
     // pre: async (...argz) => {
     // console.log('PRE LOADING config:', config)
     // console.log('PRE LOADING:', Flugin)
