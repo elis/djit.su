@@ -5,32 +5,42 @@ const initialized = {}
 export const client = {
   onLoad: () => ({}),
   pre: async ({ options: { config, services } }) => {
-    const resultServices = await require('./firebase').initialize(
-      config,
-      services
-    )
-    Object.assign(initialized, resultServices)
-    return {
-      services: resultServices
+    try {
+      const resultServices = await require('./firebase').initialize(
+        config,
+        services
+      )
+      Object.assign(initialized, resultServices)
+      return {
+        services: resultServices
+      }
+    } catch (error) {
+      console.log('🙅‍♂️ some error:', error)
     }
   }
 }
 export const server = {
   onRequest: () => ({}),
   pre: async ({ options: { config, services } }, req, res) => {
+    console.log('⭐️ FIREBASE PRE', { config, services })
+
     // pre: async (...argz) => {
     // console.log('PRE LOADING config:', config)
     // console.log('PRE LOADING:', Flugin)
     // console.log('PRE LOADING:', services, config)
     const doFalse = false
     if (doFalse) console.log(req, res)
-    const resultServices = await require('./firebase').initialize(
-      config,
-      services
-    )
-    Object.assign(initialized, resultServices)
-    return {
-      firebase: resultServices
+    try {
+      const resultServices = await require('./firebase').initialize(
+        config,
+        services
+      )
+      Object.assign(initialized, resultServices)
+      return {
+        firebase: resultServices
+      }
+    } catch (error) {
+      console.log('🙅‍♂️ some error:', error)
     }
   }
 }

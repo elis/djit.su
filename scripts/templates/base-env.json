@@ -1,0 +1,11 @@
+{
+  "FIREBASE_APIKEY": "AIzaSyDDJSDZPXq9a5sCTR97zgfTR50tRsspKoQ",
+  "FIREBASE_AUTH_DOMAIN": "djitsu-5cffa.firebaseapp.com",
+  "FIREBASE_DATABASE_URL": "https://djitsu-5cffa.firebaseio.com",
+  "FIREBASE_PROJECT_ID": "djitsu-5cffa",
+  "FIREBASE_STORAGE_BUCKET": "djitsu-5cffa.appspot.com",
+  "FIREBASE_MESSAGING_SENDER_ID": "921945884841",
+  "FIREBASE_APP_ID": "1:921945884841:web:3867a9b55d43077635c1b8",
+  "FIREBASE_MEASUREMENT_ID": "G-104YGV6JJ6",
+  "USER_CONTENT_URL": "http://localhost:3000/user-content"
+}
