@@ -14,6 +14,7 @@ import { createUser } from 'djitsu/store/user/thunks/create-user'
 import userDisconnected from 'djitsu/store/user/thunks/user-disconnected'
 import useStates from 'djitsu/utils/hooks/use-states'
 import setOptions from 'djitsu/store/user/thunks/set-options'
+import { logEvent } from 'djitsu/services/telemetry'
 
 const UserContext = createContext([])
 
@@ -85,6 +86,12 @@ export const UserProvider = (props) => {
       (authState.initialized && !authState.authenticated)
     ) {
       // Load user data
+      if (authState.authenticated) {
+        logEvent('signed-in', {
+          userId: authState.credential.uid,
+          signinProvider: authState.signinProvider
+        })
+      }
       handleUserAuthenticated()
     }
   }, [authState, currentUserID])
