@@ -10,6 +10,7 @@ import {
   publishedNotebook,
   publishFailedNotebook
 } from '../actions'
+import { logEvent } from 'djitsu/services/telemetry'
 
 export const publishNotebook = (
   notebookId: NotebookID,
@@ -32,9 +33,11 @@ export const publishNotebook = (
       notebookRevision
     )
     dispatch(publishedNotebook(notebookId, result))
+    logEvent('Notebook published', { notebookId, version: result })
     return result
   } catch (error) {
     dispatch(publishFailedNotebook(notebookId, version, error))
+    logEvent('Notebook failed to publish', { notebookId, version, error })
     throw error
   }
 }
