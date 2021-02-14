@@ -126,6 +126,7 @@ export const allowedInstalled = {
   React: () => import('react'),
   'react-dom': () => import('react-dom'),
   'prop-types': () => import('prop-types'),
+  'react-helmet': () => import('react-helmet'),
   'react-router': () => import('react-router'),
   'react-router-dom': () => import('react-router-dom'),
   lodash: () => import('lodash'),

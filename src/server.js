@@ -21,6 +21,8 @@ wrapper
   .use(vhost('*.djitapp.local', hostnameApp))
   .use(vhost('*.djit.app', hostnameApp))
   .use(vhost('*.djit.me', hostnameApp))
+  .use(vhost('*.*', hostnameApp))
+  .use(vhost('*.*.*', hostnameApp))
   .use(vhost('*', contentApp))
   .use(vhost('*', mainApp))
   .use(vhost('*.*', contentApp))
