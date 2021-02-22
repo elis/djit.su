@@ -107,7 +107,7 @@ const bashOneLiner = (command) =>
 
 const getGitHash = () => bashOneLiner('git rev-parse HEAD')
 
-const getGitDescribe = () => bashOneLiner('git describe')
+const getGitDescribe = () => bashOneLiner('git describe --always')
 
 const transformPackage = (dirname = './deploy') => {
   const { devDependencies, scripts, name, license, ...package } = pkg
