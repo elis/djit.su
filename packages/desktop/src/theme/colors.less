@@ -1,0 +1,21 @@
+@colors: {
+  primary-color: Primary Color;
+  info-color: Info Color;
+  success-color: Success Color;
+
+  processing-color: Processing Color;
+  error-color: Error Color;
+  highlight-color: Highlight Color;
+  warning-color: Warning Color;
+  normal-color: Normal Color;
+  white: White;
+  black: Black;
+
+  menu-bg: Menu Background;
+}
+
+:root {
+  each(@colors, {
+    --@{key}: @@key;
+  })
+}

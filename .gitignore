@@ -2,6 +2,7 @@ logs
 *.log
 npm-debug.log*
 .DS_Store
+.vscode
 
 trash_*
 *_trash
@@ -10,6 +11,7 @@ trash_*
 coverage
 node_modules
 build
+dist
 deploy
 .env.local
 .env.development.local

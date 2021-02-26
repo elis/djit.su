@@ -1,0 +1,100 @@
+
+@chart-mid-blue: #478CF4;
+@chart-light-green: #3CCB86;
+@chart-mid-green: #31B073;
+@chart-orange: #FD9B71;
+@chart-yellow: #FFDE68;
+@chart-beet: #AA4399;
+@chart-neutral: #8C9CD4;
+@chart-red: #DF3C5A;
+@chart-purple: #A35BFF;
+@chart-brand-accent: #4E6FE0;
+@chart-light-blue: #91D7FF;
+
+@blue-scale8: #2D53D8;
+@blue-scale7: #4C68DE;
+@blue-scale6: #637EE4;
+@blue-scale5: #7694EA;
+@blue-scale4: #86ABEF;
+@blue-scale3: #96C2F5;
+@blue-scale2: #A4D9FA;
+@blue-scale1: #B1F1FF;
+
+@orange-scale8: #FBB855;
+@orange-scale7: #FCC06C;
+@orange-scale6: #FDC883;
+@orange-scale5: #FCD099;
+@orange-scale4: #FBD8AF;
+@orange-scale3: #F9E0C5;
+@orange-scale2: #F6E9DC;
+@orange-scale1: #F1F1F2;
+
+@purple-scale8: #7528DC;
+@purple-scale7: #8C49E0;
+@purple-scale6: #A167E4;
+@purple-scale5: #B383E8;
+@purple-scale4: #C49EEB;
+@purple-scale3: #D4BAEE;
+@purple-scale2: #E3D6F0;
+@purple-scale1: #F1F2F2;
+
+@green-scale8: #31B073;
+@green-scale7: #56BA84;
+@green-scale6: #74C496;
+@green-scale5: #8ECDA8;
+@green-scale4: #A8D7BA;
+@green-scale3: #C0E0CC;
+@green-scale2: #D9E9DF;
+@green-scale1: #F1F2F2;
+
+@dataColors: {
+  chart-mid-blue: Mid Blue;
+  chart-light-green: Light Green;
+  chart-mid-green: Mid Green;
+  chart-orange: Orange;
+  chart-yellow: Yellow;
+  chart-beet: Beet;
+  chart-neutral: Neutral;
+  chart-red: Red;
+  chart-purple: Purple;
+  chart-brand-accent: Brand Accent;
+  chart-light-blue: Light Blue;
+  blue-scale8: Blue Scale 8;
+  blue-scale7: Blue Scale 7;
+  blue-scale6: Blue Scale 6;
+  blue-scale5: Blue Scale 5;
+  blue-scale4: Blue Scale 4;
+  blue-scale3: Blue Scale 3;
+  blue-scale2: Blue Scale 2;
+  blue-scale1: Blue Scale 1;
+  orange-scale8: Orange Scale 8;
+  orange-scale7: Orange Scale 7;
+  orange-scale6: Orange Scale 6;
+  orange-scale5: Orange Scale 5;
+  orange-scale4: Orange Scale 4;
+  orange-scale3: Orange Scale 3;
+  orange-scale2: Orange Scale 2;
+  orange-scale1: Orange Scale 1;
+  purple-scale8: Purple Scale 8;
+  purple-scale7: Purple Scale 7;
+  purple-scale6: Purple Scale 6;
+  purple-scale5: Purple Scale 5;
+  purple-scale4: Purple Scale 4;
+  purple-scale3: Purple Scale 3;
+  purple-scale2: Purple Scale 2;
+  purple-scale1: Purple Scale 1;
+  green-scale8: Green scale 8;
+  green-scale7: Green scale 7;
+  green-scale6: Green scale 6;
+  green-scale5: Green scale 5;
+  green-scale4: Green scale 4;
+  green-scale3: Green scale 3;
+  green-scale2: Green scale 2;
+  green-scale1: Green scale 1;
+}
+
+:root {
+  each(@dataColors, {
+    --@{key}: @@key;
+  })
+}

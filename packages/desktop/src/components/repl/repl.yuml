@@ -1,0 +1,17 @@
+
+// {type:sequence}
+// {generate:true}
+
+[App]Init.>[Repl]
+[Repl]Create new>[WorkerAPI]
+[Repl]persistedState = replState().>[Repl]
+[Repl]defaultPlugins = {prettier}.>[Repl]
+[Repl]presets = persistedState.presets.>[Repl]
+[Repl]defaultPresets = presets.reduce(...).>[Repl]
+[Repl]presetsOptions = persistedStateToPresetsOptions(persistedState).>[Repl]
+[Repl]envConfig = persistedStateToEnvConfig(persistedState).>[Repl]
+[:Computer]sendUnsentEmail>[:Server]
+[:Computer]newEmail>[:Server]
+[:Server]reponse.>[:Computer]
+[:Computer]downloadEmail>[:Server]
+[:Computer]deleteOldEmail>[:Server]
