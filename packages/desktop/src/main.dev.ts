@@ -98,6 +98,7 @@ const createWindow = async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
@@ -119,6 +120,9 @@ const createWindow = async () => {
     shell.openExternal(url);
   });
 
+  ipcMain.handle('bootup', () => {
+    return { static: `file://${__dirname}/` }
+  })
   ipcMain.handle('get-file-selection', async (event, ...args) => {
     // ... do actions on behalf of the Renderer
     console.log('files read', {event, args})

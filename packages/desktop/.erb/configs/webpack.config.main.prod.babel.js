@@ -48,9 +48,17 @@ export default merge(baseConfig, {
       openAnalyzer: process.env.OPEN_ANALYZER === 'true',
     }),
 
+    // Copy monaco editor dist
     new CopyWebpackPlugin({
       patterns: [
         { from: "node_modules/monaco-editor/min/vs/", to: "src/dist/vs" }
+      ].filter(Boolean)
+    }),
+
+    // Copy babel standalone
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: "node_modules/@babel/standalone/babel.min.js", to: "src/dist/babel" }
       ].filter(Boolean)
     }),
     /**

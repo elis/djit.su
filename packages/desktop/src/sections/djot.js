@@ -5,12 +5,15 @@ import { useLayoutSettings } from '../layout/hooks'
 import { useMonaco } from '@monaco-editor/react'
 import SplitPane from 'react-split-pane'
 import styled from 'styled-components'
+import { useRecoilState } from 'recoil';
+import { systemState } from '../state/atoms/system';
 
 import JavascriptCompiler from '../components/compilers/js'
 
 import WorkerApi from '../components/repl/WorkerApi'
 
 export const Djot = (props) => {
+  const [system, setSystem] = useRecoilState(systemState)
   const workerRef = useRef()
   const [offset, setOffset] = useState({})
   const monaco = useMonaco()
@@ -60,13 +63,17 @@ export const Djot = (props) => {
   }, [editorRef.current, monaco])
 
   useEffect(() => {
-    const compiler = new JavascriptCompiler()
-    compilerRef.current = compiler
-    console.log('Compiler:', compiler)
-    // const _workerApi = new WorkerApi();
-    // workerRef.current = _workerApi
-    // console.log('_workerApi:', _workerApi)
-  }, [])
+    if (system.booted && !compilerRef.current) {
+      const compiler = new JavascriptCompiler({
+        static: system.static
+      })
+      compilerRef.current = compiler
+      console.log('Compiler:', compiler)
+      // const _workerApi = new WorkerApi();
+      // workerRef.current = _workerApi
+      // console.log('_workerApi:', _workerApi)
+    }
+  }, [system.booted])
 
   return (
     <StyledPanes split="vertical" minSize={380} defaultSize={640}>

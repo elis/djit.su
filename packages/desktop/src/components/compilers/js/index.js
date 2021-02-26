@@ -5,9 +5,11 @@ export default class JavascriptCompiler {
     useWorker: true
   }
   _worker = new WorkerApi({
-    useWorker: this.options.useWorker
+    useWorker: this.options.useWorker,
+    staticPath: this.staticPath
   })
-  constructor (options) {
+  constructor ({ static: staticPath, ...options }) {
+    this.staticPath = staticPath
     this.options = options
   }
   async compile (code, config) {
