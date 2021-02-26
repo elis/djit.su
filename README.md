@@ -77,4 +77,3 @@ Editorjs based djitsu document editor
 
 Razzle based djitsu web client
 
-.
