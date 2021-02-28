@@ -19,7 +19,7 @@ export default class JavascriptCompiler {
     console.log('📦 COMPILING:', code)
     const compiled = await this._worker.compile(code, config)
     console.log('compiled:', compiled)
-    return 'COMPILED!'
+    return compiled
   }
   async init () {
     console.log('📦 INITING:')

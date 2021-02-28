@@ -15,6 +15,7 @@ import WorkerApi from '../components/repl/WorkerApi'
 export const Djot = (props) => {
   const [system, setSystem] = useRecoilState(systemState)
   const workerRef = useRef()
+  const [compiled, setCompiled] = useState({})
   const [compilerState, setCopmilerstate] = useState('offline')
   const [offset, setOffset] = useState({})
   const monaco = useMonaco()
@@ -40,8 +41,47 @@ export const Djot = (props) => {
     console.log('EDITOR CHANGED:', changes, compilerRef.current)
     if (compilerRef.current) {
       const compiler = compilerRef.current
-      const compiled = await compiler.compile(newValue, {})
-      console.log('compiled:', compiled)
+
+      const conf = {
+        "plugins": [],
+        "debugEnvPreset": false,
+        "envConfig": {
+          "browsers": "defaults, not ie 11, not ie_mob 11",
+          "electron": "1.8",
+          "isEnvPresetEnabled": true,
+          "isElectronEnabled": false,
+          "isNodeEnabled": false,
+          "forceAllTransforms": false,
+          "shippedProposals": false,
+          "isBuiltInsEnabled": false,
+          "isSpecEnabled": false,
+          "isLooseEnabled": false,
+          "isBugfixesEnabled": true,
+          "node": "10.13",
+          "version": "",
+          "builtIns": "usage",
+          "corejs": "3.6"
+        },
+        "presetsOptions": {
+          "decoratorsLegacy": false,
+          "decoratorsBeforeExport": false,
+          "pipelineProposal": "minimal",
+          "reactRuntime": "classic"
+        },
+        "evaluate": false,
+        "presets": [
+          "env",
+          "react",
+          "stage-2"
+        ],
+        "prettify": false,
+        "sourceMap": false,
+        "sourceType": "module",
+        "getTransitions": false
+      }
+      const result = await compiler.compile(newValue, conf)
+      console.log('compiled:', result)
+      setCompiled(result)
     }
     // console.log('Compile FN:', workerRef.current.compile)
     // try {
@@ -108,9 +148,9 @@ export const Djot = (props) => {
      />
      <StyledCompanionPane offset={offset}>
       <div className='content'>
-        The other pane
+        <pre>{compiled.compiled}</pre>
         <pre>
-          {JSON.stringify(offset, 1, 1)}
+          {JSON.stringify(compiled, 1, 1)}
         </pre>
       </div>
      </StyledCompanionPane>

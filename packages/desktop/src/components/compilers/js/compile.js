@@ -71,6 +71,7 @@ export default function compile(code: string, config: CompileConfig): Return {
 
   self.process = { env: {} }
   console.log('Required Transitions', Transitions)
+  const Babel = require('@babel/standalone')
   const transitions = new Transitions();
   console.log('WE ARE Transitions', transitions)
   const meta = {
