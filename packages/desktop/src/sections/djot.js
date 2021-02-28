@@ -15,6 +15,7 @@ import WorkerApi from '../components/repl/WorkerApi'
 export const Djot = (props) => {
   const [system, setSystem] = useRecoilState(systemState)
   const workerRef = useRef()
+  const [compilerState, setCopmilerstate] = useState('offline')
   const [offset, setOffset] = useState({})
   const monaco = useMonaco()
   useLayoutSettings({
@@ -39,7 +40,7 @@ export const Djot = (props) => {
     console.log('EDITOR CHANGED:', changes, compilerRef.current)
     if (compilerRef.current) {
       const compiler = compilerRef.current
-      const compiled = await compiler.compile(newValue)
+      const compiled = await compiler.compile(newValue, {})
       console.log('compiled:', compiled)
     }
     // console.log('Compile FN:', workerRef.current.compile)
@@ -63,17 +64,41 @@ export const Djot = (props) => {
   }, [editorRef.current, monaco])
 
   useEffect(() => {
-    if (system.booted && !compilerRef.current) {
+    if (system.booted && !compilerRef.current && compilerState === 'offline') {
+      console.log('system.static:', system.static)
       const compiler = new JavascriptCompiler({
-        static: system.static
+        staticPath: system.static
       })
       compilerRef.current = compiler
       console.log('Compiler:', compiler)
+      setCopmilerstate('pending')
       // const _workerApi = new WorkerApi();
       // workerRef.current = _workerApi
       // console.log('_workerApi:', _workerApi)
     }
-  }, [system.booted])
+  }, [system.booted, compilerState])
+
+  // useEffect(() => {
+  //   if (compilerState === 'pending') {
+  //     const compiler = compilerRef.current
+  //     let success = false
+  //     compiler.init().then(res => {
+  //       console.log('COMPILER INIT RESULT:', res)
+  //       setCopmilerstate('ready')
+  //       success = true
+  //     })
+  //     const tid = setTimeout(() => {
+  //       if (!success) setCopmilerstate('failed')
+  //     }, 2500)
+  //     return () => clearTimeout(tid)
+  //   }
+  // }, [compilerState])
+
+  // useEffect(() => {
+  //   if (compilerState === 'failed') {
+  //     setCopmilerstate('pending')
+  //   }
+  // }, [compilerState])
 
   return (
     <StyledPanes split="vertical" minSize={380} defaultSize={640}>

@@ -2,6 +2,7 @@
 
 // Globals pre-loaded by Worker
 import { compareVersions } from "./Utils";
+import Transitions from "./Transitions";
 
 declare var Babel: any;
 declare var prettier: any;
@@ -52,6 +53,7 @@ function guessFileExtension(presets: BabelPresets): SupportedFileExtension {
 console.log('🦋 COMPILE LOADED')
 
 export default function compile(code: string, config: CompileConfig): Return {
+  console.log('🦋 COMPILINE() CONFIG', config)
   const { envConfig, presetsOptions } = config;
   console.log('🦋 COMPILINE()')
 
@@ -65,11 +67,12 @@ export default function compile(code: string, config: CompileConfig): Return {
   let bugfixes = false;
   let corejs = "3.6";
 
-  console.log('WE ARE COMPILING', code)
+  console.log('🦋 🦋 WE ARE COMPILING', code)
 
-  window.process = { env: {} }
-  const Transitions = require("./Transitions");
+  self.process = { env: {} }
+  console.log('Required Transitions', Transitions)
   const transitions = new Transitions();
+  console.log('WE ARE Transitions', transitions)
   const meta = {
     compiledSize: 0,
     rawSize: new Blob([code], { type: "text/plain" }).size,

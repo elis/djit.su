@@ -9,7 +9,8 @@
   },
   "devDependencies": {
     "chalk": "^4.1.0",
-    "listr": "^0.14.3"
+    "listr": "^0.14.3",
+    "lodash": "^4.17.21"
   },
   "engines": {
     "node": ">=14"

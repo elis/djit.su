@@ -301,7 +301,8 @@
     "regenerator-runtime": "^0.13.5",
     "source-map-support": "^0.5.19",
     "styled-components": "^5.2.1",
-    "@babel/standalone": "^7.12.15"
+    "@babel/standalone": "^7.12.15",
+    "buffer": "^6.0.3"
   },
   "devEngines": {
     "node": ">=10.x",

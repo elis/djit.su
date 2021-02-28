@@ -14,9 +14,16 @@ console.log('PROMISE WORKER LOADED!')
 registerPromiseWorker(message => {
   console.log('MESSAGE INSIDE WORKER PROMISE', {message, Babel})
 
+  const Babel = require('@babel/standalone/babel')
+  console.log('Babel!', Babel)
+
   const { method, name } = message;
 
   switch (method) {
+    case "initialize":
+      console.log('🎋 INITIALIZING', message)
+      return ':)'
+
     case "compile":
       return compile(message.code, message.config);
 

@@ -79,7 +79,8 @@ const createWindow = async () => {
     titleBarStyle: 'hidden',
     webPreferences: {
       devTools: true,
-      nodeIntegration: true
+      nodeIntegration: true,
+      nodeIntegrationInWorker: true
     },
   });
 

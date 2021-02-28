@@ -30,10 +30,14 @@ export function registerPromiseWorker(handler: Handler) {
 
   if (!BabelLoaded) {
     console.log('Import Scripts!')
-    self.importScripts('./babel/babel.min.js')
-    BabelLoaded = true
-    console.log('Scripts Imported!')
+    const Babel = require('@babel/standalone/babel')
+    console.log('Babel!', Babel)
+    // selfPostMessage()
+    // self.importScripts('//babel/babel.min.js')
+    // BabelLoaded = true
+    // console.log('Scripts Imported!')
   }
+
   self.addEventListener("message", function(event) {
     const { data } = event;
     DEBUG && console.log('MESSAGE RECEIVED IN [WORKER]', data)
@@ -42,7 +46,7 @@ export function registerPromiseWorker(handler: Handler) {
 
     try {
       const message = handler(data.message);
-
+      console.log('result of handler:', message)
       selfPostMessage({
         message,
         uid: data.uid,
