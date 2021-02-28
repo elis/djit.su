@@ -34,11 +34,9 @@ export const Djot = (props) => {
 
   const onEditorMounted = (editor) => {
     editorRef.current = editor
-    console.log('editor;', editor)
   }
 
   const onEditorChange = async (newValue, { changes }) => {
-    console.log('EDITOR CHANGED:', changes, compilerRef.current)
     if (compilerRef.current) {
       const compiler = compilerRef.current
 
@@ -68,7 +66,7 @@ export const Djot = (props) => {
           "pipelineProposal": "minimal",
           "reactRuntime": "classic"
         },
-        "evaluate": true,
+        "evaluate": false,
         "presets": [
           "env",
           "react",
@@ -80,20 +78,16 @@ export const Djot = (props) => {
         "getTransitions": false
       }
       const result = await compiler.compile(newValue, conf)
-      console.log('compiled:', result)
       setCompiled(result)
     }
-    // console.log('Compile FN:', workerRef.current.compile)
-    // try {
-    //   const k = {"plugins":[],"debugEnvPreset":false,"envConfig":{"browsers":"defaults, not ie 11, not ie_mob 11","electron":"1.8","isEnvPresetEnabled":true,"isElectronEnabled":false,"isNodeEnabled":false,"forceAllTransforms":false,"shippedProposals":false,"isBuiltInsEnabled":false,"isSpecEnabled":false,"isLooseEnabled":false,"isBugfixesEnabled":true,"node":"10.13","version":"","builtIns":"usage","corejs":"3.6"},"presetsOptions":{"decoratorsLegacy":false,"decoratorsBeforeExport":false,"pipelineProposal":"minimal","reactRuntime":"classic"},"evaluate":false,"presets":["env","react","stage-2"],"prettify":false,"sourceMap":false,"sourceType":"module","getTransitions":false}
-    //   console.log('King...', k)
-    //   const res = await workerRef.current.compile(newValue, k)
-    //   console.log('COMPILE RESULT:', res)
-    // } catch (error) {
-    //   console.log('COMPILE ERROR:', error)
-
-    // }
   }
+
+  useEffect(() => {
+    if (compiled.compiled) {
+      console.log('Now that it\'s compiled, let\'s execute!')
+      const result = {}
+    }
+  }, [compiled])
 
   useEffect(() => {
     if (monaco?.editor) {
@@ -105,40 +99,11 @@ export const Djot = (props) => {
 
   useEffect(() => {
     if (system.booted && !compilerRef.current && compilerState === 'offline') {
-      console.log('system.static:', system.static)
-      const compiler = new JavascriptCompiler({
-        staticPath: system.static
-      })
+      const compiler = new JavascriptCompiler()
       compilerRef.current = compiler
-      console.log('Compiler:', compiler)
       setCopmilerstate('pending')
-      // const _workerApi = new WorkerApi();
-      // workerRef.current = _workerApi
-      // console.log('_workerApi:', _workerApi)
     }
   }, [system.booted, compilerState])
-
-  // useEffect(() => {
-  //   if (compilerState === 'pending') {
-  //     const compiler = compilerRef.current
-  //     let success = false
-  //     compiler.init().then(res => {
-  //       console.log('COMPILER INIT RESULT:', res)
-  //       setCopmilerstate('ready')
-  //       success = true
-  //     })
-  //     const tid = setTimeout(() => {
-  //       if (!success) setCopmilerstate('failed')
-  //     }, 2500)
-  //     return () => clearTimeout(tid)
-  //   }
-  // }, [compilerState])
-
-  // useEffect(() => {
-  //   if (compilerState === 'failed') {
-  //     setCopmilerstate('pending')
-  //   }
-  // }, [compilerState])
 
   return (
     <StyledPanes split="vertical" minSize={380} defaultSize={640}>
