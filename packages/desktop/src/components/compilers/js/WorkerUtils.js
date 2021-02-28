@@ -10,7 +10,7 @@ type WorkerEvent = {
   data: WorkerEventData,
 };
 
-const DEBUG = true
+const DEBUG = false
 
 let MAX_ERROR = 30
 
@@ -23,21 +23,7 @@ const workerPostMessage = (worker, ...args) => {
   return worker.postMessage(...args)
 }
 
-let BabelLoaded = false
-
 export function registerPromiseWorker(handler: Handler) {
-  console.log('REGISTERING PROMISE [WORKER]', { handler, self })
-
-  if (!BabelLoaded) {
-    console.log('Import Scripts!')
-    const Babel = require('@babel/standalone/babel')
-    console.log('Babel!', Babel)
-    // selfPostMessage()
-    // self.importScripts('//babel/babel.min.js')
-    // BabelLoaded = true
-    // console.log('Scripts Imported!')
-  }
-
   self.addEventListener("message", function(event) {
     const { data } = event;
     DEBUG && console.log('MESSAGE RECEIVED IN [WORKER]', data)
@@ -70,7 +56,6 @@ export function registerPromiseWorkerApi(worker: any, settings: Record<string, a
   // Unique id per message since message order isn't guaranteed
   let counter = 0;
 
-  console.log('REGISTERING WORKER API', settings)
   worker.addEventListener("message", (event: WorkerEvent) => {
     const { uid, error, message } = event.data;
     const [resolve, reject] = uidMap[uid];

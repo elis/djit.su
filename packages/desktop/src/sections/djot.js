@@ -7,6 +7,7 @@ import SplitPane from 'react-split-pane'
 import styled from 'styled-components'
 import { useRecoilState } from 'recoil';
 import { systemState } from '../state/atoms/system';
+import objectHash from 'object-hash'
 
 import JavascriptCompiler from '../components/compilers/js'
 
@@ -78,14 +79,26 @@ export const Djot = (props) => {
         "getTransitions": false
       }
       const result = await compiler.compile(newValue, conf)
+      result.source = newValue
+      try {
+        const ast = await compiler.walk(compiled.source, {
+          sourceType: 'module'
+        })
+        result.ast = ast
+      } catch (error) {
+        result.parserErrorMessage = `${error}`
+      }
+      console.log('🧠 setting compiled:', result)
       setCompiled(result)
     }
   }
 
   useEffect(() => {
     if (compiled.compiled) {
+      const compiler = compilerRef.current
       console.log('Now that it\'s compiled, let\'s execute!')
-      const result = {}
+      const result = compiler.execute(compiled.compiled)
+      console.log('executed code:', result)
     }
   }, [compiled])
 
@@ -105,6 +118,102 @@ export const Djot = (props) => {
     }
   }, [system.booted, compilerState])
 
+  const [displayValue, setDisplayValue] = useState([])
+
+  const buildDisplay = () => {
+    if (compiled?.ast?.body?.length) {
+      console.log('📜 AST Updated', compiled.ast)
+      const { source, ast } = compiled
+      const display = []
+      const lines = []
+      let chr = 0
+
+      let line = []
+
+      for (const node of ast.body) {
+        console.log('the node we\'re visiting:', node)
+        const prev = source.substr(chr, node.start - chr)
+        console.log('🦷 Prev:', { prev })
+        chr = node.end
+        const body = source.substr(node.start, node.end - node.start)
+        console.log('👂 Body:', { body })
+        const prevNLs = (prev.match(/\n/g) || []).length
+        const bodyNLs = (body.match(/\n/g) || []).length
+        console.log('🦵 Newlines:', { prevNLs, bodyNLs })
+
+        if (prevNLs) {
+          const hasLine = line.length
+          if (hasLine) {
+            display.push(line)
+            line = []
+          }
+          for (let i = 0; i < prevNLs - (hasLine ? 1 : 0); ++i) {
+            display.push('')
+          }
+        }
+
+        if (!bodyNLs) {
+          line.push('+' + node.type)
+        } else {
+          for (let i = 0; i < bodyNLs; ++i) {
+            console.log('Testing ', i, 'in bodyNLs', bodyNLs)
+            if (!i) display.push('->' + node.type)
+            else {
+              display.push(']')
+            }
+          }
+          if (!body.match(/\n$/)) {
+            line.push('/' + node.type)
+          }
+        }
+
+
+        // if (bodyNLs)
+        //   for (let i = 0; i < bodyNLs; ++i) {
+        //     console.log('Testing ', i, 'in bodyNLs', bodyNLs)
+        //     if (!i) display.push('+' + node.type)
+        //     else {
+        //       if (i === bodyNLs - 1) display.push('/' + node.type)
+        //       else display.push('')
+        //     }
+        //   }
+        // else {
+        //   display.push('+' + node.type)
+        // }
+      }
+      if (line.length) {
+        display.push([...line])
+        line = []
+      }
+      if (chr < source.length) {
+        const bodyNLs = (source.substr(chr).match(/\n/g) || []).length
+        for (let i = 0; i < bodyNLs; ++i) {
+          display.push('')
+        }
+      }
+      console.log('📜🖥 AST Display Ready', display)
+      setDisplayValue(display)
+    }
+  }
+
+  const [lastCompiledHash, setLastCompiledHash] = useState('')
+  useEffect(() => {
+    if (compiled?.compiled) {
+      console.log('👩‍🦰 compiled updated', compiled.compiled)
+      const hash = objectHash({compiled: compiled.compiled, source: compiled.source})
+      console.log('👩‍🦰 new hash', hash, 'old hash:', lastCompiledHash)
+      if (lastCompiledHash !== hash) {
+        console.log('👩‍🦰 setting hash to:', hash)
+        setLastCompiledHash(hash)
+      }
+    }
+  }, [compiled])
+  useEffect(() => {
+    if (lastCompiledHash) {
+      buildDisplay()
+    }
+  }, [lastCompiledHash])
+
   return (
     <StyledPanes split="vertical" minSize={380} defaultSize={640}>
       <MonacoEditor
@@ -113,6 +222,9 @@ export const Djot = (props) => {
      />
      <StyledCompanionPane offset={offset}>
       <div className='content'>
+        {displayValue?.length > 0 && displayValue.map((row) => (
+          <div className='line'>{row}&nbsp;</div>
+        ))}
         <pre>{compiled.compiled}</pre>
         <pre>
           {JSON.stringify(compiled, 1, 1)}
@@ -132,6 +244,26 @@ const StyledCompanionPane = styled.div`
     position: relative;
     height: ${({offset}) => offset.scrollHeight}px;
     top: ${({offset}) => offset.scrollTop * -1}px;
+
+    > .line {
+      /* border: 1px solid #F0F; */
+      position: relative;
+      line-height: 1.5em;
+      &::after {
+        position: absolute;
+        left: -100%;
+        width: 200%;
+        content: "";
+        border-bottom: 1px solid #FF00FF33;
+        bottom: 0;
+      }
+
+      &:hover {
+        &::after {
+          border-bottom-color: #00FFFF88;
+        }
+      }
+    }
   }
 `
 

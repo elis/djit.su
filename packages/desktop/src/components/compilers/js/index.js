@@ -1,4 +1,6 @@
 import WorkerApi from './WorkerApi'
+import execute from './execute'
+import {walkCode} from './walker'
 // import { execute, executeCode } from '../javascript/executor'
 
 export default class JavascriptCompiler {
@@ -19,7 +21,12 @@ export default class JavascriptCompiler {
     console.log('compiled:', compiled)
     return compiled
   }
+  async walk (code, options) {
+    return walkCode(code, options)
+  }
   async execute (code, config) {
+    console.log('📦🐝 EXECUTING:', {code})
+    return execute(code, config)
     // return execute(code, {
     //   context: {
     //     test: 'works',

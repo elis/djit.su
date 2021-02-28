@@ -7,23 +7,14 @@ declare var Babel: any;
 declare var babelPresetEnv: any;
 declare function importScripts(url: string): void;
 
-console.log('PROMISE WORKER LOADED!')
-
 // This script should be executed within a web-worker.
 // Values returned below will be automatically wrapped in Promises.
 registerPromiseWorker(message => {
-  console.log('MESSAGE INSIDE WORKER PROMISE', {message, Babel})
-
   const Babel = require('@babel/standalone/babel')
-  console.log('Babel!', Babel)
 
   const { method, name } = message;
 
   switch (method) {
-    case "initialize":
-      console.log('🎋 INITIALIZING', message)
-      return ':)'
-
     case "compile":
       return compile(message.code, message.config);
 
@@ -60,7 +51,6 @@ registerPromiseWorker(message => {
 
     case "loadScript":
       try {
-        console.log('😍 LOAD SCRIPT', message)
         importScripts(message.url);
 
         return true;
@@ -80,7 +70,6 @@ registerPromiseWorker(message => {
 
     case "registerPlugins":
       try {
-        console.log('😍 REGISTER PLUGINS', message)
         message.plugins.forEach(({ pluginName, instanceName }) => {
           let plugin = self[instanceName];
 
