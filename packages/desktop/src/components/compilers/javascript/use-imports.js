@@ -1,6 +1,6 @@
 import fromPairs from 'lodash/fp/fromPairs'
 import * as d3require from './require'
-import asyncFilter from 'djitsu/utils/async-filter'
+import asyncFilter from './async-filter'
 
 const DEBUG = false
 
