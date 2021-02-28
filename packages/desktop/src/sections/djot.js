@@ -68,7 +68,7 @@ export const Djot = (props) => {
           "pipelineProposal": "minimal",
           "reactRuntime": "classic"
         },
-        "evaluate": false,
+        "evaluate": true,
         "presets": [
           "env",
           "react",
