@@ -119,18 +119,24 @@ export const Djot = (props) => {
   }, [system.booted, compilerState])
 
   const [displayValue, setDisplayValue] = useState([])
+  const [resultCode, setResultCode] = useState()
+  const [resultOutput, setResultOutput] = useState([])
 
-  const buildDisplay = () => {
+
+  const buildDisplay = async () => {
     if (compiled?.ast?.body?.length) {
       console.log('📜 AST Updated', compiled.ast)
       const { source, ast } = compiled
       const display = []
       const lines = []
+      const lineMap = new Map()
       let chr = 0
 
+      let resultSource = ''
       let line = []
 
-      for (const node of ast.body) {
+      for (let nodeIndex = 0; nodeIndex < ast.body.length; ++nodeIndex) {
+        const node = ast.body[nodeIndex]
         console.log('the node we\'re visiting:', node)
         const prev = source.substr(chr, node.start - chr)
         console.log('🦷 Prev:', { prev })
@@ -145,21 +151,29 @@ export const Djot = (props) => {
           const hasLine = line.length
           if (hasLine) {
             display.push(line)
+            lines.push('')
             line = []
           }
           for (let i = 0; i < prevNLs - (hasLine ? 1 : 0); ++i) {
             display.push('')
+            lines.push('')
           }
         }
+
+        const lineStart = lines.length
 
         if (!bodyNLs) {
           line.push('+' + node.type)
         } else {
           for (let i = 0; i < bodyNLs; ++i) {
             console.log('Testing ', i, 'in bodyNLs', bodyNLs)
-            if (!i) display.push('->' + node.type)
+            if (!i) {
+              display.push('->' + node.type)
+              lines.push('')
+            }
             else {
               display.push(']')
+              lines.push('')
             }
           }
           if (!body.match(/\n$/)) {
@@ -180,21 +194,115 @@ export const Djot = (props) => {
         // else {
         //   display.push('+' + node.type)
         // }
+
+        const resultValues = {}
+        if (prev) {
+          resultSource += prev
+        }
+
+        switch (node.type) {
+          case 'ExpressionStatement':
+            resultSource += `(() => {results[${nodeIndex}] = ${body.replace(/[;]$/, '')};})()`
+            lineMap.set(lineStart, nodeIndex)
+            break
+          default:
+            resultSource += body
+        }
+        // if (node.type === 'ExpressionStatement') {
+        //   const constituteCode = `(() => {results[${nodeIndex}] = ${body}}())`
+
+        //   resultsSource = (resultsSource || source).substring(0, node.start) +
+        //   constituteCode +
+        //   (resultsSource || source).substring(node.end)
+        // }
       }
       if (line.length) {
         display.push([...line])
+        lines.push('')
         line = []
       }
       if (chr < source.length) {
         const bodyNLs = (source.substr(chr).match(/\n/g) || []).length
         for (let i = 0; i < bodyNLs; ++i) {
           display.push('')
+          lines.push('')
         }
       }
-      console.log('📜🖥 AST Display Ready', display)
+      console.log('📜🖥 AST Display Ready', {display, resultSource})
+      await compileResults(resultSource)
+
+      setResultCode(resultSource)
+      setLinesMap(lineMap)
       setDisplayValue(display)
     }
   }
+
+  const [linesMap, setLinesMap] = useState(new Map())
+
+  const compileResults = useCallback(async (code) => {
+    const compiler = compilerRef.current
+    console.log('🥵 Compiling results code:', code)
+    try {
+
+      const conf = {
+        "plugins": [],
+        "debugEnvPreset": false,
+        "envConfig": {
+          "browsers": "defaults, not ie 11, not ie_mob 11",
+          "electron": "1.8",
+          "isEnvPresetEnabled": true,
+          "isElectronEnabled": false,
+          "isNodeEnabled": false,
+          "forceAllTransforms": false,
+          "shippedProposals": false,
+          "isBuiltInsEnabled": false,
+          "isSpecEnabled": false,
+          "isLooseEnabled": false,
+          "isBugfixesEnabled": true,
+          "node": "10.13",
+          "version": "",
+          "builtIns": "usage",
+          "corejs": "3.6"
+        },
+        "presetsOptions": {
+          "decoratorsLegacy": false,
+          "decoratorsBeforeExport": false,
+          "pipelineProposal": "minimal",
+          "reactRuntime": "classic"
+        },
+        "evaluate": false,
+        "presets": [
+          "env",
+          "react",
+          "stage-2"
+        ],
+        "prettify": false,
+        "sourceMap": false,
+        "sourceType": "module",
+        "getTransitions": false
+      }
+      const compiledResult = await compiler.compile(code, conf)
+      console.log('Compiled code:', compiledResult)
+      const context = {
+        results: []
+      }
+      const result = await compiler.execute(compiledResult.compiled, { context })
+
+      console.log('Result of compileResults:', result)
+      console.log('💐🐝 Result of context:', context)
+      setResultValues([...context.results])
+    } catch (error) {
+      console.log('Result code compiling error:', error)
+    }
+  }, [])
+
+  const [displayResults, setDisplayResults] = useState([])
+  const [resultValues, setResultValues] = useState([])
+
+  // useEffect(() => {
+  //   console.log('🥵 #1 Compiling results code:', resultCode)
+  //   compileResults(resultCode)
+  // }, [resultCode])
 
   const [lastCompiledHash, setLastCompiledHash] = useState('')
   useEffect(() => {
@@ -208,11 +316,19 @@ export const Djot = (props) => {
       }
     }
   }, [compiled])
+
   useEffect(() => {
     if (lastCompiledHash) {
       buildDisplay()
     }
   }, [lastCompiledHash])
+
+  console.group('Display values, results')
+  console.log('🗺 linesMap', linesMap)
+  console.log('displayValue', displayValue)
+  console.log('resultValues', resultValues)
+  console.log('displayResults', displayResults)
+  console.groupEnd()
 
   return (
     <StyledPanes split="vertical" minSize={380} defaultSize={640}>
@@ -222,13 +338,18 @@ export const Djot = (props) => {
      />
      <StyledCompanionPane offset={offset}>
       <div className='content'>
-        {displayValue?.length > 0 && displayValue.map((row) => (
-          <div className='line'>{row}&nbsp;</div>
+        {displayValue?.length > 0 && displayValue.map((row, rowIndex) => (
+          <div className='line'>
+            <span className='type'>{row}&nbsp;</span>
+            <div className='value'>{linesMap.has(rowIndex) ? resultValues[linesMap.get(rowIndex)] : null}</div>
+          </div>
         ))}
+        <pre>{resultCode}</pre>
+        {/*
         <pre>{compiled.compiled}</pre>
         <pre>
           {JSON.stringify(compiled, 1, 1)}
-        </pre>
+        </pre> */}
       </div>
      </StyledCompanionPane>
     </StyledPanes>
