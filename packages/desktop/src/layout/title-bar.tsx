@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Layout, Tooltip } from 'antd'
+import { Affix, Button, Layout, Tooltip } from 'antd'
 import styled from 'styled-components'
 import useIPCRenderer from '../services/ipc/renderer'
 import { CodeOutlined } from '@ant-design/icons'
@@ -11,20 +11,26 @@ export const TitleBar: React.FC = (props) => {
     ipc.invoke('open-dev-tools', 'test', { jest: 'fest' })
   }
 
-  return (<StyledTitleBar>
-    <div className='os-control' />
-    <div className='title'>Reading a book</div>
-    <div className='late'>
-      {props.children}
-      <ThemeDropdown>
-      <Button type='text' size='small'>Theme</Button>
-    </ThemeDropdown>
+  // TODO: Remove affix and make better layout
 
-      <Tooltip title='Open DevTools'>
-        <Button type='text' size='small' onClick={showDevTools} icon={<CodeOutlined />} />
-      </Tooltip>
-    </div>
-  </StyledTitleBar>)
+  return (
+    <Affix>
+      <StyledTitleBar>
+        <div className='os-control' />
+        <div className='title subtle'>djitsu desktop v0.1.0</div>
+        <div className='late subtle'>
+          {props.children}
+          <ThemeDropdown>
+            <Button type='text' size='small'>Theme</Button>
+          </ThemeDropdown>
+
+          <Tooltip title='Open DevTools'>
+            <Button type='text' size='small' onClick={showDevTools} icon={<CodeOutlined />} />
+          </Tooltip>
+        </div>
+      </StyledTitleBar>
+    </Affix>
+  )
 }
 
 const StyledTitleBar = styled(Layout.Header)`
@@ -37,7 +43,9 @@ const StyledTitleBar = styled(Layout.Header)`
     padding: 0;
     height: var(--height);
     line-height: var(--height);
-    background: none;
+    background: var(--menu-bg);
+    z-index: 99999;
+    position: relative;
     > * * {
       -webkit-app-region: no-drag;
     }
@@ -51,6 +59,15 @@ const StyledTitleBar = styled(Layout.Header)`
       justify-content: flex-end;
       align-items: center;
     }
+
+    > .subtle {
+      opacity: 0.1;
+      transition: opacity 120ms ease-out;
+    }
+    &:hover > .subtle {
+      opacity: 1;
+    }
+
   }
 `
 
