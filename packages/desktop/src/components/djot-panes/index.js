@@ -11,7 +11,9 @@ export const DjotPanes = (props) => {
         <div className='content'>
           {!!lines?.length && lines.map((row, rowIndex) => (
             <div className='line' data-line-number={rowIndex} key={'djot-line-' + rowIndex}>
-              {Line ? <Line data={row} index={rowIndex} /> : row}
+              <div className='container'>
+                {Line ? <Line data={row} index={rowIndex} /> : row}
+              </div>
             </div>
           ))}
 
@@ -36,18 +38,34 @@ const StyledCompanionPane = styled.div`
       /* border: 1px solid #F0F; */
       position: relative;
       line-height: 1.5em;
-      x &::after {
+      max-height: 1.5em;
+
+
+      > .container {
+        max-height: 1.5em;
+
+      }
+
+      &::after {
         position: absolute;
         left: -100%;
         width: 200%;
         content: "";
-        border-bottom: 1px solid #FF00FF33;
+        border-bottom: 1px dashed var(--menu-bg);
         bottom: 0;
+        z-index: 1001;
+        opacity: 0.1;
+        transition: all 420ms ease-out;
+        pointer-events: none;
       }
 
       &:hover {
+        > .container {
+          overflow: visible;
+        }
         &::after {
-          border-bottom-color: #00FFFF88;
+          opacity: 0.42;
+          border-bottom-color: var(--normal-color);
         }
       }
     }
