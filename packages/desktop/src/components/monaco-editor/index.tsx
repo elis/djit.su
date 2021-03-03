@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import Editor, { loader } from '@monaco-editor/react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import Editor, { loader, useMonaco } from '@monaco-editor/react'
 import Monaco from 'monaco-editor'
 import { merge } from 'lodash'
 import { useTheme } from '../../theme'
+import { useThrottle } from 'ahooks'
 
 interface MonacoEditorProps extends React.FC {
+  onMount?: (editor: Monaco.editor.IEditor) => void
+  onScroll?: (scrollEvent: Monaco.IScrollEvent) => void
   options: Monaco.editor.IStandaloneEditorConstructionOptions
 }
 
@@ -42,12 +45,35 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
   }
   const userProps = merge(defaultProps, props)
 
+  const editorRef = useRef()
+  const [offset, setOffset] = useState({})
+  const offsetValue = useThrottle(offset, { wait: 500 })
+
+  const monaco = useMonaco()
+
+  const onDidScroll = useCallback((scrollEvent) => {
+    userProps.onScroll?.(scrollEvent)
+  }, [])
+
+  const onEditorMounted = useCallback((editor) => {
+    editorRef.current = editor
+    if (userProps.onMount) userProps.onMount(editor)
+  }, [])
+
+  // Subscribe to monaco editor scroll event
+  useEffect(() => {
+    if (monaco?.editor)
+      monaco.editor.onDidCreateEditor((codeEditor) => {
+        codeEditor.onDidScrollChange(onDidScroll)
+      })
+  }, [editorRef.current, monaco])
+
   useEffect(() => {
     loadTheme(userProps.theme).then(() => setLoaded(true))
   }, [userProps.theme])
 
   return loaded
-    ? <Editor {...userProps} />
+    ? <Editor {...userProps} onMount={onEditorMounted} />
     : <div>Loading...</div>
 }
 

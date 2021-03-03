@@ -1,7 +1,7 @@
 import React from 'react'
 import { HashRouter as Router, Route, Switch } from 'react-router-dom'
 import DjitsuLayout from '../layout'
-import Djot from '../sections/djot'
+import Djot from '../sections/next-djot'
 import DjitsuEditor from '../sections/editor'
 import DjitsuHome from '../sections/home'
 

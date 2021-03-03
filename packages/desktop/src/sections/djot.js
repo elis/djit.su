@@ -1,3 +1,5 @@
+// @flow
+
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import MonacoEditor from '../components/monaco-editor'
 import { useLayoutState } from '../layout'
@@ -41,54 +43,27 @@ export const Djot = (props) => {
     if (compilerRef.current) {
       const compiler = compilerRef.current
 
-      const conf = {
-        "plugins": [],
-        "debugEnvPreset": false,
-        "envConfig": {
-          "browsers": "defaults, not ie 11, not ie_mob 11",
-          "electron": "1.8",
-          "isEnvPresetEnabled": true,
-          "isElectronEnabled": false,
-          "isNodeEnabled": false,
-          "forceAllTransforms": false,
-          "shippedProposals": false,
-          "isBuiltInsEnabled": false,
-          "isSpecEnabled": false,
-          "isLooseEnabled": false,
-          "isBugfixesEnabled": true,
-          "node": "10.13",
-          "version": "",
-          "builtIns": "usage",
-          "corejs": "3.6"
-        },
-        "presetsOptions": {
-          "decoratorsLegacy": false,
-          "decoratorsBeforeExport": false,
-          "pipelineProposal": "minimal",
-          "reactRuntime": "classic"
-        },
-        "evaluate": false,
-        "presets": [
-          "env",
-          "react",
-          "stage-2"
-        ],
-        "prettify": false,
-        "sourceMap": false,
-        "sourceType": "module",
-        "getTransitions": false
-      }
-      const result = await compiler.compile(newValue, conf)
+      /*
+        Compilation Stages
+        ===========================
+        1. User Input -> ES5
+        2. User Input -> AST
+        3. User Input -> Djot
+        4. Djot -> Output
+      */
+
+      const result = await compiler.compile(newValue)
       result.source = newValue
       try {
         const ast = await compiler.walk(compiled.source, {
           sourceType: 'module'
         })
         result.ast = ast
+        const djotted = compiler.djot(result.compiled)
       } catch (error) {
         result.parserErrorMessage = `${error}`
       }
-      console.log('🧠 setting compiled:', result)
+      // console.log('🧠 setting compiled:', result)
       setCompiled(result)
     }
   }
@@ -96,9 +71,7 @@ export const Djot = (props) => {
   useEffect(() => {
     if (compiled.compiled) {
       const compiler = compilerRef.current
-      console.log('Now that it\'s compiled, let\'s execute!')
       const result = compiler.execute(compiled.compiled)
-      console.log('executed code:', result)
     }
   }, [compiled])
 
@@ -125,7 +98,7 @@ export const Djot = (props) => {
 
   const buildDisplay = async () => {
     if (compiled?.ast?.body?.length) {
-      console.log('📜 AST Updated', compiled.ast)
+      // console.log('📜 AST Updated', compiled.ast)
       const { source, ast } = compiled
       const display = []
       const lines = []
@@ -137,15 +110,15 @@ export const Djot = (props) => {
 
       for (let nodeIndex = 0; nodeIndex < ast.body.length; ++nodeIndex) {
         const node = ast.body[nodeIndex]
-        console.log('the node we\'re visiting:', node)
+        // console.log('the node we\'re visiting:', node)
         const prev = source.substr(chr, node.start - chr)
-        console.log('🦷 Prev:', { prev })
+        // console.log('🦷 Prev:', { prev })
         chr = node.end
         const body = source.substr(node.start, node.end - node.start)
-        console.log('👂 Body:', { body })
+        // console.log('👂 Body:', { body })
         const prevNLs = (prev.match(/\n/g) || []).length
         const bodyNLs = (body.match(/\n/g) || []).length
-        console.log('🦵 Newlines:', { prevNLs, bodyNLs })
+        // console.log('🦵 Newlines:', { prevNLs, bodyNLs })
 
         if (prevNLs) {
           const hasLine = line.length
@@ -166,7 +139,7 @@ export const Djot = (props) => {
           line.push('+' + node.type)
         } else {
           for (let i = 0; i < bodyNLs; ++i) {
-            console.log('Testing ', i, 'in bodyNLs', bodyNLs)
+            // console.log('Testing ', i, 'in bodyNLs', bodyNLs)
             if (!i) {
               display.push('->' + node.type)
               lines.push('')
@@ -228,7 +201,7 @@ export const Djot = (props) => {
           lines.push('')
         }
       }
-      console.log('📜🖥 AST Display Ready', {display, resultSource})
+      // console.log('📜🖥 AST Display Ready', {display, resultSource})
       await compileResults(resultSource)
 
       setResultCode(resultSource)
@@ -241,7 +214,7 @@ export const Djot = (props) => {
 
   const compileResults = useCallback(async (code) => {
     const compiler = compilerRef.current
-    console.log('🥵 Compiling results code:', code)
+    // console.log('🥵 Compiling results code:', code)
     try {
 
       const conf = {
@@ -282,14 +255,14 @@ export const Djot = (props) => {
         "getTransitions": false
       }
       const compiledResult = await compiler.compile(code, conf)
-      console.log('Compiled code:', compiledResult)
+      // console.log('Compiled code:', compiledResult)
       const context = {
         results: []
       }
       const result = await compiler.execute(compiledResult.compiled, { context })
 
-      console.log('Result of compileResults:', result)
-      console.log('💐🐝 Result of context:', context)
+      // console.log('Result of compileResults:', result)
+      // console.log('💐🐝 Result of context:', context)
       setResultValues([...context.results])
     } catch (error) {
       console.log('Result code compiling error:', error)
@@ -307,11 +280,11 @@ export const Djot = (props) => {
   const [lastCompiledHash, setLastCompiledHash] = useState('')
   useEffect(() => {
     if (compiled?.compiled) {
-      console.log('👩‍🦰 compiled updated', compiled.compiled)
+      // console.log('👩‍🦰 compiled updated', compiled.compiled)
       const hash = objectHash({compiled: compiled.compiled, source: compiled.source})
-      console.log('👩‍🦰 new hash', hash, 'old hash:', lastCompiledHash)
+      // console.log('👩‍🦰 new hash', hash, 'old hash:', lastCompiledHash)
       if (lastCompiledHash !== hash) {
-        console.log('👩‍🦰 setting hash to:', hash)
+        // console.log('👩‍🦰 setting hash to:', hash)
         setLastCompiledHash(hash)
       }
     }
@@ -323,12 +296,12 @@ export const Djot = (props) => {
     }
   }, [lastCompiledHash])
 
-  console.group('Display values, results')
-  console.log('🗺 linesMap', linesMap)
-  console.log('displayValue', displayValue)
-  console.log('resultValues', resultValues)
-  console.log('displayResults', displayResults)
-  console.groupEnd()
+  // console.group('Display values, results')
+  // console.log('🗺 linesMap', linesMap)
+  // console.log('displayValue', displayValue)
+  // console.log('resultValues', resultValues)
+  // console.log('displayResults', displayResults)
+  // console.groupEnd()
 
   return (
     <StyledPanes split="vertical" minSize={380} defaultSize={640}>
