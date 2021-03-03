@@ -23,13 +23,19 @@ export const Main = (props) => {
     </div>
   )
 }
+
+<Main />;
+3 + 2;
+123 + 321;
+
+
 `
 
 export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
   const [themeState] = useTheme()
   const [loaded, setLoaded] = useState(false)
   const defaultProps = {
-    height: '600px',
+    height: 'var(--editor-height)',
     theme: themeState.theme,
     defaultLanguage: 'javascript',
     defaultValue: BASE_CODE,

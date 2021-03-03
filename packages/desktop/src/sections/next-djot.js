@@ -92,27 +92,52 @@ export const DjotSection = (props) => {
   const showExtra = false
 
   return (
-    <DjotPanes extra={showExtra && (<>
-      <h4>Compiled</h4>
-      <pre>{JSON.stringify(compiled, 1, 1)}</pre>
-      <h4>Compiled Source</h4>
-      <pre>{debugData?.compiled?.compiled}</pre>
+    <StyledContainer
+    >
+      <DjotPanes
+      style={{ '--scroll-height': offset?.scrollHeight + 'px', '--scroll-top': (offset?.scrollTop * -1) + 'px' }}
 
-      <h4>Debug Data</h4>
-      <pre>
-        {JSON.stringify(debugData, 1, 1)}
-      </pre>
-    </>)}
-      lineComponent={LineComponent}
-      lines={compiled?.display?.output} offset={offset}>
-      <MonacoEditor
-        onMount={onEditorMount}
-        onScroll={onEditorScroll}
-        onChange={onEditorChange}
-     />
-    </DjotPanes>
+      extra={showExtra && (<>
+        <h4>OFfset</h4>
+        <pre>{JSON.stringify(offset, 1, 1)}</pre>
+        <h4>Compiled</h4>
+        <pre>{JSON.stringify(compiled, 1, 1)}</pre>
+        <h4>Compiled Source</h4>
+        <pre>{debugData?.compiled?.compiled}</pre>
+
+        <h4>Debug Data</h4>
+        <pre>
+          {JSON.stringify(debugData, 1, 1)}
+        </pre>
+      </>)}
+        linePropsHandler={([line], lineIndex) => {
+          return line.result && line.lines ? ({
+            style: {
+              '--lines': line.lines
+            }
+          }) : {}
+        }}
+        lineComponent={LineComponent}
+        lines={compiled?.display?.output}
+        // offset={offset}
+        >
+        <MonacoEditor
+          onMount={onEditorMount}
+          onScroll={onEditorScroll}
+          onChange={onEditorChange}
+      />
+      </DjotPanes>
+    </StyledContainer>
   )
 }
+
+const StyledContainer = styled.div`
+  --header-height: 77px;
+  > .SplitPane {
+    max-height: calc(100vh - var(--header-height));
+    --editor-height: calc(100vh - var(--header-height));
+  }
+`
 
 const LineComponent = (props) => {
   const { data: [data], index } = props
@@ -127,7 +152,7 @@ const LineComponent = (props) => {
 
       return res
     } catch (error) {
-      console.log('unable to res', error)
+      console.error('unable to res', error)
       return <>errored</>
     }
   }

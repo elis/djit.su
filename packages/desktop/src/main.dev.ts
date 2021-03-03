@@ -154,7 +154,7 @@ const createWindow = async () => {
   })
 
   ipcMain.handle('dark-mode:toggle', () => {
-    if (nativeTheme.shouldUseDarkColors) {
+    if (!nativeTheme.shouldUseDarkColors) {
       nativeTheme.themeSource = 'light'
     } else {
       nativeTheme.themeSource = 'dark'

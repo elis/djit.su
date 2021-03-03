@@ -14,7 +14,6 @@ export const TitleBar: React.FC = (props) => {
   // TODO: Remove affix and make better layout
 
   return (
-    <Affix>
       <StyledTitleBar>
         <div className='os-control' />
         <div className='title subtle'>djitsu desktop v0.1.0</div>
@@ -29,12 +28,12 @@ export const TitleBar: React.FC = (props) => {
           </Tooltip>
         </div>
       </StyledTitleBar>
-    </Affix>
   )
 }
 
 const StyledTitleBar = styled(Layout.Header)`
   &.ant-layout-header {
+    top: 0;
     --height: 28px;
     -webkit-app-region: drag;
     display: grid;
@@ -45,7 +44,7 @@ const StyledTitleBar = styled(Layout.Header)`
     line-height: var(--height);
     background: var(--menu-bg);
     z-index: 99999;
-    position: relative;
+    position: sticky;
     > * * {
       -webkit-app-region: no-drag;
     }
