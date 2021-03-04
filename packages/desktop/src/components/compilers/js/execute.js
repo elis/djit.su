@@ -4,7 +4,6 @@ export default function execute (code, options = {}) {
 
   const localContext = {
     require: (loadeWhatte) => {
-      console.log('💐 loading what?', loadeWhatte)
       if (loadeWhatte === 'react') return require('react')
     },
     exports: {}

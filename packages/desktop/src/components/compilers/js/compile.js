@@ -50,12 +50,8 @@ function guessFileExtension(presets: BabelPresets): SupportedFileExtension {
   return (ext: SupportedFileExtension);
 }
 
-console.log('🦋 COMPILE LOADED')
-
 export default function compile(code: string, config: CompileConfig): Return {
-  console.log('🦋 COMPILINE() CONFIG', config)
   const { envConfig, presetsOptions } = config;
-  console.log('🦋 COMPILINE()')
 
   let compiled = null;
   let compileErrorMessage = null;
@@ -67,13 +63,9 @@ export default function compile(code: string, config: CompileConfig): Return {
   let bugfixes = false;
   let corejs = "3.6";
 
-  console.log('🦋 🦋 WE ARE COMPILING', code)
-
   self.process = { env: {} }
-  console.log('Required Transitions', Transitions)
   const Babel = require('@babel/standalone')
   const transitions = new Transitions();
-  console.log('WE ARE Transitions', transitions)
   const meta = {
     compiledSize: 0,
     rawSize: new Blob([code], { type: "text/plain" }).size,

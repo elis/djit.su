@@ -111,9 +111,9 @@ export const DjotSection = (props) => {
         </pre>
       </>)}
         linePropsHandler={([line], lineIndex) => {
-          return line.result && line.lines ? ({
+          return line.result ? ({
             style: {
-              '--lines': line.lines
+              '--lines': line.lines || 0
             }
           }) : {}
         }}

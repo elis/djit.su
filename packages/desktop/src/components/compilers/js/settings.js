@@ -15,8 +15,8 @@ export const babelConfig = {
     isBugfixesEnabled: true,
     node: "10.13",
     version: "",
-    builtIns: "usage",
-    corejs: "3.6"
+    builtIns: "usage"
+    // corejs: "3.6"
   },
   presetsOptions: {
     decoratorsLegacy: false,

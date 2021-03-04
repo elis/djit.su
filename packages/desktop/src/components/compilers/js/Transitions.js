@@ -11,8 +11,6 @@ type Parent = {
   },
 };
 
-console.log('😭 TRANSITIONS LOADED', { process })
-
 export default class Transitions {
   _transitions: Array<Transition> = [];
 

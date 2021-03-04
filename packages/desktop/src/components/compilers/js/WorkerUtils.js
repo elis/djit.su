@@ -32,7 +32,6 @@ export function registerPromiseWorker(handler: Handler) {
 
     try {
       const message = handler(data.message);
-      console.log('result of handler:', message)
       selfPostMessage({
         message,
         uid: data.uid,
@@ -49,8 +48,7 @@ export function registerPromiseWorker(handler: Handler) {
   });
 }
 
-export function registerPromiseWorkerApi(worker: any, settings: Record<string, any>) {
-  const { staticPath } = settings
+export function registerPromiseWorkerApi(worker: any) {
   const uidMap = {};
 
   // Unique id per message since message order isn't guaranteed

@@ -35,24 +35,8 @@ export default class WorkerApi {
   _worker: PromiseWorkerApi
 
   constructor (options: Record<string, any>) {
-    const { staticPath, ...opts } = options
-    this.options = opts
-    this._worker = registerPromiseWorkerApi(new WorkerSource(true), { staticPath })
-    console.log('WORKER LOADED??', staticPath)
-    this.staticPath = staticPath
-
-  }
-
-  init(): Promise<string> {
-    console.log('💐 init message sending:', {staticPath: this.staticPath})
-    return this._worker.postMessage({
-      method: 'initialize',
-      staticPath: this.staticPath
-    })
-    .then(res => {
-      console.log('💐 init result:', res)
-      return ':D'
-    })
+    this.options = options
+    this._worker = registerPromiseWorkerApi(new WorkerSource(true))
   }
 
   compile(code: string, config: CompileConfig): Promise<CompileResult> {
