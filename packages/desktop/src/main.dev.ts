@@ -17,6 +17,8 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import commander from 'commander'
 
+import YAML from 'yaml'
+
 const local: Record<string, unknown> = {
 }
 export default class AppUpdater {
@@ -144,6 +146,46 @@ const createWindow = async () => {
     if (!mainWindow) return {error: 'no window'}
     mainWindow.webContents.openDevTools()
     return
+  })
+
+  ipcMain.handle('save-pane-width', async (event, newWidth) => {
+    const { writeFile, readFile } = require('fs').promises
+    const path = await import('path')
+    const homedir = (await import('os')).homedir();
+    const filepath = path.join(homedir, '.djitsurc')
+    const settings: Record<string, any> = {}
+    try {
+      const settingsFile = await readFile(filepath, { encoding: 'utf-8' })
+      const parsed = YAML.parse(settingsFile)
+      Object.assign(settings, parsed)
+    } catch (error) {
+      console.log('error reading settings', `${error}`)
+    }
+
+    settings.djotPaneWidth = newWidth
+    const yamld = YAML.stringify(settings)
+    try {
+      await writeFile(filepath, yamld)
+    } catch (error) {
+      console.log('error writing file:', `${error}`)
+    }
+    return
+  })
+  ipcMain.handle('get-pane-width', async (event) => {
+    const { readFile } = require('fs').promises
+    const path = await import('path')
+    const homedir = (await import('os')).homedir();
+    const filepath = path.join(homedir, '.djitsurc')
+    const settings: Record<string, any> = {}
+    try {
+      const settingsFile = await readFile(filepath, { encoding: 'utf-8' })
+      const parsed = YAML.parse(settingsFile)
+      Object.assign(settings, parsed)
+    } catch (error) {
+      console.log('error reading settings', `${error}`)
+    }
+
+    return settings.djotPaneWidth
   })
 
   ipcMain.handle('read-files', async (event, ...args) => {

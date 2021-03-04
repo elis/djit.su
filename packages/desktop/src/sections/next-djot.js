@@ -8,17 +8,22 @@ import DjotPanes from '../components/djot-panes'
 import useStates from '../utils/hooks/use-states'
 import { useMonaco } from '@monaco-editor/react'
 import { useLayoutSettings } from '../layout/hooks'
-import { useThrottle } from 'ahooks'
+import { useDebounceFn, useThrottle } from 'ahooks'
 
 import JavascriptCompiler from '../components/compilers/js'
 import {ErrorBoundary} from 'react-error-boundary'
+import useIPCRenderer from '../services/ipc/renderer'
 
 
 export const DjotSection = (props) => {
+  const ipc = useIPCRenderer()
+
   const [offset, setOffset] = useState({})
   const [compiled, setCompiled]= useState({})
   const compilerRef: React.RefObject<JavascriptCompiler> = useRef()
 
+  const [panesReady, setPanesReady] = useState()
+  const [paneWidth, setPaneWidth] = useState(0)
   const [debugData, setDebugData] = useStates({})
 
   useLayoutSettings({
@@ -86,17 +91,30 @@ export const DjotSection = (props) => {
 
   // Initialize compiler instance
   useEffect(() => {
+    // Initialize compiler
     compilerRef.current = new JavascriptCompiler()
+
+    // Load pane width
+    ipc.invoke('get-pane-width').then((savePaneWidth) => {
+      console.log('loaded pane width:', savePaneWidth)
+      setPanesReady(true)
+      setPaneWidth(savePaneWidth || 600)
+    })
   }, [])
+
+  const { run: onPanesChange } = useDebounceFn((newWidth) => {
+    ipc.invoke('save-pane-width', newWidth)
+  }, { wait: 300, leading: true })
 
   const showExtra = false
 
   return (
     <StyledContainer
     >
-      <DjotPanes
+      {panesReady && <DjotPanes
+      onChange={onPanesChange}
       style={{ '--scroll-height': offset?.scrollHeight + 'px', '--scroll-top': (offset?.scrollTop * -1) + 'px' }}
-
+      size={paneWidth}
       extra={showExtra && (<>
         <h4>OFfset</h4>
         <pre>{JSON.stringify(offset, 1, 1)}</pre>
@@ -126,7 +144,7 @@ export const DjotSection = (props) => {
           onScroll={onEditorScroll}
           onChange={onEditorChange}
       />
-      </DjotPanes>
+      </DjotPanes>}
     </StyledContainer>
   )
 }

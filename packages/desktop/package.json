@@ -282,7 +282,8 @@
     "acorn-jsx": "^5.3.1",
     "object-hash": "^2.1.1",
     "ahooks": "^2.9.6",
-    "react-error-boundary": "^3.1.1"
+    "react-error-boundary": "^3.1.1",
+    "yaml": "^2.0.0-3"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.0.9",

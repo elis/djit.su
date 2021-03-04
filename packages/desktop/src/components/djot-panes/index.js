@@ -3,9 +3,13 @@ import SplitPane from 'react-split-pane'
 import styled from 'styled-components'
 
 export const DjotPanes = (props) => {
-  const { lines, lineComponent: Line, linePropsHandler, extra, style = {} } = props
+  const { lines, lineComponent: Line, linePropsHandler, extra, style = {}, onChange, defaultSize, size } = props
   return (
-    <StyledPanes split="vertical" minSize={380} defaultSize={640} style={style} >
+    <StyledPanes
+      onChange={onChange}
+      size={size}
+      defaultSize={defaultSize}
+      split="vertical" minSize={120} style={style} >
       {props.children}
       <StyledCompanionPane>
         <div className='content'>

@@ -12,7 +12,6 @@ export const useIPCRenderer = () => {
     if (!system.booted)
       invoke('bootup')
         .then(result => {
-          console.log('result of bootup:', result)
           setSystem({ ...result, booted: true })
         })
 
