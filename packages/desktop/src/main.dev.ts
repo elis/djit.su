@@ -56,12 +56,30 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+const installFiles = async () => {
+  const {ProgId, ShellOption, Regedit} = require('electron-regedit')
+
+  new ProgId({
+      description: 'Djitsu Test',
+      extensions: ['djitsux'],
+      shell: [
+          new ShellOption({verb: ShellOption.OPEN}),
+          new ShellOption({verb: ShellOption.EDIT, args: ['--edit']}),
+          new ShellOption({verb: ShellOption.PRINT, args: ['--print']})
+      ]
+  })
+
+  Regedit.installAll()
+  console.log('Extensions ready!')
+}
+
 const createWindow = async () => {
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
   ) {
     await installExtensions();
+    await installFiles();
   }
 
   const RESOURCES_PATH = app.isPackaged
@@ -215,6 +233,9 @@ const createWindow = async () => {
   ipcMain.handle('dark-mode:system', () => {
     nativeTheme.themeSource = 'system'
   })
+  ipcMain.handle('get-local', () => {
+    return local
+  })
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
@@ -238,11 +259,13 @@ app.on('activate', () => {
 });
 
 app.on('second-instance', (_event, argv, cwd) => {
+  console.log('[==] Second Instance', argv, cwd)
   local.second = {
     argv, cwd
   }
 })
 app.on('open-file', (_event, path) => {
+  console.log('[==] Open File', path)
   local.third = {
     path
   }

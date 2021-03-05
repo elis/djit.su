@@ -2,13 +2,18 @@ import React from 'react'
 import { Affix, Button, Layout, Tooltip } from 'antd'
 import styled from 'styled-components'
 import useIPCRenderer from '../services/ipc/renderer'
-import { CodeOutlined } from '@ant-design/icons'
+import { CodeOutlined, FileAddOutlined } from '@ant-design/icons'
 import { ThemeDropdown } from './header'
 
 export const TitleBar: React.FC = (props) => {
   const ipc = useIPCRenderer()
   const showDevTools = () => {
     ipc.invoke('open-dev-tools', 'test', { jest: 'fest' })
+  }
+
+  const getLocal = async () => {
+    const locals = await ipc.invoke('get-local')
+    console.log('Locals:', locals)
   }
 
   // TODO: Remove affix and make better layout
@@ -19,6 +24,7 @@ export const TitleBar: React.FC = (props) => {
         <div className='title subtle'>djitsu desktop v0.1.0</div>
         <div className='late subtle'>
           {props.children}
+          <Button type='text' size='small' onClick={getLocal} icon={<FileAddOutlined />} />
           <ThemeDropdown>
             <Button type='text' size='small'>Theme</Button>
           </ThemeDropdown>
