@@ -3,16 +3,16 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import SplitPane from 'react-split-pane'
 import styled from 'styled-components'
-import MonacoEditor from '../components/monaco-editor'
-import DjotPanes from '../components/djot-panes'
-import useStates from '../utils/hooks/use-states'
+import MonacoEditor from '../../components/monaco-editor'
+import DjotPanes from '../../components/djot-panes'
+import useStates from '../../utils/hooks/use-states'
 import { useMonaco } from '@monaco-editor/react'
-import { useLayoutSettings } from '../layout/hooks'
+import { useLayoutSettings } from '../../layout/hooks'
 import { useDebounceFn, useThrottle } from 'ahooks'
 
-import JavascriptCompiler from '../components/compilers/js'
+import JavascriptCompiler from '../../components/compilers/js'
 import {ErrorBoundary} from 'react-error-boundary'
-import useIPCRenderer from '../services/ipc/renderer'
+import useIPCRenderer from '../../services/ipc/renderer'
 
 
 export const DjotSection = (props) => {

@@ -28,8 +28,8 @@ const installPackage = (package) =>
     .exec('yarn install', { cwd: resolvePath('packages', package) }, () => resolve()))
 
 const installPackagesInPackage = (package, packages) =>
-  new Promise((resolve) => require('child_process')
-    .exec(`yarn add ${packages.join(' ')}`, { cwd: resolvePath('packages', package) }, (err, stdout) => err ? rejects(err) : resolve(stdout)))
+  new Promise((resolve, reject) => require('child_process')
+    .exec(`yarn add ${packages.join(' ')}`, { cwd: resolvePath('packages', package) }, (err, stdout) => err ? reject(err) : resolve(stdout)))
 
 const linkPackage = (package) =>
   new Promise((resolve) => require('child_process')
