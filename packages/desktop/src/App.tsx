@@ -13,9 +13,10 @@ import icon from '../assets/icon.svg';
 import './App.global.less';
 import './App.global.scss';
 import DjitsuRoutes from './routes';
+import SystemService from './services/system';
 import { RecoilRoot } from 'recoil';
 
-const Hello = () => {
+const Hello__DEPRECATED = () => {
   const [themeState, themeActions] = useTheme()
   const [theme, setTheme] = useState('light')
   const [output, setOutput] = useState('')
@@ -63,6 +64,7 @@ const Hello = () => {
   }
   return (
     <div>
+      <SystemService />
       <StyleLauncher>
 
         <span>Welcome to</span>
@@ -148,6 +150,7 @@ export default function App() {
     <RecoilRoot>
       <ThemeSwitcherProvider defaultTheme={theme} themeMap={themes}>
         <DjitsuTheme theme={theme}>
+          <SystemService />
           <DjitsuRoutes />
           {/* <Router>
             <Switch>

@@ -328,7 +328,8 @@
     "styled-components": "^5.2.1",
     "@babel/standalone": "^7.12.15",
     "buffer": "^6.0.3",
-    "fix-path": "^3.0.0"
+    "fix-path": "^3.0.0",
+    "react-spinners-kit": "^1.9.1"
   },
   "devEngines": {
     "node": ">=10.x",

@@ -142,8 +142,9 @@ const createWindow = async () => {
   });
 
   ipcMain.handle('bootup', () => {
-    return { static: `file://${__dirname}/` }
+    return { staticPath: `file://${__dirname}/` }
   })
+
   ipcMain.handle('get-file-selection', async (event, ...args) => {
     // ... do actions on behalf of the Renderer
     console.log('files read', {event, args})
