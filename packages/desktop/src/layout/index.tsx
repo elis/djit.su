@@ -109,7 +109,7 @@ export const useLayoutState = () => {
 const StyledLayout = styled(Layout)`
 
   &.ant-layout {
-    min-height: 100vh;
+    min-height: calc(100vh - 1px);
     > .ant-layout-content {
       /* border: 1px solid #FF00FF99; */
     }

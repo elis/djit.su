@@ -46,12 +46,8 @@ const ThemeContext = createContext<ThemeContext>([{
 
 export const useTheme = () => useContext(ThemeContext)
 
-console.log('PROCESS.ENV:', process.env)
-
 const themes = Object.entries(themesConfig).map(([name, pub]) => ([name, 'static://' + pub]))
   .reduce((acc, [name, pub]) => ({...acc, [name]: pub}), {})
-
-console.log('Themes obj:', themes)
 
 export { themes }
 interface DjitsuThemeProps {
