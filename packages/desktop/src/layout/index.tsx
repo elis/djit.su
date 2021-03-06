@@ -12,10 +12,13 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../theme'
 import Spinner from '../components/spinner';
+import LoadingScreen from '../components/loading-screen';
 import Header from './header';
 import TitleBar from './title-bar';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { layoutState } from '../state/atoms/layout';
+import { systemLoading } from '../state/atoms/system';
+import { SystemSpinner } from '../schema/system';
 
 
 
@@ -29,19 +32,16 @@ export type DjitsuLayoutProps = {
 export const DjitsuLayout: React.FC<DjitsuLayoutProps> = (props) => {
   const { loading } = props
   const [layout, setLayout] = useRecoilState(layoutState)
+  const systemLoadingState = useRecoilValue(systemLoading)
 
-  if (loading) return <StyledLoadingLayout>
+  if (loading) return <StyledLayout>
     <TitleBar />
-    <Content>
-      <div className='brand'>
-        <DjitsuSymbol />
-      </div>
-      <Spinner  />
-      <div className='message'>
-        Loading
-      </div>
-    </Content>
-  </StyledLoadingLayout>
+    <Layout>
+      <Layout>
+        <LoadingScreen />
+      </Layout>
+    </Layout>
+  </StyledLayout>
 
   return (
     <StyledLayout>
@@ -110,8 +110,11 @@ const StyledLayout = styled(Layout)`
 
   &.ant-layout {
     min-height: calc(100vh - 1px);
+    > .ant-layout
+    > .ant-layout
     > .ant-layout-content {
-      /* border: 1px solid #FF00FF99; */
+      display: flex;
+      flex-direction: column;
     }
   }
 `
@@ -132,8 +135,8 @@ const StyledLoadingLayout = styled(StyledLayout)`
           opacity: 1;
         }
       }
-      > [class^='impulse'] {
-        margin: 24px;
+      > .spinner {
+        margin: 32px;
       }
       > .message {
         font-size: 12px;

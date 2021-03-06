@@ -142,7 +142,7 @@ const createWindow = async () => {
   });
 
   ipcMain.handle('bootup', () => {
-    return { staticPath: `file://${__dirname}/` }
+    return { staticPath: `file://${__dirname}/`, local }
   })
 
   ipcMain.handle('get-file-selection', async (event, ...args) => {

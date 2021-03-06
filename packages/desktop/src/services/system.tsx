@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useRecoilState } from 'recoil';
-import { bootError, systemState } from '../state/atoms/system';
+import { bootError, systemCommand, systemState } from '../state/atoms/system';
 import { useIPCRenderer } from './ipc/renderer'
 
 import { BootupData, SystemStatus } from '../schema/system'
@@ -8,6 +8,7 @@ import { BootupData, SystemStatus } from '../schema/system'
 export const SystemService: React.FC = (props) => {
   const { invoke } = useIPCRenderer()
   const [system, setSystem] = useRecoilState(systemState)
+  const [systemCommandState, setSystemCommand] = useRecoilState(systemCommand)
   const [bootErrorState, setBootError] = useRecoilState(bootError)
 
 
@@ -20,8 +21,25 @@ export const SystemService: React.FC = (props) => {
 
       invoke('bootup')
         .then(async (result: BootupData) => {
+
+          // DEBUG
+          Object.assign(result, {
+            "third": {
+              "path": "/Users/eli/projects/temp/f/eli.djitsu"
+            },
+          })
+
+          if (result.third?.path) {
+            // openFile: result.third.path
+            setSystemCommand({ action: 'open-file', path: result.third.path })
+          }
+
           await new Promise(resolve => setTimeout(resolve, 3000))
-          setSystem(v => ({ ...v, ...result, status: SystemStatus.Ready }))
+          setSystem(v => ({
+            ...v,
+            staticPath: result.staticPath,
+            status: SystemStatus.Ready
+          }))
         })
         .catch((error) => {
           setBootError(error.toString())

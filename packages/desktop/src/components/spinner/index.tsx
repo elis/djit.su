@@ -1,15 +1,24 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ImpulseSpinner } from 'react-spinners-kit'
+import { ImpulseSpinner, RotateSpinner } from 'react-spinners-kit'
+import { SystemSpinner } from '../../schema/system'
 
+export type SpinnerProps = {
+  type?: SystemSpinner
+}
 
-export const Spinner: React.FC = (props) => {
+export const Spinner: React.FC<SpinnerProps> = (props) => {
   return (
-    <ImpulseSpinner
-      size={30}
-      backColor='var(--primary-2)'
-      frontColor='var(--primary-7)'
-    />
+    props.type === SystemSpinner.Rotate
+      ? <RotateSpinner
+          size={30}
+          color='var(--primary-4)'
+        />
+      : <ImpulseSpinner
+          size={30}
+          backColor='var(--primary-2)'
+          frontColor='var(--primary-7)'
+        />
   )
 }
 

@@ -1,18 +1,18 @@
 // @flow
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import MonacoEditor from '../../components/monaco-editor'
-import { useLayoutSettings } from '../../layout/hooks'
+import MonacoEditor from '../../../components/monaco-editor'
+import { useLayoutSettings } from '../../../layout/hooks'
 import { useMonaco } from '@monaco-editor/react'
 import SplitPane from 'react-split-pane'
 import styled from 'styled-components'
 import { useRecoilState } from 'recoil';
-import { systemState } from '../../state/atoms/system';
+import { systemState } from '../../../state/atoms/system';
 import objectHash from 'object-hash'
 
-import JavascriptCompiler from '../../components/compilers/js'
+import JavascriptCompiler from '../../../components/compilers/js'
 
-import WorkerApi from '../../components/repl/WorkerApi'
+import WorkerApi from '../../../components/repl/WorkerApi'
 
 export const Djot = (props) => {
   const [system, setSystem] = useRecoilState(systemState)

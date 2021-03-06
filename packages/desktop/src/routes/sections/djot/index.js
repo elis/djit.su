@@ -3,17 +3,20 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import SplitPane from 'react-split-pane'
 import styled from 'styled-components'
-import MonacoEditor from '../../components/monaco-editor'
-import DjotPanes from '../../components/djot-panes'
-import useStates from '../../utils/hooks/use-states'
+import MonacoEditor from '../../../components/monaco-editor'
+import DjotPanes from '../../../components/djot-panes'
+import LoadingScreen from '../../../components/loading-screen'
+import useStates from '../../../utils/hooks/use-states'
 import { useMonaco } from '@monaco-editor/react'
-import { useLayoutSettings } from '../../layout/hooks'
+import { useLayoutSettings } from '../../../layout/hooks'
 import { useDebounceFn, useThrottle } from 'ahooks'
 
-import JavascriptCompiler from '../../components/compilers/js'
+import JavascriptCompiler from '../../../components/compilers/js'
 import {ErrorBoundary} from 'react-error-boundary'
-import useIPCRenderer from '../../services/ipc/renderer'
-
+import useIPCRenderer from '../../../services/ipc/renderer'
+import { useFileHandler } from './file-handler'
+import { SystemSpinner } from '../../../schema/system'
+import { DjotStatus } from '../../../schema/djot'
 
 export const DjotSection = (props) => {
   const ipc = useIPCRenderer()
@@ -25,6 +28,8 @@ export const DjotSection = (props) => {
   const [panesReady, setPanesReady] = useState()
   const [paneWidth, setPaneWidth] = useState(0)
   const [debugData, setDebugData] = useStates({})
+
+  const file = useFileHandler(props)
 
   useLayoutSettings({
     sidebar: false,
@@ -108,10 +113,15 @@ export const DjotSection = (props) => {
 
   const showExtra = false
 
+  useEffect(() => {
+    console.log('🗃 🗂 file updated:', file)
+  }, [file])
+
   return (
     <StyledContainer
     >
-      {panesReady && <DjotPanes
+      {file.loading && <LoadingScreen {...file.loading} />}
+      {file.status === DjotStatus.Ready && panesReady && <DjotPanes
       onChange={onPanesChange}
       style={{ '--scroll-height': offset?.scrollHeight + 'px', '--scroll-top': (offset?.scrollTop * -1) + 'px' }}
       size={paneWidth}
@@ -151,6 +161,10 @@ export const DjotSection = (props) => {
 
 const StyledContainer = styled.div`
   --header-height: 77px;
+
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
   > .SplitPane {
     max-height: calc(100vh - var(--header-height));
     --editor-height: calc(100vh - var(--header-height));
