@@ -2,7 +2,12 @@
 import { writeFile, readFile } from 'fs/promises'
 import YAML from 'yaml'
 
-console.log('test')
+const myReadFile = async (event, filepath) => {
+  console.log('read file:', filepath)
+  const filedata = await readFile(filepath, { encoding: 'utf-8' })
+  console.log('file data:', filedata)
+  return ':)s'
+}
 
 const savePaneWidth = async (event, newWidth) => {
   const path = await import('path')
@@ -29,6 +34,9 @@ const savePaneWidth = async (event, newWidth) => {
   return
 }
 try {
+  const result = await myReadFile({}, '/Users/eli/projects/temp/f/eli.djitsu')
+  console.log('result of read file:', result)
+
   // savePaneWidth({}, Math.floor(Math.random() * 1000))
 } catch (error) {
   console.log('nope:', `${error}`)

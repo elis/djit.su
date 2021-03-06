@@ -1,11 +1,13 @@
 export type BootupData = {
   staticPath: string
-  options?: Record<string, unknown>,
-  third?: {
-    path: string
-  },
-  ready?: {
-    info: Record<string, unknown>
+  local: {
+    options?: Record<string, unknown>,
+    third?: {
+      path: string
+    },
+    ready?: {
+      info: Record<string, unknown>
+    }
   }
 }
 
@@ -28,7 +30,7 @@ export type SystemCommand = {
 } | null
 
 export type SystemLoading = {
-  message?: string
+  message?: string | React.ReactElement
   Message?: (props: any) => React.ReactElement
   start?: number
   spinner?: SystemSpinner

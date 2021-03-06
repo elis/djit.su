@@ -35,6 +35,8 @@ const StyledHeader = styled(Layout.Header)`
     padding-left: 0;
     height: 48px;
     line-height: 48px;
+    position: relative;
+    z-index: 50;
     span:empty {
       flex: 1 1 auto;
     }

@@ -18,6 +18,7 @@ import MenuBuilder from './menu';
 import commander from 'commander'
 
 import YAML from 'yaml'
+const { readFile, writeFile } = require('fs').promises;
 
 const local: Record<string, unknown> = {
 }
@@ -214,6 +215,9 @@ const createWindow = async () => {
     return {q: 'vc'}
   })
 
+  ipcMain.handle('read-file', async (event, filepath) => readFile(filepath, { encoding: 'utf-8' }))
+  ipcMain.handle('write-file', async (event, filepath, filedata) => writeFile(filepath, filedata))
+
   ipcMain.handle('dark-mode:toggle', () => {
     if (!nativeTheme.shouldUseDarkColors) {
       nativeTheme.themeSource = 'light'
@@ -264,12 +268,14 @@ app.on('second-instance', (_event, argv, cwd) => {
   local.second = {
     argv, cwd
   }
+  if (mainWindow === null) createWindow();
 })
 app.on('open-file', (_event, path) => {
   console.log('[==] Open File', path)
   local.third = {
     path
   }
+  if (mainWindow === null) createWindow();
 })
 app.on('ready', (_event, info) => {
   local.ready = {

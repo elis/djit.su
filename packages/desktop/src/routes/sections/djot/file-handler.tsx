@@ -1,20 +1,22 @@
 import { Button } from 'antd'
-import React, { useEffect } from 'react'
-import { useRecoilState } from 'recoil'
+import React, { useCallback, useEffect, useMemo } from 'react'
+import { useRecoilState, useRecoilStateLoadable, useRecoilValueLoadable } from 'recoil'
 import { DjotStatus, DjotType } from '../../../schema/djot'
 import { SystemSpinner } from '../../../schema/system'
 import { currentDjotId, djotEditor } from '../../../state/atoms/djot'
 import { loadingStatus, systemLoading } from '../../../state/atoms/system'
 
+import { file } from '../../../state/atoms/files'
+import useIPCRenderer from '../../../services/ipc/renderer'
 
 
 export const useFileHandler = (props: Record<string, any>) => {
+  const { invoke } = useIPCRenderer()
   const [currentId, setCurrentDjotId] = useRecoilState(currentDjotId)
   const [state, setDjotEditor] = useRecoilState(djotEditor(props.match.params.path))
 
+  const [fileState, setFile] = useRecoilStateLoadable(file(state.path))
   const [loadingState, setLoadingStatus] = useRecoilState(loadingStatus('file'))
-  console.log('WE Using file handler:', props)
-  console.log('djotEditorState:', state)
 
   useEffect(() => {
     if (props.match?.params?.type === 'file') {
@@ -41,24 +43,13 @@ export const useFileHandler = (props: Record<string, any>) => {
 
   useEffect(() => {
     if (state.type === DjotType.File && state.status === DjotStatus.Unavailable) {
-      console.log('WE GONNA LOAD THAT FILE!', state.path)
       setLoadingStatus({
-        // message: <React.Fragment>
-        //   <div>Loading file: {state.path}</div>
-        //   <Button size='small' onClick={() => {
-        //     console.log('Cancel 2 clicked!')
-        //   }}>Cancel</Button>
-        // </React.Fragment>,
-        message: 'Loading file...',
-        Message: () => (
+        message: (
           <React.Fragment>
             <div>Loading file: {state.path}</div>
             <div style={{textAlign: 'center', padding: '24px 0'}}>
               <Button
                 size='small'
-                // onClick={() => {
-                //   console.log('Cancel 2 clicked!')
-                // }}
                 onClick={cancelClick}
               >Cancel</Button>
             </div>
@@ -68,6 +59,7 @@ export const useFileHandler = (props: Record<string, any>) => {
       })
       setDjotEditor(v => ({ ...v, status: DjotStatus.Loading}))
 
+
       const tid = setTimeout(() => setLoadingStatus(false), 5000)
       return () => clearTimeout(tid)
     } else {
@@ -76,9 +68,38 @@ export const useFileHandler = (props: Record<string, any>) => {
     }
   }, [state])
 
-  return {
+  useEffect(() => {
+    if (state.status === DjotStatus.Loading && fileState.state === 'hasValue') {
+      setLoadingStatus(false)
+      setDjotEditor(v => ({ ...v, status: DjotStatus.Ready}))
+    }
+  }, [fileState, state])
+
+  const saveFile = useCallback(async (filepath: string, filedata: string) => {
+    await invoke('write-file', filepath, filedata)
+    setFile(v => ({ ...v, contents: filedata }))
+  }, [])
+
+  const setFileContents = useCallback(async (newData) => {
+    console.log('What is state?', state)
+    if (!state.path) throw new Error('No filepath set')
+    await saveFile(state.path, newData)
+  }, [state])
+
+  const output = useMemo(() => ({
     currentId,
+    contents: fileState.state === 'hasValue' && fileState.contents,
     status: state.status,
-    loading: loadingState
-  }
+    loading: loadingState,
+
+    setFileContents
+  }), [
+    currentId,
+    fileState,
+    state,
+    loadingState,
+    setFileContents
+  ])
+
+  return output
 }

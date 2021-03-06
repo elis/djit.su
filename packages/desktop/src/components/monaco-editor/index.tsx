@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import Editor, { loader, useMonaco } from '@monaco-editor/react'
+import Editor, { EditorProps, loader, useMonaco } from '@monaco-editor/react'
 import Monaco from 'monaco-editor'
 import { merge } from 'lodash'
 import { useTheme } from '../../theme'
 import { useThrottle } from 'ahooks'
 
 interface MonacoEditorProps extends React.FC {
+  code?: string
+  onSave?: (newContents: string) => void
   onMount?: (editor: Monaco.editor.IEditor) => void
   onScroll?: (scrollEvent: Monaco.IScrollEvent) => void
   options: Monaco.editor.IStandaloneEditorConstructionOptions
@@ -38,7 +40,7 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
     height: 'var(--editor-height)',
     theme: themeState.theme,
     defaultLanguage: 'javascript',
-    defaultValue: BASE_CODE,
+    defaultValue: props.code,
     path: './src/main.jsx',
     options: {
       lineNumbersMinChars: 2,
@@ -46,12 +48,17 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
         enabled: false,
         side: 'left',
         renderCharacters: false
-      }
-    }
+      },
+
+      // Tried wordwrapping - its breaking the result output
+      // wordWrap: 'on',
+      // wordWrapMinified: true,
+      // wrappingIndent: 'indent'
+    },
   }
   const userProps = merge(defaultProps, props)
 
-  const editorRef = useRef()
+  const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor>()
   const [offset, setOffset] = useState({})
   const offsetValue = useThrottle(offset, { wait: 500 })
 
@@ -73,6 +80,114 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
         codeEditor.onDidScrollChange(onDidScroll)
       })
   }, [editorRef.current, monaco])
+
+  const [keybound, setKyebound] = useState(false)
+
+  useEffect(() => {
+    const editor = editorRef.current
+    if (!keybound && monaco?.editor && editor) {
+
+      editor.addAction({
+        // An unique identifier of the contributed action.
+        id: 'save',
+
+        // A label of the action that will be presented to the user.
+        label: 'Save File',
+
+        // An optional array of keybindings for the action.
+        keybindings: [
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S,
+          // chord
+          // monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K, monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M)
+        ],
+
+        // A precondition for this action.
+        precondition: undefined,
+
+        // A rule to evaluate on top of the precondition in order to dispatch the keybindings.
+        keybindingContext: undefined,
+
+        contextMenuGroupId: 'navigation',
+
+        contextMenuOrder: 1.5,
+
+        // Method that will be executed when the action is triggered.
+        // @param editor The editor instance is passed in as a convinience
+        run: async (ed) => {
+          console.log("save me => " + ed.getPosition(), ed);
+          const model = ed.getModel();
+          const value = model?.getValue()
+          props.onSave?.(value || '')
+        }
+      });
+
+      editor.addAction({
+        // An unique identifier of the contributed action.
+        id: 'run',
+
+        // A label of the action that will be presented to the user.
+        label: 'Run Code',
+
+        // An optional array of keybindings for the action.
+        keybindings: [
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+          // chord
+          // monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K, monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M)
+        ],
+
+        // A precondition for this action.
+        precondition: undefined,
+
+        // A rule to evaluate on top of the precondition in order to dispatch the keybindings.
+        keybindingContext: undefined,
+
+        contextMenuGroupId: 'navigation',
+
+        contextMenuOrder: 1.5,
+
+        // Method that will be executed when the action is triggered.
+        // @param editor The editor instance is passed in as a convinience
+        run: async (ed) => {
+          console.log("Run Code! => " + ed.getPosition());
+
+        }
+      });
+      editor.addAction({
+        // An unique identifier of the contributed action.
+        id: 'run-line',
+
+        // A label of the action that will be presented to the user.
+        label: 'Run Line',
+
+        // An optional array of keybindings for the action.
+        keybindings: [
+          monaco.KeyMod.Alt | monaco.KeyCode.Enter,
+          // chord
+          // monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K, monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M)
+        ],
+
+        // A precondition for this action.
+        precondition: undefined,
+
+        // A rule to evaluate on top of the precondition in order to dispatch the keybindings.
+        keybindingContext: undefined,
+
+        contextMenuGroupId: 'navigation',
+
+        contextMenuOrder: 1.5,
+
+        // Method that will be executed when the action is triggered.
+        // @param editor The editor instance is passed in as a convinience
+        run: async (ed) => {
+          console.log("Run Line! => " + ed.getPosition());
+
+        }
+      });
+
+      console.log('Bound')
+      setKyebound(true)
+    }
+  }, [monaco, editorRef.current, keybound])
 
   useEffect(() => {
     loadTheme(userProps.theme).then(() => setLoaded(true))

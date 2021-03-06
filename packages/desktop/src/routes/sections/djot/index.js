@@ -117,8 +117,14 @@ export const DjotSection = (props) => {
     console.log('🗃 🗂 file updated:', file)
   }, [file])
 
+  const saveToFile = useCallback(async (newData) => {
+    const result = await file.setFileContents(newData)
+    console.log('Result of set file contents:', result)
+  }, [file])
+
   return (
     <StyledContainer
+    className={offset.scrollTop > 0 ? 'scrl-top' : ''}
     >
       {file.loading && <LoadingScreen {...file.loading} />}
       {file.status === DjotStatus.Ready && panesReady && <DjotPanes
@@ -150,6 +156,8 @@ export const DjotSection = (props) => {
         // offset={offset}
         >
         <MonacoEditor
+          code={file.contents}
+          onSave={saveToFile}
           onMount={onEditorMount}
           onScroll={onEditorScroll}
           onChange={onEditorChange}
@@ -165,9 +173,30 @@ const StyledContainer = styled.div`
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+  position: relative;
   > .SplitPane {
     max-height: calc(100vh - var(--header-height));
     --editor-height: calc(100vh - var(--header-height));
+  }
+
+  &::before {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -10px;
+    height: 10px;
+    background: #00000000;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.5);
+    z-index: 10;
+    opacity: 0;
+    transition: all 120ms ease-in;
+  }
+  &.scrl-top {
+    &::before {
+      opacity: 1;
+    }
   }
 `
 

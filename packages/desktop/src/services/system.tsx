@@ -22,16 +22,19 @@ export const SystemService: React.FC = (props) => {
       invoke('bootup')
         .then(async (result: BootupData) => {
 
+          console.log('Bootstrap data result:', result)
           // DEBUG
-          Object.assign(result, {
-            "third": {
-              "path": "/Users/eli/projects/temp/f/eli.djitsu"
-            },
+          true && Object.assign(result, {
+            local: {
+              "third": {
+                "path": "/Users/eli/projects/temp/f/eli.djot"
+              },
+            }
           })
 
-          if (result.third?.path) {
+          if (result?.local?.third?.path) {
             // openFile: result.third.path
-            setSystemCommand({ action: 'open-file', path: result.third.path })
+            setSystemCommand({ action: 'open-file', path: result.local.third.path })
           }
 
           await new Promise(resolve => setTimeout(resolve, 3000))
