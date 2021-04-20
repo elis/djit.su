@@ -17,6 +17,10 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import commander from 'commander'
 
+import initEgraze from './egraze'
+
+import mainProcessInit from './main-process'
+
 import YAML from 'yaml'
 const { readFile, writeFile } = require('fs').promises;
 
@@ -250,52 +254,63 @@ const createWindow = async () => {
  * Add event listeners...
  */
 
-app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow();
-});
 
-app.on('second-instance', (_event, argv, cwd) => {
-  console.log('[==] Second Instance', argv, cwd)
-  local.second = {
-    argv, cwd
-  }
-  if (mainWindow === null) createWindow();
-})
-app.on('open-file', (_event, path) => {
-  console.log('[==] Open File', path)
-  local.third = {
-    path
-  }
-  if (mainWindow === null) createWindow();
-})
-app.on('ready', (_event, info) => {
-  local.ready = {
-    info
-  }
-})
+const TRANSITION = true
+if (TRANSITION) {
+  // mainProcessInit()
+  initEgraze()
+} else {
+  app.on('window-all-closed', () => {
+    // Respect the OSX convention of having the application in memory even
+    // after all windows have been closed
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
+  app.on('activate', () => {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (mainWindow === null) createWindow();
+  });
 
-commander
-  .name('djitsu')
-  .version('1.2.3')
-  .addOption(
-    new commander.Option('-v, --voice <voice>', 'Select voice')
-  )
-  .description(
-    'Working example'
-  )
-  .addHelpText('after', 'Up')
-  .action((options) => {
-    local.options = options
-    app.whenReady().then(createWindow).catch(console.log);
-
+  app.on('second-instance', (_event, argv, cwd) => {
+    console.log('[==] Second Instance', argv, cwd)
+    local.second = {
+      argv, cwd
+    }
+    if (mainWindow === null) createWindow();
   })
-commander.parse(process.argv)
+  app.on('open-file', (_event, path) => {
+    console.log('[==] Open File', path)
+    local.third = {
+      path
+    }
+    if (mainWindow === null) createWindow();
+  })
+
+  ///////////////////////////////////////
+
+  app.on('ready', (_event, info) => {
+    local.ready = {
+      info
+    }
+  })
+
+  commander
+    .name('djitsu')
+    .version('1.2.3')
+    .addOption(
+      new commander.Option('-v, --voice <voice>', 'Select voice')
+    )
+    .description(
+      'Working example'
+    )
+    .addHelpText('after', 'Up')
+    .action((options) => {
+      local.options = options
+      app.whenReady().then(createWindow).catch(console.log);
+
+    })
+  commander.parse(process.argv)
+}
+

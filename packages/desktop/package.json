@@ -329,7 +329,9 @@
     "@babel/standalone": "^7.12.15",
     "buffer": "^6.0.3",
     "fix-path": "^3.0.0",
-    "react-spinners-kit": "^1.9.1"
+    "react-spinners-kit": "^1.9.1",
+    "@isomorphic-git/lightning-fs": "^4.4.1",
+    "isomorphic-git": "^1.0.0-beta.36"
   },
   "devEngines": {
     "node": ">=10.x",
