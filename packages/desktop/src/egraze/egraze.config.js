@@ -1,5 +1,3 @@
-import { EgrazeConfig } from "./types";
-
 export default {
   plugins: [
     {
@@ -10,4 +8,4 @@ export default {
     },
     'filesystem'
   ]
-} as EgrazeConfig
+}

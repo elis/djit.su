@@ -6,7 +6,5 @@ export default function initEgraze() {
   const plugins = initPlugins(config.plugins)
   console.log('plguins initialized!', plugins)
 
-  return {
-    onReady: plugins.onReady
-  }
+  return plugins
 }

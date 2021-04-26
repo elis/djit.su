@@ -4,7 +4,8 @@
   "productName": "Djitsu",
   "description": "Advanced Code Editor",
   "scripts": {
-    "build": "yarn build:themes && concurrently \"yarn build:main\" \"yarn build:renderer\"",
+    "build": "yarn build:themes && yarn build:app",
+    "build:app": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
     "build:main": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.main.prod.babel.js",
     "build:renderer": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.renderer.prod.babel.js",
     "build:themes": "./scripts/compile-themes.sh",
@@ -15,6 +16,7 @@
     "start": "yarn build:themes && concurrently \"yarn start:dev\" \"yarn start:themes\"",
     "start:dev": "node -r @babel/register ./.erb/scripts/CheckPortInUse.js && cross-env yarn start:renderer",
     "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/BabelRegister ./src/main.dev.ts",
+    "start:dev:main": "onchange -i -k 'src/**/*.*' -- yarn start:dev",
     "start:renderer": "cross-env NODE_ENV=development webpack serve --config ./.erb/configs/webpack.config.renderer.dev.babel.js",
     "start:themes": "nodemon -e less -w ./src/theme/ --exec \"yarn build:themes\"",
     "test": "jest"
