@@ -1,9 +1,9 @@
 export default {
   plugins: [
     {
-      plugin: require('./plugins/egraze-session').default,
+      plugin: require('./plugins/egraze-session'),
       options: {
-        main: require('../main-process').default
+        main: require('../main-process')
       }
     },
     'filesystem'

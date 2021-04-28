@@ -82,254 +82,191 @@ const installFiles = async () => {
 }
 
 const createWindow = async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    await installExtensions()
-    await installFiles()
-  }
+  // if (
+  //   process.env.NODE_ENV === 'development' ||
+  //   process.env.DEBUG_PROD === 'true'
+  // ) {
+  //   await installExtensions()
+  //   await installFiles()
+  // }
 
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'resources')
-    : path.join(__dirname, '../resources')
+  // const RESOURCES_PATH = app.isPackaged
+  //   ? path.join(process.resourcesPath, 'resources')
+  //   : path.join(__dirname, '../resources')
 
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths)
-  }
+  // const getAssetPath = (...paths: string[]): string => {
+  //   return path.join(RESOURCES_PATH, ...paths)
+  // }
 
-  mainWindow = new BrowserWindow({
-    show: false,
-    width: 1280,
-    height: 728,
-    icon: getAssetPath('icon.png'),
-    frame: false,
-    titleBarStyle: 'hidden',
-    webPreferences: {
-      devTools: true,
-      nodeIntegration: true,
-      nodeIntegrationInWorker: true
-    }
-  })
+  // mainWindow = new BrowserWindow({
+  //   show: false,
+  //   width: 1280,
+  //   height: 728,
+  //   icon: getAssetPath('icon.png'),
+  //   frame: false,
+  //   titleBarStyle: 'hidden',
+  //   webPreferences: {
+  //     devTools: true,
+  //     nodeIntegration: true,
+  //     nodeIntegrationInWorker: true
+  //   }
+  // })
 
-  // const session = mainWindow.webContents.session
-  session.defaultSession.protocol.registerFileProtocol(
-    'static',
-    (request, callback) => {
-      const fileUrl = request.url.replace('static://', '')
-      const filePath = path.join(app.getAppPath(), 'dist', fileUrl)
-      callback(filePath)
-    }
-  )
+  // // const session = mainWindow.webContents.session
+  // session.defaultSession.protocol.registerFileProtocol(
+  //   'static',
+  //   (request, callback) => {
+  //     const fileUrl = request.url.replace('static://', '')
+  //     const filePath = path.join(app.getAppPath(), 'dist', fileUrl)
+  //     callback(filePath)
+  //   }
+  // )
 
-  mainWindow.loadURL(`file://${__dirname}/index.html`)
+  // mainWindow.loadURL(`file://${__dirname}/index.html`)
 
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined')
-    }
+  // // @TODO: Use 'ready-to-show' event
+  // //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
+  // mainWindow.webContents.on('did-finish-load', () => {
+  //   if (!mainWindow) {
+  //     throw new Error('"mainWindow" is not defined')
+  //   }
 
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize()
-    } else {
-      mainWindow.show()
-      mainWindow.focus()
-    }
-  })
+  //   if (process.env.START_MINIMIZED) {
+  //     mainWindow.minimize()
+  //   } else {
+  //     mainWindow.show()
+  //     mainWindow.focus()
+  //   }
+  // })
 
-  mainWindow.on('closed', () => {
-    mainWindow = null
-  })
+  // mainWindow.on('closed', () => {
+  //   mainWindow = null
+  // })
 
-  const menuBuilder = new MenuBuilder(mainWindow)
-  menuBuilder.buildMenu()
+  // const menuBuilder = new MenuBuilder(mainWindow)
+  // menuBuilder.buildMenu()
 
-  // Open urls in the user's browser
-  mainWindow.webContents.on('new-window', (event, url) => {
-    event.preventDefault()
-    shell.openExternal(url)
-  })
+  // // Open urls in the user's browser
+  // mainWindow.webContents.on('new-window', (event, url) => {
+  //   event.preventDefault()
+  //   shell.openExternal(url)
+  // })
 
-  ipcMain.handle('bootup', () => {
-    return { staticPath: `file://${__dirname}/`, local }
-  })
+  // ipcMain.handle('bootup', () => {
+  //   return { staticPath: `file://${__dirname}/`, local }
+  // })
 
-  ipcMain.handle('get-file-selection', async (event, ...args) => {
-    // ... do actions on behalf of the Renderer
-    console.log('files read', { event, args })
-    if (!mainWindow) return { error: 'no window' }
-    const result = await dialog.showOpenDialog(mainWindow, {
-      properties: ['openFile', 'openDirectory']
-    })
-    console.log('result of dialogxxx:', result)
-    return {
-      result,
-      cwd: process.cwd(),
-      processexecArgv: process.execArgv,
-      execPath: process.execPath,
-      argv: process.argv,
-      local,
-      exec: app.getPath('exe'),
-      appPath: app.getAppPath()
-    }
-  })
-  ipcMain.handle('open-dev-tools', () => {
-    // ... do actions on behalf of the Renderer
-    if (!mainWindow) return { error: 'no window' }
-    mainWindow.webContents.openDevTools()
-  })
+  // ipcMain.handle('get-file-selection', async (event, ...args) => {
+  //   // ... do actions on behalf of the Renderer
+  //   console.log('files read', { event, args })
+  //   if (!mainWindow) return { error: 'no window' }
+  //   const result = await dialog.showOpenDialog(mainWindow, {
+  //     properties: ['openFile', 'openDirectory']
+  //   })
+  //   console.log('result of dialogxxx:', result)
+  //   return {
+  //     result,
+  //     cwd: process.cwd(),
+  //     processexecArgv: process.execArgv,
+  //     execPath: process.execPath,
+  //     argv: process.argv,
+  //     local,
+  //     exec: app.getPath('exe'),
+  //     appPath: app.getAppPath()
+  //   }
+  // })
 
-  ipcMain.handle('save-pane-width', async (event, newWidth) => {
-    const { writeFile, readFile } = require('fs').promises
-    const path = await import('path')
-    const homedir = (await import('os')).homedir()
-    const filepath = path.join(homedir, '.djitsurc')
-    const settings: Record<string, any> = {}
-    try {
-      const settingsFile = await readFile(filepath, { encoding: 'utf-8' })
-      const parsed = YAML.parse(settingsFile)
-      Object.assign(settings, parsed)
-    } catch (error) {
-      console.log('error reading settings', `${error}`)
-    }
+  // ipcMain.handle('open-dev-tools', () => {
+  //   // ... do actions on behalf of the Renderer
+  //   if (!mainWindow) return { error: 'no window' }
+  //   mainWindow.webContents.openDevTools()
+  // })
 
-    settings.djotPaneWidth = newWidth
-    const yamld = YAML.stringify(settings)
-    try {
-      await writeFile(filepath, yamld)
-    } catch (error) {
-      console.log('error writing file:', `${error}`)
-    }
-  })
-  ipcMain.handle('get-pane-width', async event => {
-    const { readFile } = require('fs').promises
-    const path = await import('path')
-    const homedir = (await import('os')).homedir()
-    const filepath = path.join(homedir, '.djitsurc')
-    const settings: Record<string, any> = {}
-    try {
-      const settingsFile = await readFile(filepath, { encoding: 'utf-8' })
-      const parsed = YAML.parse(settingsFile)
-      Object.assign(settings, parsed)
-    } catch (error) {
-      console.log('error reading settings', `${error}`)
-    }
+  // ipcMain.handle('save-pane-width', async (event, newWidth) => {
+  //   const { writeFile, readFile } = require('fs').promises
+  //   const path = await import('path')
+  //   const homedir = (await import('os')).homedir()
+  //   const filepath = path.join(homedir, '.djitsurc')
+  //   const settings: Record<string, any> = {}
+  //   try {
+  //     const settingsFile = await readFile(filepath, { encoding: 'utf-8' })
+  //     const parsed = YAML.parse(settingsFile)
+  //     Object.assign(settings, parsed)
+  //   } catch (error) {
+  //     console.log('error reading settings', `${error}`)
+  //   }
 
-    return settings.djotPaneWidth
-  })
+  //   settings.djotPaneWidth = newWidth
+  //   const yamld = YAML.stringify(settings)
+  //   try {
+  //     await writeFile(filepath, yamld)
+  //   } catch (error) {
+  //     console.log('error writing file:', `${error}`)
+  //   }
+  // })
+  // ipcMain.handle('get-pane-width', async event => {
+  //   const { readFile } = require('fs').promises
+  //   const path = await import('path')
+  //   const homedir = (await import('os')).homedir()
+  //   const filepath = path.join(homedir, '.djitsurc')
+  //   const settings: Record<string, any> = {}
+  //   try {
+  //     const settingsFile = await readFile(filepath, { encoding: 'utf-8' })
+  //     const parsed = YAML.parse(settingsFile)
+  //     Object.assign(settings, parsed)
+  //   } catch (error) {
+  //     console.log('error reading settings', `${error}`)
+  //   }
 
-  ipcMain.handle('read-files', async (event, ...args) => {
-    // ... do actions on behalf of the Renderer
+  //   return settings.djotPaneWidth
+  // })
 
-    console.log('files read', { event, args })
-    return { q: 'vc' }
-  })
+  // ipcMain.handle('read-files', async (event, ...args) => {
+  //   // ... do actions on behalf of the Renderer
 
-  ipcMain.handle('read-file', async (event, filepath) =>
-    readFile(filepath, { encoding: 'utf-8' })
-  )
-  ipcMain.handle('write-file', async (event, filepath, filedata) =>
-    writeFile(filepath, filedata)
-  )
+  //   console.log('files read', { event, args })
+  //   return { q: 'vc' }
+  // })
 
-  ipcMain.handle('dark-mode:toggle', () => {
-    if (!nativeTheme.shouldUseDarkColors) {
-      nativeTheme.themeSource = 'light'
-    } else {
-      nativeTheme.themeSource = 'dark'
-    }
-    return nativeTheme.shouldUseDarkColors
-  })
-  ipcMain.handle('dark-mode:set', (_event, on) => {
-    if (!on) {
-      nativeTheme.themeSource = 'light'
-    } else {
-      nativeTheme.themeSource = 'dark'
-    }
-    return nativeTheme.shouldUseDarkColors
-  })
+  // ipcMain.handle('read-file', async (event, filepath) =>
+  //   readFile(filepath, { encoding: 'utf-8' })
+  // )
+  // ipcMain.handle('write-file', async (event, filepath, filedata) =>
+  //   writeFile(filepath, filedata)
+  // )
 
-  ipcMain.handle('dark-mode:system', () => {
-    nativeTheme.themeSource = 'system'
-  })
-  ipcMain.handle('get-local', () => {
-    return local
-  })
+  // ipcMain.handle('dark-mode:toggle', () => {
+  //   if (!nativeTheme.shouldUseDarkColors) {
+  //     nativeTheme.themeSource = 'light'
+  //   } else {
+  //     nativeTheme.themeSource = 'dark'
+  //   }
+  //   return nativeTheme.shouldUseDarkColors
+  // })
+  // ipcMain.handle('dark-mode:set', (_event, on) => {
+  //   if (!on) {
+  //     nativeTheme.themeSource = 'light'
+  //   } else {
+  //     nativeTheme.themeSource = 'dark'
+  //   }
+  //   return nativeTheme.shouldUseDarkColors
+  // })
+
+  // ipcMain.handle('dark-mode:system', () => {
+  //   nativeTheme.themeSource = 'system'
+  // })
+  // ipcMain.handle('get-local', () => {
+  //   return local
+  // })
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
 }
 
-/**
- * Add event listeners...
- */
-
-const TRANSITION = true
-if (TRANSITION) {
-  // mainProcessInit()
-  const egraze = initEgraze()
-  const initcb = (options: unknown) => {
-    // local.options = options
-    // app.whenReady().then(createWindow).catch(console.log)
-  }
-  egraze.init(initcb, app, {
+const launch = async () => {
+  const egraze = await initEgraze()
+  egraze.init(app, {
     dirname: __dirname
   })
-  console.log('Value of egraze:', egraze)
-  app.on('activate', () => {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (mainWindow === null) createWindow()
-  })
-} else {
-  app.on('window-all-closed', () => {
-    // Respect the OSX convention of having the application in memory even
-    // after all windows have been closed
-    if (process.platform !== 'darwin') {
-      app.quit()
-    }
-  })
-  app.on('activate', () => {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (mainWindow === null) createWindow()
-  })
-
-  app.on('second-instance', (_event, argv, cwd) => {
-    console.log('[==] Second Instance', argv, cwd)
-    local.second = {
-      argv,
-      cwd
-    }
-    if (mainWindow === null) createWindow()
-  })
-  app.on('open-file', (_event, path) => {
-    console.log('[==] Open File', path)
-    local.third = {
-      path
-    }
-    if (mainWindow === null) createWindow()
-  })
-
-  /// ////////////////////////////////////
-
-  app.on('ready', (_event, info) => {
-    local.ready = {
-      info
-    }
-  })
-
-  commander
-    .name('djitsu')
-    .version('1.2.3')
-    .addOption(new commander.Option('-v, --voice <voice>', 'Select voice'))
-    .description('Working example')
-    .addHelpText('after', 'Up')
-    .action(options => {
-      local.options = options
-      app.whenReady().then(createWindow).catch(console.log)
-    })
-  commander.parse(process.argv)
 }
+launch()

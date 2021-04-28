@@ -3,25 +3,23 @@ import chalk from 'chalk'
 
 const S = chalk`{bgBlack {yellow ⌬} }`
 
-export default function initEgrazePlugins(list) {
+export default async function initEgrazePlugins(list) {
   console.log(S, ' sup plugins', list)
-  const plugins = getPlugins(list)
+  const plugins = await getPlugins(list)
   // const plugins: any[] = []
   console.log(S, ' ! Plugins result:', plugins)
 
-  const init = (callback, ...args) => {
+  const init = async (...args) => {
     const result = activatePlugins(plugins, 'main', 'init', args)
     console.log('result of  init:', result)
-
-    const cbResult = callback(...args)
-    console.log('result of callback:', cbResult)
+    return result
   }
 
   const onReady = async (event, info, app) => {
     console.log(S, ' Ready go set!', { event, info })
 
     // const results = 'testing'
-    const results = activatePlugins(plugins, 'main', 'onReady', [
+    const results = await activatePlugins(plugins, 'main', 'onReady', [
       event,
       info,
       app
@@ -52,7 +50,7 @@ const formatPlugins = (acc, plugin) => [...acc, pluckPlugin(plugin)]
 
 const pluckPlugin = plugin => {
   if (typeof plugin === 'string') {
-    return [require(`./plugins/egraze-${plugin}`).default, {}]
+    return [require(`./plugins/egraze-${plugin}`), {}]
   }
   if (typeof plugin === 'function') {
     const result = plugin()
@@ -60,10 +58,7 @@ const pluckPlugin = plugin => {
     plugin = result
   }
   if (typeof plugin.plugin === 'string') {
-    return [
-      require(`./plugins/egraze-${plugin.plugin}`).default,
-      plugin?.options ?? {}
-    ]
+    return [require(`./plugins/egraze-${plugin.plugin}`), plugin?.options ?? {}]
   }
   if ('main' in plugin || 'renderer' in plugin) {
     return [plugin, {}]

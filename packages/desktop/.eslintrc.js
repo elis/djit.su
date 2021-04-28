@@ -4,8 +4,11 @@ module.exports = {
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
     'import/no-dynamic-require': 'off',
+    'import/prefer-default-export': 'off',
+    'promise/always-return': 'off',
     'global-require': 'off',
     'no-console': 'off',
+    '@typescript-eslint/no-unused': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

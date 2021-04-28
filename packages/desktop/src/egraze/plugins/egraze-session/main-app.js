@@ -1,11 +1,10 @@
 import { autoUpdater } from 'electron-updater'
 import log from 'electron-log'
 import path from 'path'
+import YAML from 'yaml'
 
-import { BrowserWindow, session, shell } from 'electron'
+import { BrowserWindow, ipcMain, session, shell } from 'electron'
 import MenuBuilder from '../../../menu'
-
-let mainWindow = null
 
 export default class AppUpdater {
   constructor() {
@@ -59,6 +58,8 @@ const installFiles = async () => {
 }
 
 export const createWindow = async (app, config) => {
+  const { dirname } = config
+  let mainWindow = null
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
@@ -67,9 +68,15 @@ export const createWindow = async (app, config) => {
     await installFiles()
   }
 
+  ipcMain.handle('bootup', () => {
+    return { staticPath: `file://${config.dirname}/`, local: config.local }
+  })
+
+  console.log('\n\n😬💐 DIRNAME CONFIG:', config)
+
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'resources')
-    : path.join(__dirname, '../resources')
+    : path.join(dirname, '../resources')
 
   const getAssetPath = (...paths: string[]): string => {
     return path.join(RESOURCES_PATH, ...paths)
@@ -99,7 +106,7 @@ export const createWindow = async (app, config) => {
     }
   )
 
-  mainWindow.loadURL(`file://${config.dirname}/index.html`)
+  mainWindow.loadURL(`file://${dirname}/index.html`)
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -116,10 +123,6 @@ export const createWindow = async (app, config) => {
     }
   })
 
-  mainWindow.on('closed', () => {
-    mainWindow = null
-  })
-
   const menuBuilder = new MenuBuilder(mainWindow)
   menuBuilder.buildMenu()
 
@@ -129,4 +132,52 @@ export const createWindow = async (app, config) => {
     shell.openExternal(url)
   })
 
+  ipcMain.handle('save-pane-width', async (event, newWidth) => {
+    const { writeFile, readFile } = require('fs').promises
+    const homedir = (await import('os')).homedir()
+    const filepath = path.join(homedir, '.djitsurc')
+    const settings = {}
+    try {
+      const settingsFile = await readFile(filepath, { encoding: 'utf-8' })
+      const parsed = YAML.parse(settingsFile)
+      Object.assign(settings, parsed)
+    } catch (error) {
+      console.log('error reading settings', `${error}`)
+    }
+
+    settings.djotPaneWidth = newWidth
+    const yamld = YAML.stringify(settings)
+    try {
+      await writeFile(filepath, yamld)
+    } catch (error) {
+      console.log('error writing file:', `${error}`)
+    }
+  })
+
+  ipcMain.handle('get-pane-width', async event => {
+    const { readFile } = require('fs').promises
+    const homedir = (await import('os')).homedir()
+    const filepath = path.join(homedir, '.djitsurc')
+    const settings = {}
+    try {
+      const settingsFile = await readFile(filepath, { encoding: 'utf-8' })
+      const parsed = YAML.parse(settingsFile)
+      Object.assign(settings, parsed)
+    } catch (error) {
+      console.log('error reading settings', `${error}`)
+    }
+
+    return settings.djotPaneWidth
+  })
+
+  ipcMain.handle('open-dev-tools', () => {
+    // ... do actions on behalf of the Renderer
+    if (!mainWindow) return { error: 'no window' }
+    mainWindow.webContents.openDevTools()
+  })
+
+  // eslint-disable-next-line no-new
+  new AppUpdater()
+
+  return mainWindow
 }
