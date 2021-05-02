@@ -4,7 +4,7 @@ import { createWindow } from './main-app'
 export const name = 'session'
 
 export const main = {
-  init: (options, app, config) => {
+  init: (options, fields, app, config) => {
     const local = {}
 
     // local.options = options
@@ -17,9 +17,6 @@ export const main = {
         mainWindow = null
       })
     }
-    app.whenReady().then(makeWindow).catch(console.log)
-
-    console.log('\n\n\n😍 Initializing app session',)
 
     app.on('activate', async () => {
       // On macOS it's common to re-create a window in the app when the
@@ -58,10 +55,12 @@ export const main = {
     })
 
     return {
+      makeWindow,
       field: 'test'
     }
   },
-  onReady: options => {
-    console.log('🙎‍♂️ Egraze Session Plugin Ready!', options)
+  onReady: (options, fields) => {
+    console.log('🙎‍♂️ Egraze Session Plugin Ready!', { fields, options })
+    fields.makeWindow()
   }
 }

@@ -1,9 +1,10 @@
-import bindLocalFilesystem from "./host-filesystem"
+import bindLocalFilesystem from './host-filesystem'
 
 export const name = 'filesystem'
 
+/** @type {import('../../egraze-plugins').MainPlugin} */
 export const main = {
-  init: (options, app, config) => {
+  init: (options, fields, app, config) => {
     console.log('Initializing Filesystem Support!', config)
     bindLocalFilesystem(app, config)
   },

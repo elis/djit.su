@@ -4,7 +4,7 @@ import { plugin } from '../../index'
 
 const { readFile, writeFile } = fs.promises
 
-export const bindLocalFilesystem = (app, config) => {
+const bindLocalFilesystem = (app, config) => {
   console.log('BINDING FILESYSTEM', config)
 
   app.on('open-file', (_event, path) => {
