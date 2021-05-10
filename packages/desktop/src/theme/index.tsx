@@ -8,12 +8,12 @@ import React, {
 import Helmet from 'react-helmet'
 // import { logEvent, setProperty } from 'djitsu/services/telemetry'
 // import { useUser } from 'djitsu/providers/user'
-import { useThemeSwitcher } from './css-theme-switcher';
+import { access } from 'fs'
+import { useThemeSwitcher } from './css-theme-switcher'
 
 import themesConfig from '../dist/themes/themes.json'
-import { access } from 'fs';
 
-type ThemeContext = [ThemeContextState, ThemeContextActions]
+type ThemeContextTuple = [ThemeContextState, ThemeContextActions]
 interface ThemeContextState {
   activation?: boolean
   isDark?: boolean
@@ -33,21 +33,25 @@ type ThemeOption = {
   dark: boolean
 }
 
-const ThemeContext = createContext<ThemeContext>([{
-  theme: 'djitsu-light-theme',
-  availableThemes: []
-}, {
-  setActivation: () => console.error('no theme context provided'),
-  switchTheme: () => console.error('no theme context provided'),
-  setTheme: () => console.error('no theme context provided'),
-  getTheme: () => console.error('no theme context provided'),
-  getThemes: () => console.error('no theme context provided')
-}])
+const ThemeContext = createContext<ThemeContextTuple>([
+  {
+    theme: 'djitsu-light-theme',
+    availableThemes: []
+  },
+  {
+    setActivation: () => console.error('no theme context provided'),
+    switchTheme: () => console.error('no theme context provided'),
+    setTheme: () => console.error('no theme context provided'),
+    getTheme: () => console.error('no theme context provided'),
+    getThemes: () => console.error('no theme context provided')
+  }
+])
 
 export const useTheme = () => useContext(ThemeContext)
 
-const themes = Object.entries(themesConfig).map(([name, pub]) => ([name, 'static://' + pub]))
-  .reduce((acc, [name, pub]) => ({...acc, [name]: pub}), {})
+const themes = Object.entries(themesConfig)
+  .map(([name, pub]) => [name, `static://${pub}`])
+  .reduce((acc, [name, pub]) => ({ ...acc, [name]: pub }), {})
 
 export { themes }
 interface DjitsuThemeProps {
@@ -56,25 +60,25 @@ interface DjitsuThemeProps {
   onTypeChange?: (type: 'light' | 'dark') => void
 }
 
-export const DjitsuTheme: React.FC<DjitsuThemeProps> = (props) => {
+export const DjitsuTheme: React.FC<DjitsuThemeProps> = props => {
   // const [user, userActions] = useUser()
-  const { switcher, themes, currentTheme, status } = useThemeSwitcher();
+  const { switcher, themes, currentTheme, status } = useThemeSwitcher()
   const [isDark, setIsDark] = useState(false)
 
   const themeRef = useRef('')
-  const [themeInStore, setThemeInStore] = useState(props.theme || 'djitsu-light-theme')
-  const [activation, _setActivation] = useState(
-    // user?.options?.['theme-activation'] ?? true
+  const [themeInStore, setThemeInStore] = useState(
+    props.theme || 'djitsu-light-theme'
   )
+  const [activation, _setActivation] = useState()
+  // user?.options?.['theme-activation'] ?? true
 
   useEffect(() => {
     themeRef.current = themeInStore
 
-    switcher({ theme: themes[themeInStore] });
-    const dark = availableThemes.find(({name}) => name === themeInStore)?.dark
+    switcher({ theme: themes[themeInStore] })
+    const dark = availableThemes.find(({ name }) => name === themeInStore)?.dark
     props.onTypeChange?.(dark ? 'dark' : 'light')
     setIsDark(!!dark)
-
   }, [themeInStore])
 
   useEffect(() => {
@@ -96,7 +100,9 @@ export const DjitsuTheme: React.FC<DjitsuThemeProps> = (props) => {
         } else if (!darkModeOn) {
           setThemeInStore('djitsu-light-theme')
         }
-        props.onChange?.(prefersDark ? 'djitsu-dark-theme' : 'djitsu-light-theme')
+        props.onChange?.(
+          prefersDark ? 'djitsu-dark-theme' : 'djitsu-light-theme'
+        )
       }
       mql.addEventListener('change', onChangeMql)
 
@@ -109,12 +115,17 @@ export const DjitsuTheme: React.FC<DjitsuThemeProps> = (props) => {
   const [availableThemes, setAvailableThemes] = useState<ThemeOption[]>([])
 
   useEffect(() => {
-    (async () => {
-
+    ;(async () => {
       const themesData = await Promise.all(
-        Object.keys(themes).map(async (name) => [name, await import('./themes/' + name + '/theme.json')])
+        Object.keys(themes).map(async name => [
+          name,
+          await import(`./themes/${name}/theme.json`)
+        ])
       )
-      const parsedData = themesData.map(([name, themeJson]) => ({ name, dark: themeJson.type === 'dark' }))
+      const parsedData = themesData.map(([name, themeJson]) => ({
+        name,
+        dark: themeJson.type === 'dark'
+      }))
       setAvailableThemes(parsedData)
     })()
   }, [themes])
@@ -131,29 +142,38 @@ export const DjitsuTheme: React.FC<DjitsuThemeProps> = (props) => {
       // userActions.setOption('theme-activation', on)
     },
     switchTheme: () => {
-      setThemeInStore(themeInStore === 'djitsu-dark-theme' ? 'djitsu-light-theme' : 'djitsu-dark-theme')
-      props.onChange?.(themeInStore !== 'djitsu-dark-theme' ? 'djitsu-dark-theme' : 'djitsu-light-theme')
+      setThemeInStore(
+        themeInStore === 'djitsu-dark-theme'
+          ? 'djitsu-light-theme'
+          : 'djitsu-dark-theme'
+      )
+      props.onChange?.(
+        themeInStore !== 'djitsu-dark-theme'
+          ? 'djitsu-dark-theme'
+          : 'djitsu-light-theme'
+      )
     },
     setTheme: (theme: string) => setThemeInStore(theme),
     getTheme: () => themeRef.current,
     getThemes: (type?: 'light' | 'dark') =>
-      type ? availableThemes.filter(({dark}) => dark === (type === 'dark')) : availableThemes
+      type
+        ? availableThemes.filter(({ dark }) => dark === (type === 'dark'))
+        : availableThemes
   }
-  const context: ThemeContext = [state, actions]
+  const context: ThemeContextTuple = [state, actions]
 
   return (
-
-      <ThemeContext.Provider value={context}>
-        <div className={'djs-theme ' + themeInStore}>
-          <Helmet>
-            <link
-              href='https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap'
-              rel='stylesheet'
-            />
-          </Helmet>
-          {props.children}
-        </div>
-      </ThemeContext.Provider>
+    <ThemeContext.Provider value={context}>
+      <div className={`djs-theme ${themeInStore}`}>
+        <Helmet>
+          <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap"
+            rel="stylesheet"
+          />
+        </Helmet>
+        {props.children}
+      </div>
+    </ThemeContext.Provider>
   )
 }
 

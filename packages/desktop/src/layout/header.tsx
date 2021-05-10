@@ -1,32 +1,37 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { Button, Dropdown, Layout, Menu, Tooltip } from 'antd'
 
-import DjitsuSymbol from '../components/djitsu-symbol';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { useTheme } from '../theme'
-import useIPCRenderer from '../services/ipc/renderer';
+import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 import { CodeOutlined } from '@ant-design/icons'
+import DjitsuSymbol from '../components/djitsu-symbol'
+import { useTheme } from '../theme'
+import useIPCRenderer from '../services/ipc/renderer'
 
-export const Header: React.FC = (props) => {
+export const Header: React.FC = props => {
   const ipc = useIPCRenderer()
   const showDevTools = () => {
     ipc.invoke('open-dev-tools', 'test', { jest: 'fest' })
   }
   return (
-    <StyledHeader theme='light'>
+    <StyledHeader theme="light">
       <div className="logo">
-        <Link to='/'>
+        <Link to="/">
           <DjitsuSymbol size={16} />
         </Link>
       </div>
-      <Menu className='main-menu' theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
+      <Menu
+        className="main-menu"
+        theme="dark"
+        mode="horizontal"
+        defaultSelectedKeys={['2']}
+      >
         {/* <Menu.Item key="1">nav 1</Menu.Item>
         <Menu.Item key="2">nav 2</Menu.Item>
         <Menu.Item key="3">nav 3</Menu.Item> */}
       </Menu>
       <span />
-  </StyledHeader>
+    </StyledHeader>
   )
 }
 const StyledHeader = styled(Layout.Header)`
@@ -70,7 +75,7 @@ const StyledHeader = styled(Layout.Header)`
         &:hover {
           > svg {
             transform: scale(1.4);
-            color: #FFF;
+            color: #fff;
           }
         }
       }
@@ -79,7 +84,6 @@ const StyledHeader = styled(Layout.Header)`
       > .ant-menu-item {
         height: 48px;
       }
-
     }
   }
 `
@@ -99,16 +103,25 @@ export const ThemeDropdown: React.FC = ({ children }) => {
   //   ))}
   // </Select.OptGroup>
 
-  const darkThemes = useMemo(() => themeState.availableThemes?.filter(({dark}) => dark), [themeState.availableThemes])
-  const lightThemes = useMemo(() => themeState.availableThemes?.filter(({dark}) => !dark), [themeState.availableThemes])
+  const darkThemes = useMemo(
+    () => themeState.availableThemes?.filter(({ dark }) => dark),
+    [themeState.availableThemes]
+  )
+  const lightThemes = useMemo(
+    () => themeState.availableThemes?.filter(({ dark }) => !dark),
+    [themeState.availableThemes]
+  )
 
   const enterTheme = useCallback((event, theme) => {
     themeActions.setTheme(theme)
   }, [])
 
-  const leaveTheme = useCallback((event, theme) => {
-    themeActions.setTheme(baseTheme)
-  }, [baseTheme])
+  const leaveTheme = useCallback(
+    (event, theme) => {
+      themeActions.setTheme(baseTheme)
+    },
+    [baseTheme]
+  )
 
   const selectTheme = useCallback((event, theme) => {
     themeActions.setTheme(theme)
@@ -119,22 +132,29 @@ export const ThemeDropdown: React.FC = ({ children }) => {
     <Menu>
       {lightThemes.length > 0 && (
         <Menu.ItemGroup title={`Light Themes — ${lightThemes.length}`}>
-          {lightThemes.map(({name}) => (
-            <Menu.Item isSelected={name === themeState.theme} onClick={(event) => selectTheme(event, name)}
-              onMouseEnter={(event) => enterTheme(event, name)} onMouseLeave={(event) => leaveTheme(event, name)}>
+          {lightThemes.map(({ name }) => (
+            <Menu.Item
+              isSelected={name === themeState.theme}
+              onClick={event => selectTheme(event, name)}
+              onMouseEnter={event => enterTheme(event, name)}
+              onMouseLeave={event => leaveTheme(event, name)}
+            >
               {name}
             </Menu.Item>
-
           ))}
         </Menu.ItemGroup>
       )}
       {darkThemes.length > 0 && (
         <Menu.ItemGroup title={`Dark Themes — ${darkThemes.length}`}>
-          {darkThemes.map(({name}) => (
-            <Menu.Item isSelected={name === themeState.theme} onClick={(event) => selectTheme(event, name)} onMouseEnter={(event) => enterTheme(event, name)} onMouseLeave={(event) => leaveTheme(event, name)}>
+          {darkThemes.map(({ name }) => (
+            <Menu.Item
+              isSelected={name === themeState.theme}
+              onClick={event => selectTheme(event, name)}
+              onMouseEnter={event => enterTheme(event, name)}
+              onMouseLeave={event => leaveTheme(event, name)}
+            >
               {name}
             </Menu.Item>
-
           ))}
         </Menu.ItemGroup>
       )}
@@ -146,6 +166,5 @@ export const ThemeDropdown: React.FC = ({ children }) => {
     </Dropdown>
   )
 }
-
 
 export default Header

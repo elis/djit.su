@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-import chalk from 'chalk'
-
-const S = chalk`{bgBlack {yellow ⌬} }`
-
 /**
  * Build Egraze plugins
  * @param {PluginConfiguration[]} list - List of plugin configurations
@@ -12,26 +7,48 @@ export default async function buildEgrazePlugins(list) {
   const cache = {}
   const plugins = getPlugins(list)
 
-  const init = (app, options) => {
+  const initMain = (app, options) => {
+    console.log('🏮🧸 INITIALIZING EGRAZE PLUGINS', { app, options })
     const activated = activatePlugins(plugins, 'main', 'init', [app, options])
     const initialized = initializePlugins(plugins, activated)
     cache.initialized = initialized
-    return initialized
+    return {
+      app,
+      initialized
+    }
   }
 
-  const onReady = async (event, info, app) => {
-    const results = await activatePlugins(
+  const initRenderer = (App, options) => {
+    console.log('🏮🧸 INITIALIZING EGRAZE PLUGINS', { App, options })
+    const activated = activatePlugins(plugins, 'renderer', 'init', [
+      App,
+      options
+    ])
+    const initialized = initializePlugins(plugins, activated)
+    cache.initialized = initialized
+    return {
+      App,
+      initialized
+    }
+  }
+
+  const onReadyMain = () => {
+    const results = activatePlugins(
       cache.initialized || plugins,
       'main',
-      'onReady',
-      [event, info, app]
+      'onReady'
     )
     return results
   }
 
   return {
-    init,
-    onReady
+    main: {
+      init: initMain,
+      onReady: onReadyMain
+    },
+    renderer: {
+      init: initRenderer
+    }
   }
 }
 
@@ -344,13 +361,20 @@ const initializedPlugin = plugins => (acc, activated, index) => [
 
 /**
  * @typedef {Object} EgrazeApi
- * @property {InitializeEgraze} init - Initialize Egraze and it's plugin
- * @property {OnReady} onReady - Execute after all initialization procedures
+ * @property {{ init: InitializeMain, onReady: () => void }} main - Main process API
+ * @property {{ init: InitializeRenderer }} renderer - Renderer process API
  */
 
 /**
- * @callback InitializeEgraze
+ * @callback InitializeMain
+ * @param {keyof PluginPart} part - Part of plugin to initialize
  * @param {import('electron').app} app - Electron app instannce
+ * @param {InstanceOptions} options - Instance configuration object
+ */
+
+/**
+ * @callback InitializeRenderer
+ * @param {import('react').ReactElement} App - Electron app instannce
  * @param {InstanceOptions} options - Instance configuration object
  */
 

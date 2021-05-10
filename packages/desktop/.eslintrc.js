@@ -5,10 +5,13 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'import/no-dynamic-require': 'off',
     'import/prefer-default-export': 'off',
+    'import/no-named-as-default': 'off',
     'promise/always-return': 'off',
     'global-require': 'off',
     'no-console': 'off',
+    '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/no-unused': 'off',
+    'react/prop-types': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

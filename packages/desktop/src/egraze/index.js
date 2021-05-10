@@ -14,10 +14,18 @@ export const plugin = name => {
   return cache.initial.get(name)
 }
 
-export default async function Egraze(app, options) {
+export async function main(app, options) {
   const plugins = await buildPlugins(config.plugins)
-  const initial = await plugins.init(app, options)
+  const initial = await plugins.main.init(app, options)
   cache.plugins = plugins
   cache.initial = new Map(Object.entries(initial))
-  return { ...plugins, plugin }
+  return { ...plugins.main, plugin }
+}
+
+export async function renderer(App, options) {
+  const plugins = await buildPlugins(config.plugins)
+  const initial = await plugins.renderer.init(App, options)
+  cache.plugins = plugins
+  cache.initial = new Map(Object.entries(initial))
+  return { ...plugins.renderer, plugin }
 }

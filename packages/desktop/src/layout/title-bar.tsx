@@ -1,11 +1,15 @@
 import React from 'react'
-import { Affix, Button, Layout, Tooltip } from 'antd'
+import { Button, Layout, Tooltip } from 'antd'
 import styled from 'styled-components'
-import useIPCRenderer from '../services/ipc/renderer'
 import { CodeOutlined, FileAddOutlined } from '@ant-design/icons'
+import useIPCRenderer from '../services/ipc/renderer'
 import { ThemeDropdown } from './header'
 
-export const TitleBar: React.FC = (props) => {
+export type TitleBarProps = {
+  children: React.ReactChildren
+}
+
+export const TitleBar: React.FC<TitleBarProps> = ({ children }) => {
   const ipc = useIPCRenderer()
   const showDevTools = () => {
     ipc.invoke('open-dev-tools', 'test', { jest: 'fest' })
@@ -19,21 +23,33 @@ export const TitleBar: React.FC = (props) => {
   // TODO: Remove affix and make better layout
 
   return (
-      <StyledTitleBar>
-        <div className='os-control' />
-        <div className='title subtle'>djitsu desktop v0.1.0</div>
-        <div className='late subtle'>
-          {props.children}
-          <Button type='text' size='small' onClick={getLocal} icon={<FileAddOutlined />} />
-          <ThemeDropdown>
-            <Button type='text' size='small'>Theme</Button>
-          </ThemeDropdown>
+    <StyledTitleBar>
+      <div className="os-control" />
+      <div className="title subtle">djitsu desktop v0.1.0</div>
+      <div className="late subtle">
+        {children}
+        <Button
+          type="text"
+          size="small"
+          onClick={getLocal}
+          icon={<FileAddOutlined />}
+        />
+        <ThemeDropdown>
+          <Button type="text" size="small">
+            Theme
+          </Button>
+        </ThemeDropdown>
 
-          <Tooltip title='Open DevTools'>
-            <Button type='text' size='small' onClick={showDevTools} icon={<CodeOutlined />} />
-          </Tooltip>
-        </div>
-      </StyledTitleBar>
+        <Tooltip title="Open DevTools">
+          <Button
+            type="text"
+            size="small"
+            onClick={showDevTools}
+            icon={<CodeOutlined />}
+          />
+        </Tooltip>
+      </div>
+    </StyledTitleBar>
   )
 }
 
@@ -72,7 +88,6 @@ const StyledTitleBar = styled(Layout.Header)`
     &:hover > .subtle {
       opacity: 1;
     }
-
   }
 `
 

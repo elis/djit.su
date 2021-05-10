@@ -22,7 +22,7 @@ export const SystemService: React.FC = props => {
       invoke('bootup')
         .then(async (result: BootupData) => {
           console.log('Bootstrap data result:', result)
-          // DEBUG
+          // DEBUG &&
           true &&
             Object.assign(result, {
               local: {

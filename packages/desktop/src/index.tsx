@@ -1,8 +1,13 @@
-import React from 'react';
-import { render } from 'react-dom';
-import App from './App';
-// import './App.global.css';
+import React from 'react'
+import { render } from 'react-dom'
+import App from './App'
+import { renderer } from './egraze'
 
-// import './theme/index.less';
+const launch = () => {
+  console.log('🚃 📇 Launching Egraze:')
+  const EgrazeApp = renderer(App, {})
+  // console.log('🚃 📇 Egraze App Initializedxxx:', EgrazeApp)
 
-render(<App />, document.getElementById('root'));
+  render(<>Sup</>, document.getElementById('root'))
+}
+launch()

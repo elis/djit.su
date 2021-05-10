@@ -1,8 +1,13 @@
-import { atom, atomFamily } from "recoil"
-import { SystemCommand, SystemLoading, SystemState, SystemStatus } from "../../schema/system"
+import { atom, atomFamily } from 'recoil'
+import {
+  SystemCommand,
+  SystemLoading,
+  SystemState,
+  SystemStatus
+} from '../../schema/system'
 
 export const systemState = atom({
-  key: "systemState",
+  key: 'themeState',
   default: {
     serviceAttached: false,
     status: SystemStatus.Unavailable,

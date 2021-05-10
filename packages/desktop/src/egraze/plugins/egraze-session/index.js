@@ -55,6 +55,7 @@ export const main = {
     })
 
     return {
+      app,
       makeWindow,
       field: 'test'
     }
