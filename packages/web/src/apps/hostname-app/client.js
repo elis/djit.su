@@ -4,7 +4,7 @@ import HostnameApp from './app'
 
 export const name = 'Hostname App'
 
-export const check = /^([^.]+)[.]((djit[.]me)|(djitapp.local)|(works|org|com|camp))$/i
+export const check = /^([^.]+)[.]((djit[.]me)|(djitapp.local)|(works|org|com|camp|(co\.)?il))$/i
 
 export const app = (cr) => {
   console.log('Readying Hostname app!', cr)
