@@ -20,9 +20,27 @@ export const NotebookPage = (props) => {
     async () => {
       try {
         console.log('Hostname:', props.hostname)
-        const notebook = await actions.getNotebookByHostname(
-          props.hostname + '.djit.me'
-        )
+        const notebook = await (async () => {
+          let error
+          try {
+            const reg = await actions.getNotebookByHostname(
+              props.hostname + '.djit.me'
+            )
+            return reg
+          } catch (err) {
+            error = err
+          }
+          try {
+            const hckHostname = props.hostname.replace('.', '_')
+            console.log('HckHostname:', hckHostname)
+            const hckd = await actions.getNotebookByHostname(
+              hckHostname + '.djit.me'
+            )
+            return hckd
+          } catch (err) {
+            throw error
+          }
+        })()
 
         try {
           const exec = await notebookCompiler(notebook)
