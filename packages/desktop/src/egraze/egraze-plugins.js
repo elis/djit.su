@@ -310,7 +310,9 @@ const pluginWrapper = (Wrapped, plugin) =>
 /**
  * Activated Plugin
  * @typedef {Object} ActivatedPlugin
- * @extends PluginModule
+ * @property {string} name - Valid plugin name to identify by
+ * @property {MainPlugin} main - Main process plugin
+ * @property {RendererPlugin} renderer - Rendererd process plugin
  * @property {PluginFields} fields - Plugin section activation result
  */
 
