@@ -3,7 +3,7 @@ import 'regenerator-runtime/runtime'
 import { app } from 'electron'
 import AppUpdater from './egraze/plugins/egraze-session/main-app'
 
-import { main } from './egraze'
+import main from './egraze/main.process'
 
 export default AppUpdater
 

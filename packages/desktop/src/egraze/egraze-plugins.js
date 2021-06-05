@@ -1,3 +1,5 @@
+import React from 'react'
+
 /**
  * Build Egraze plugins
  * @param {PluginConfiguration[]} list - List of plugin configurations
@@ -8,7 +10,6 @@ export default async function buildEgrazePlugins(list) {
   const plugins = getPlugins(list)
 
   const initMain = (app, options) => {
-    console.log('🏮🧸 INITIALIZING EGRAZE PLUGINS', { app, options })
     const activated = activatePlugins(plugins, 'main', 'init', [app, options])
     const initialized = initializePlugins(plugins, activated)
     cache.initialized = initialized
@@ -19,15 +20,17 @@ export default async function buildEgrazePlugins(list) {
   }
 
   const initRenderer = (App, options) => {
-    console.log('🏮🧸 INITIALIZING EGRAZE PLUGINS', { App, options })
     const activated = activatePlugins(plugins, 'renderer', 'init', [
-      App,
       options
     ])
     const initialized = initializePlugins(plugins, activated)
+    // console.log('🏮🧸 [RENDERER] INITIALIZED', initialized)
     cache.initialized = initialized
+    const Wrapped = wrapApp(App, activated)
+
     return {
       App,
+      Wrapped,
       initialized
     }
   }
@@ -86,17 +89,17 @@ const formatPlugins = (acc, plugin) => [...acc, pluckPlugin(plugin)]
  * @returns {PluckedPlugin}
  */
 const pluckPlugin = plugin => {
-  if (typeof plugin === 'string') {
-    return [require(`./plugins/egraze-${plugin}`), {}]
-  }
+  // if (typeof plugin === 'string') {
+  //   return [require(`./plugins/egraze-${plugin}`), {}]
+  // }
   if (typeof plugin === 'function') {
     const result = plugin()
     // eslint-disable-next-line no-param-reassign
     plugin = result
   }
-  if (typeof plugin.plugin === 'string') {
-    return [require(`./plugins/egraze-${plugin.plugin}`), plugin?.options ?? {}]
-  }
+  // if (typeof plugin.plugin === 'string') {
+  //   return [require(`./plugins/egraze-${plugin.plugin}`), plugin?.options ?? {}]
+  // }
   if ('main' in plugin || 'renderer' in plugin) {
     return [plugin, {}]
   }
@@ -104,14 +107,13 @@ const pluckPlugin = plugin => {
   return [plugin.plugin, plugin.options ?? {}]
 }
 
-// Fold plugins activation
 /**
- *
+ * Fold plugins activation
  * @param {PluckedPlugin[]} plugins - Plugins to use
  * @param {keyof PluginModule} part - Plugin part to load
  * @param {keyof (MainPlugin | RendererPlugin)} what - 'init', 'onReady'
  * @param {unknown[]} args - Arguments to pass to activation function
- * @returns {ActivatedPlugin}
+ * @returns {ActivatedPlugin[]}
  */
 const activatePlugins = (plugins, part, what, args) =>
   fold(onPlugin(what), [], getPlugin(plugins, part, what, args))
@@ -125,8 +127,7 @@ const onPlugin = what => (acc, plugin) => [
   ...acc,
   {
     ...plugin,
-    // fields: plugin[what](plugin.options, ...args)
-    fields: plugin[what](plugin.options, ...(plugin.args || []))
+    fields: plugin?.[what]?.(plugin.options, ...(plugin.args || []))
   }
 ]
 
@@ -152,19 +153,21 @@ const getPlugin = (plugins, part, what, args) =>
 const formatPlugin = (part, what, args) => (
   acc,
   [value, options, root, fields]
-) =>
-  value && value[what]
-    ? [
-        ...acc,
-        {
+) => [
+  ...acc,
+  {
+    name: options.name || root.name,
+    options,
+    root,
+    args: [fields, ...(args || [])],
+    ...value && value[what]
+      ? {
           [what]: value[what],
           [part]: value,
-          options,
-          root,
-          args: [fields, ...(args || [])]
         }
-      ]
-    : acc
+      : {}
+  }
+]
 
 /**
  * Fold plugins parts
@@ -191,10 +194,7 @@ const formatPluginsParts = (...parts) => (acc, [plugin, options, fields]) => [
  * @returns {FormattedPluginPart[]}
  */
 const formatPluginPart = (plugin, options, fields) => (acc, part) =>
-  plugin && plugin[part]
-    ? [...acc, [plugin[part], options, plugin, fields]]
-    : // ? [...acc, [plugin[part], options, plugin]]
-      acc
+  [...acc, [plugin?.[part], options, plugin, fields]]
 
 /**
  *
@@ -214,6 +214,30 @@ const initializedPlugin = plugins => (acc, activated, index) => [
   ...acc,
   [plugins[index][0], plugins[index][1], activated.fields]
 ]
+
+
+/**
+ *
+ * @param {import('react').ReactElement} App - React component to wrap
+ * @param {ActivatedPlugin[]} plugins - Activated plugins
+ * @returns {WrappedEgrazeApp}
+ */
+const wrapApp = (App, plugins) =>
+  fold(pluginWrapper, App, plugins)
+
+/**
+ *
+ * @param {import('react').ReactElement} Wrapped
+ * @param {ActivatedPlugin} plugin
+ * @returns {import('react').ReactElement}
+ */
+const pluginWrapper = (Wrapped, plugin) =>
+  plugin?.renderer?.Wrapper
+    ? (props) => <plugin.renderer.Wrapper fields={plugin.fields}><Wrapped {...props} /></plugin.renderer.Wrapper>
+    : Wrapped
+
+
+
 
 //
 //
@@ -300,7 +324,7 @@ const initializedPlugin = plugins => (acc, activated, index) => [
 /**
  * Renderer Process plugin
  * @typedef {Object} RendererPlugin
- * @property {InitializeRenderer} init - Initialize the renderer
+ * @property {InitializeRendererPlugin} init - Initialize the renderer
  */
 
 /**
@@ -320,7 +344,7 @@ const initializedPlugin = plugins => (acc, activated, index) => [
  */
 
 /**
- * @callback InitializeRenderer
+ * @callback InitializeRendererPlugin
  * @param {PluginOptions} options - Plugin options provided by config
  * @param {InstanceConfiguration} config - Instance configuration
  */
@@ -374,8 +398,9 @@ const initializedPlugin = plugins => (acc, activated, index) => [
 
 /**
  * @callback InitializeRenderer
- * @param {import('react').ReactElement} App - Electron app instannce
+ * @param {JSX.Element} App - React component
  * @param {InstanceOptions} options - Instance configuration object
+ * @returns {RendererInstance}
  */
 
 /**
@@ -384,3 +409,29 @@ const initializedPlugin = plugins => (acc, activated, index) => [
  * @property {MainPlugin} main - Main process plugin
  * @property {RendererPlugin} renderer - Rendererd process plugin
  */
+
+/**
+ * @typedef {Object} RendererInstance
+ * @property {EgrazeWrappedApp} App - Egraze wrapped react app [DEPRECATED]
+ * @property {JSX.Element<WrapperEgrazeAppProps>} Wrapped - Egraze wrapped react app
+ * @property {Object} initialized
+ */
+
+/**
+ * @callback EgrazeWrappedApp
+ * @param {Object} props
+ */
+
+
+/**
+ * @callback WrappedEgrazeApp
+ * @param {WrapperEgrazeAppProps}
+ * @returns {JSX.Element<Record<string, any>>}
+ */
+
+/**
+ * @typedef {Object} WrapperEgrazeAppProps
+ * @property {Object} fields - Initialized plugin fields
+ * @property {JSX.Children} children - Children to display
+ */
+

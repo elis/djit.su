@@ -47,9 +47,6 @@ export const main = {
       }
     })
 
-    ipcMain.handle('dark-mode:system', () => {
-      nativeTheme.themeSource = 'system'
-    })
     ipcMain.handle('get-local', () => {
       return local
     })

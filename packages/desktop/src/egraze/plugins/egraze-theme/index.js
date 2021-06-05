@@ -1,3 +1,4 @@
+import React from 'react'
 import { ipcMain, nativeTheme } from 'electron'
 import { plugin } from '../..'
 
@@ -28,6 +29,12 @@ export const main = {
 
 export const renderer = {
   init: (...args) => {
-    console.log('INITIALIZING EGRAZE THEME RENDERER PLUGIN', args)
+    return {}
+  },
+  Wrapper: (props) => {
+    // props.fields === (init() => fields)
+    return <div className='test-wrapper-2'>
+      {props.children}
+    </div>
   }
 }

@@ -78,7 +78,7 @@ export const createWindow = async (app, config) => {
     ? path.join(process.resourcesPath, 'resources')
     : path.join(dirname, '../resources')
 
-  const getAssetPath = (...paths: string[]): string => {
+  const getAssetPath = (...paths) => {
     return path.join(RESOURCES_PATH, ...paths)
   }
 
@@ -91,6 +91,8 @@ export const createWindow = async (app, config) => {
     titleBarStyle: 'hidden',
     webPreferences: {
       devTools: true,
+      contextIsolation: false,
+      contextIsolationInWorker: false,
       nodeIntegration: true,
       nodeIntegrationInWorker: true
     }
