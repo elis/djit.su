@@ -23,7 +23,7 @@ export const DjotSection = (props) => {
 
   const [offset, setOffset] = useState({})
   const [compiled, setCompiled]= useState({})
-  const compilerRef: React.RefObject<JavascriptCompiler> = useRef()
+  const compilerRef = useRef()
 
   const [panesReady, setPanesReady] = useState()
   const [paneWidth, setPaneWidth] = useState(0)

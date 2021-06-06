@@ -201,13 +201,13 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
 const loadTheme = (() => {
   let jsxConfigured = true
   const loaded: Record<string, boolean> = {}
-  const availableThemes = require('../../dist/themes/themes.json')
+  const availableThemes = require('../../../dist/themes/themes.json')
 
   return async (theme: string) => {
     if (!loaded[theme]) {
       configPaths()
       if (theme in availableThemes) {
-        const themeJson = require('../../dist/themes/monaco/' + theme + '.json')
+        const themeJson = require('../../../dist/themes/monaco/' + theme + '.json')
 
         loader.init().then(monaco => {
           if (!jsxConfigured) {

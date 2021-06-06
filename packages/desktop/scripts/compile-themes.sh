@@ -1,6 +1,6 @@
 #!/bin/bash
 
-THEMES_SOURCE="src/theme/themes"
+THEMES_SOURCE="src/djitsu/theme/themes"
 THEMES_DESTINATION="src/dist/themes"
 THEMES_PUBLIC="themes"
 THEMES_DESTINATION_MONACO="src/dist/themes/monaco"

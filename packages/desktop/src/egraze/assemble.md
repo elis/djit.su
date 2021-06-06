@@ -3,9 +3,11 @@
 ```ts
 const config = {
     plugins: [
+      // ! OUTDATED
       // String
-      'plugin-name' as EgrazePluginConfigString,
+      // 'plugin-name' as EgrazePluginConfigString,
 
+      // ! OUTDATED
       // OR
       // String with options
       {

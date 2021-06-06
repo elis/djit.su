@@ -18,7 +18,7 @@
     "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/BabelRegister ./src/main.dev.ts",
     "start:dev:main": "onchange -i -k 'src/**/*.*' -- yarn start:dev",
     "start:renderer": "cross-env NODE_ENV=development webpack serve --config ./.erb/configs/webpack.config.renderer.dev.babel.js",
-    "start:themes": "nodemon -e less -w ./src/theme/ --exec \"yarn build:themes\"",
+    "start:themes": "nodemon -e less -w ./src/djitsu/theme/ --exec \"yarn build:themes\"",
     "test": "jest"
   },
   "lint-staged": {

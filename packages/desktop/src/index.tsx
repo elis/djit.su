@@ -1,10 +1,10 @@
 import React from 'react'
 import { render } from 'react-dom'
-import App from './App'
+import DjitsuApp from './djitsu'
 import renderer from './egraze/renderer.process'
 
 const launch = async () => {
-  const egraze = await renderer(App, {})
+  const egraze = await renderer(DjitsuApp, {})
   const { Wrapped } = egraze
   render(<Wrapped />, document.getElementById('root'))
 }

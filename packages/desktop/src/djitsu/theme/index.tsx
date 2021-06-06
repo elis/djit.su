@@ -11,7 +11,7 @@ import Helmet from 'react-helmet'
 import { access } from 'fs'
 import { useThemeSwitcher } from './css-theme-switcher'
 
-import themesConfig from '../dist/themes/themes.json'
+import themesConfig from '../../dist/themes/themes.json'
 
 type ThemeContextTuple = [ThemeContextState, ThemeContextActions]
 interface ThemeContextState {
