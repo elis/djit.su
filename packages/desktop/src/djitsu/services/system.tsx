@@ -23,7 +23,7 @@ export const SystemService: React.FC = props => {
         .then(async (result: BootupData) => {
           console.log('Bootstrap data result:', result)
           // DEBUG &&
-          true &&
+          false && !result?.local?.third?.path &&
             Object.assign(result, {
               local: {
                 third: {

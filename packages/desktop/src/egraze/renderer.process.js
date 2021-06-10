@@ -7,6 +7,7 @@ export default async function renderer(App, options) {
   const initial = await plugins.renderer.init(App, options)
   cache.plugins = plugins
   cache.initial = new Map(Object.entries(initial))
+  cache.apis = initial.apis
 
-  return initial
+  return { ...initial, plugins }
 }

@@ -1,0 +1,7 @@
+plugin: session
+fn: onOpenFile
+args: [
+  {},
+  ['/Users/eli/projects/temp/djitsu-playgroup/sample.djot'],
+  '/Users/eli/projects/temp/djitsu-playgroup'
+]

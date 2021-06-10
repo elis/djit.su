@@ -6,7 +6,8 @@ export const cache = {}
  * @returns exposed plugin API
  */
 export const plugin = name => {
-  if (!cache.initial.has(name))
+  console.log('Plugin requested:', name, cache)
+  if (!cache.apis?.[name])
     throw new Error(`No plugin API named "${name}" available`)
-  return cache.initial.get(name)
+  return cache.apis[name]
 }

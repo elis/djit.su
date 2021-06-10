@@ -1,6 +1,9 @@
 export default {
   plugins: [
     {
+      plugin: require('./plugins/egraze-develop'),
+    },
+    {
       plugin: require('./plugins/egraze-theme'),
     },
     {

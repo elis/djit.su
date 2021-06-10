@@ -7,5 +7,7 @@ export default async function main(app, options) {
   const initial = await plugins.main.init(app, options)
   cache.plugins = plugins
   cache.initial = new Map(Object.entries(initial))
-  return { ...plugins.main, plugin }
+  cache.apis = initial.apis
+
+  return { ...plugins.main, plugins }
 }

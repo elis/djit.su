@@ -19,6 +19,7 @@ export const useFileHandler = (props: Record<string, any>) => {
   const [loadingState, setLoadingStatus] = useRecoilState(loadingStatus('file'))
 
   useEffect(() => {
+    console.log('Initializing `useFileHandler` - provided props:', props)
     if (props.match?.params?.type === 'file') {
       setDjotEditor({
         type: DjotType.File,

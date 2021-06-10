@@ -8,12 +8,18 @@ import React from 'react'
 export default async function buildEgrazePlugins(list) {
   const cache = {}
   const plugins = getPlugins(list)
+  // console.log('🏮🧸 [BUILD PLUGINS] plugins', plugins)
 
   const initMain = (app, options) => {
     const activated = activatePlugins(plugins, 'main', 'init', [app, options])
     const initialized = initializePlugins(plugins, activated)
     cache.initialized = initialized
+    // console.log('🏮🧸 [MAIN] INITIALIZED', initialized)
+    const apis = preparePluginAPI(plugins, activated)
+    cache.apis = apis
+    // console.log('🏮🧸 [MAIN] APIs Prepared', apis)
     return {
+      apis,
       app,
       initialized
     }
@@ -27,10 +33,14 @@ export default async function buildEgrazePlugins(list) {
     // console.log('🏮🧸 [RENDERER] INITIALIZED', initialized)
     cache.initialized = initialized
     const Wrapped = wrapApp(App, activated)
+    // console.log('🏮🧸 [MAIN] INITIALIZED', initialized)
+    const apis = preparePluginAPI(plugins, activated)
+    cache.apis = apis
 
     return {
       App,
       Wrapped,
+      apis,
       initialized
     }
   }
@@ -215,6 +225,31 @@ const initializedPlugin = plugins => (acc, activated, index) => [
   [plugins[index][0], plugins[index][1], activated.fields]
 ]
 
+/**
+ *
+ * @param {PluckedPlugin} plugins - Plucked plugins
+ * @param {ActivatedPlugin[]} activated - Activated plugins
+ * @returns {PluginAPIs}
+ */
+const preparePluginAPI = (plugins, activated) =>
+  fold(prepareAPI(plugins), {}, activated)
+
+/**
+ *
+ * @param {PluckedPlugin[]} plugins - Plucked plugins
+ * @returns {PreparePluginAPIReducer}
+ */
+const prepareAPI = plugins => (acc, activated, index) => {
+  const plugin = plugins[index][0]
+  if (!plugin.name)
+    return acc
+
+  return {
+    ...acc,
+    [plugin.name]: activated.fields
+  }
+}
+
 
 /**
  *
@@ -281,6 +316,14 @@ const pluginWrapper = (Wrapped, plugin) =>
  * @param {ActivatedPlugin} activated - Activated plugin
  * @param {number} index - Index of activated plugin
  * @returns {InitializedPlugin[]}
+ */
+
+/**
+ * @callback PreparePluginAPIReducer
+ * @param {Object} acc - Accumulator
+ * @param {ActivatedPlugin} activated - Activated plugin
+ * @param {number} index - Index of activated plugin
+ * @returns {PluginAPIs}
  */
 
 /**
@@ -435,5 +478,13 @@ const pluginWrapper = (Wrapped, plugin) =>
  * @typedef {Object} WrapperEgrazeAppProps
  * @property {Object} fields - Initialized plugin fields
  * @property {JSX.Children} children - Children to display
+ */
+
+/**
+ * @typedef {Object} PluginAPI
+ */
+
+/**
+ * @typedef {Object} PluginAPIs
  */
 
