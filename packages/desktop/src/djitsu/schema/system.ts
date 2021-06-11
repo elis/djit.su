@@ -15,6 +15,7 @@ export type SystemState = {
   status: SystemStatus
   staticPath: string
   serviceAttached: boolean
+  windowId: string
 }
 
 export enum SystemStatus {

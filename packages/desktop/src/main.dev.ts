@@ -7,6 +7,18 @@ import main from './egraze/main.process'
 
 export default AppUpdater
 
+if (
+  process.env.NODE_ENV === 'development' ||
+  process.env.DEBUG_PROD === 'true'
+) {
+  require('electron-debug')()
+}
+
+if (process.env.NODE_ENV === 'production') {
+  const sourceMapSupport = require('source-map-support')
+  sourceMapSupport.install()
+}
+
 const launch = async () => {
   const egraze = await main(app, {
     dirname: __dirname

@@ -3,6 +3,7 @@ import { Button, Layout, Tooltip } from 'antd'
 import styled from 'styled-components'
 import { CodeOutlined, FileAddOutlined } from '@ant-design/icons'
 import useIPCRenderer from '../services/ipc/renderer'
+import { useSystem } from '../services/system'
 import { ThemeDropdown } from './header'
 
 export type TitleBarProps = {
@@ -11,8 +12,10 @@ export type TitleBarProps = {
 
 export const TitleBar: React.FC<TitleBarProps> = ({ children }) => {
   const ipc = useIPCRenderer()
+  const [system] = useSystem()
   const showDevTools = () => {
-    ipc.invoke('open-dev-tools', 'test', { jest: 'fest' })
+    console.log('system:', system)
+    ipc.invoke('open-dev-tools', system.windowId)
   }
 
   const getLocal = async () => {

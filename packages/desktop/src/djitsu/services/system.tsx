@@ -14,14 +14,19 @@ export const SystemService: React.FC = props => {
 
   useEffect(() => {
     console.log('🏙 System Service Attaching', system)
-    setSystem(v => ({ ...v, serviceAttached: true }))
+    console.log('Location:', window.location)
+    const { search } = window.location
+    const windowId = search.split('?')[1].split('&').map((el) => el.split('='))
+      .find(([field]) => field === 'id')?.[1]
+    setSystem(v => ({ ...v, serviceAttached: true, windowId }))
+    console.log('🏙 windowId:', windowId)
 
     if (system.status === SystemStatus.Unavailable) {
       setSystem(v => ({ ...v, serviceAttached: true }))
 
-      invoke('bootup')
+      invoke('bootup', windowId)
         .then(async (result: BootupData) => {
-          console.log('Bootstrap data result:', result)
+          console.log('🏙 Bootstrap data result:', result)
           // DEBUG &&
           false && !result?.local?.third?.path &&
             Object.assign(result, {

@@ -1,5 +1,7 @@
 import { ipcMain, nativeTheme } from 'electron'
-import { createWindow } from './main-app'
+
+import Messaging from './messaging'
+import WindowManager from './window-manager'
 
 export const name = 'session'
 
@@ -7,45 +9,58 @@ export const main = {
   init: (options, fields, app, config) => {
     const local = {}
 
-    // local.options = options
-    let mainWindow
+    const wm = new WindowManager(app, { ...config, local })
+    const messaging = new Messaging(app, wm, { ...config, local })
 
-    const makeWindow = async () => {
-      mainWindow = await createWindow(app, { ...config, local })
+    const makeWindow = wm.createWindow
 
-      mainWindow.on('closed', () => {
-        mainWindow = null
+    const onActivate = async () => {
+      console.log('[==] Window onActivate', JSON.stringify(wm.getMainWindow() || {}).substr(0, 60))
+      // On macOS it's common to re-create a window in the app when the
+      // dock icon is clicked and there are no other windows open.
+      if (!wm.getMainWindow()) wm.createWindow({
+        context: {
+          action: 'new-window'
+        }
       })
     }
 
-    const onActivate = async () => {
-      // On macOS it's common to re-create a window in the app when the
-      // dock icon is clicked and there are no other windows open.
-      if (mainWindow === null) mainWindow = await makeWindow()
-    }
-
     const onReady = (_event, info) => {
-      local.ready = {
-        info
-      }
+      local.info = info
     }
 
     const onOpenFile =  async (_event, path) => {
-
       console.log('[==] Open File', path)
-      local.third = {
-        path
-      }
-      if (mainWindow === null) mainWindow = await makeWindow()
+
+      wm.createWindow({
+        context: {
+          action: 'open-file',
+          payload: { path }
+        }
+      })
+    }
+
+    const onOpenUrl =  async (_event, path, ...rest) => {
+      console.log('[==] Open URL', path, rest)
+
+      wm.createWindow({
+        context: {
+          action: 'open-url',
+          payload: { path, rest }
+        }
+      })
     }
 
     const onSecondInstance = async (_event, argv, cwd) => {
       console.log('[==] Second Instance', argv, cwd)
-      local.second = {
-        argv,
-        cwd
-      }
-      if (mainWindow === null) mainWindow = await makeWindow()
+
+      if (!wm.getMainWindow())
+        wm.createWindow({
+          context: {
+            action: 'second-instance',
+            payload: { argv, cwd }
+          }
+        })
     }
 
     const onWindowAllClosed = () => {
@@ -57,18 +72,11 @@ export const main = {
     }
 
     app.on('activate', onActivate)
-
     app.on('ready', onReady)
-
     app.on('open-file', onOpenFile)
-
+    app.on('open-url', onOpenUrl)
     app.on('second-instance', onSecondInstance)
-
     app.on('window-all-closed', onWindowAllClosed)
-
-    ipcMain.handle('get-local', () => {
-      return local
-    })
 
     return {
       app,
@@ -85,6 +93,10 @@ export const main = {
   },
   onReady: (options, fields) => {
     console.log('🙎‍♂️ Egraze Session Plugin Ready!', { fields, options })
-    fields.makeWindow()
+    fields.makeWindow({
+      context: {
+        action: 'initial'
+      }
+    })
   }
 }
