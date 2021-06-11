@@ -1,7 +1,11 @@
+# this file is being listened to in development and once its
+# save it will trigger the associated plugins' function with the
+# arguments provided to assist with simulatin file and url opening
+# from the os and other simulations
 plugin: session
 fn: onOpenFile
 args: [
   {},
-  ['/Users/eli/projects/temp/djitsu-playgroup/sample.djot'],
+  '/Users/eli/projects/temp/djitsu-playgroup/komp.djit',
   '/Users/eli/projects/temp/djitsu-playgroup'
 ]

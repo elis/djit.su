@@ -3,20 +3,19 @@ import { BrowserWindow, ipcMain, session, shell } from 'electron'
 import MenuBuilder from './menu'
 import AppUpdater from './app-updater'
 
-export default function WindowManager (app, config) {
+export default function WindowManager(app, config) {
   const { dirname } = config
   const state = {
     windows: []
   }
 
-
   const RESOURCES_PATH = app.isPackaged
-  ? path.join(process.resourcesPath, 'resources')
-  : path.join(dirname, '../resources')
+    ? path.join(process.resourcesPath, 'assets')
+    : path.join(dirname, '../assets')
 
   const getAssetPath = (...paths) => path.join(RESOURCES_PATH, ...paths)
 
-  const createWindow = async (options) => {
+  const createWindow = async options => {
     const id = Date.now().toString(32)
     const isMain = !state.windows.length
     const { context = {} } = options || {}
@@ -37,6 +36,8 @@ export default function WindowManager (app, config) {
       }
     }
 
+    console.log('Window options:', windowOptions)
+
     const window = {
       context,
       id,
@@ -47,7 +48,7 @@ export default function WindowManager (app, config) {
     if (
       !state.initializedDebug &&
       (process.env.NODE_ENV === 'development' ||
-      process.env.DEBUG_PROD === 'true')
+        process.env.DEBUG_PROD === 'true')
     ) {
       await installExtensions()
       await installFiles()
@@ -65,7 +66,8 @@ export default function WindowManager (app, config) {
 
     if (isMain) {
       // TODO: Update menu on new windows
-      const menuBuilder = state.menu = new MenuBuilder(window.window)
+      const menuBuilder = new MenuBuilder(window.window)
+      state.menu = menuBuilder
       menuBuilder.buildMenu()
 
       state.mainWindow = window
@@ -80,7 +82,7 @@ export default function WindowManager (app, config) {
     return window
   }
 
-  const registerWindowHandlers = (window) => {
+  const registerWindowHandlers = window => {
     // @TODO: Use 'ready-to-show' event - meh, potentially.
     //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
     window.window.webContents.on('did-finish-load', () => {
@@ -108,7 +110,9 @@ export default function WindowManager (app, config) {
       state.windows = state.windows.filter(({ id }) => id !== window.id)
       if (window.isMain)
         // Pick last focused window as mainWIndow
-        state.mainWindow = state.windows.sort((a, b) => a.lastFocus < b.lastFocus ? 1 : -1)[0]
+        state.mainWindow = state.windows.sort((a, b) =>
+          a.lastFocus < b.lastFocus ? 1 : -1
+        )[0]
     })
 
     window.window.on('browser-window-focus', () => {
@@ -125,7 +129,6 @@ export default function WindowManager (app, config) {
     createWindow
   }
 }
-
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer')
@@ -158,7 +161,7 @@ const installFiles = async () => {
   console.log('Extensions ready!')
 }
 
-const configureDefaultSession = (app) => {
+const configureDefaultSession = app => {
   session.defaultSession.protocol.registerFileProtocol(
     'static',
     (request, callback) => {
@@ -169,6 +172,6 @@ const configureDefaultSession = (app) => {
   )
 }
 
-const installProtocol = (app) => {
+const installProtocol = app => {
   app.setAsDefaultProtocolClient('djitsu')
 }

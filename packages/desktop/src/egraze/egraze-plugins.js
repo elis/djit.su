@@ -26,9 +26,7 @@ export default async function buildEgrazePlugins(list) {
   }
 
   const initRenderer = (App, options) => {
-    const activated = activatePlugins(plugins, 'renderer', 'init', [
-      options
-    ])
+    const activated = activatePlugins(plugins, 'renderer', 'init', [options])
     const initialized = initializePlugins(plugins, activated)
     // console.log('🏮🧸 [RENDERER] INITIALIZED', initialized)
     cache.initialized = initialized
@@ -170,12 +168,12 @@ const formatPlugin = (part, what, args) => (
     options,
     root,
     args: [fields, ...(args || [])],
-    ...value && value[what]
+    ...(value && value[what]
       ? {
           [what]: value[what],
-          [part]: value,
+          [part]: value
         }
-      : {}
+      : {})
   }
 ]
 
@@ -203,8 +201,10 @@ const formatPluginsParts = (...parts) => (acc, [plugin, options, fields]) => [
  * @param {PluginOptions} options - Options for plugin
  * @returns {FormattedPluginPart[]}
  */
-const formatPluginPart = (plugin, options, fields) => (acc, part) =>
-  [...acc, [plugin?.[part], options, plugin, fields]]
+const formatPluginPart = (plugin, options, fields) => (acc, part) => [
+  ...acc,
+  [plugin?.[part], options, plugin, fields]
+]
 
 /**
  *
@@ -241,8 +241,7 @@ const preparePluginAPI = (plugins, activated) =>
  */
 const prepareAPI = plugins => (acc, activated, index) => {
   const plugin = plugins[index][0]
-  if (!plugin.name)
-    return acc
+  if (!plugin.name) return acc
 
   return {
     ...acc,
@@ -250,15 +249,13 @@ const prepareAPI = plugins => (acc, activated, index) => {
   }
 }
 
-
 /**
  *
  * @param {import('react').ReactElement} App - React component to wrap
  * @param {ActivatedPlugin[]} plugins - Activated plugins
  * @returns {WrappedEgrazeApp}
  */
-const wrapApp = (App, plugins) =>
-  fold(pluginWrapper, App, plugins)
+const wrapApp = (App, plugins) => fold(pluginWrapper, App, plugins)
 
 /**
  *
@@ -268,11 +265,12 @@ const wrapApp = (App, plugins) =>
  */
 const pluginWrapper = (Wrapped, plugin) =>
   plugin?.renderer?.Wrapper
-    ? (props) => <plugin.renderer.Wrapper fields={plugin.fields}><Wrapped {...props} /></plugin.renderer.Wrapper>
+    ? props => (
+        <plugin.renderer.Wrapper fields={plugin.fields}>
+          <Wrapped {...props} />
+        </plugin.renderer.Wrapper>
+      )
     : Wrapped
-
-
-
 
 //
 //
@@ -467,7 +465,6 @@ const pluginWrapper = (Wrapped, plugin) =>
  * @param {Object} props
  */
 
-
 /**
  * @callback WrappedEgrazeApp
  * @param {WrapperEgrazeAppProps}
@@ -487,4 +484,3 @@ const pluginWrapper = (Wrapped, plugin) =>
 /**
  * @typedef {Object} PluginAPIs
  */
-

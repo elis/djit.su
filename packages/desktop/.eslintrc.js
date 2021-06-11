@@ -9,9 +9,12 @@ module.exports = {
     'promise/always-return': 'off',
     'global-require': 'off',
     'no-console': 'off',
+    'prefer-destructuring': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/no-unused': 'off',
     'react/prop-types': 'off',
+    'react/jsx-filename-extension': 'off',
+    'react/jsx-props-no-spreading': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

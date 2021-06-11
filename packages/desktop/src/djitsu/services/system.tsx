@@ -16,9 +16,15 @@ export const SystemService: React.FC = props => {
     console.log('🏙 System Service Attaching', system)
     console.log('Location:', window.location)
     const { search } = window.location
-    const windowId = search.split('?')[1].split('&').map((el) => el.split('='))
+    const windowId = search
+      .split('?')[1]
+      .split('&')
+      .map(el => el.split('='))
       .find(([field]) => field === 'id')?.[1]
-    setSystem(v => ({ ...v, serviceAttached: true, windowId }))
+
+    if (windowId) setSystem(v => ({ ...v, serviceAttached: true, windowId }))
+    else throw new Error('WindowID is not defined')
+
     console.log('🏙 windowId:', windowId)
 
     if (system.status === SystemStatus.Unavailable) {
@@ -28,20 +34,21 @@ export const SystemService: React.FC = props => {
         .then(async (result: BootupData) => {
           console.log('🏙 Bootstrap data result:', result)
           // DEBUG &&
-          false && !result?.local?.third?.path &&
+          false &&
+            !result?.local?.payload?.path &&
             Object.assign(result, {
               local: {
-                third: {
+                action: 'open-file',
+                payload: {
                   path: '/Users/eli/projects/temp/f/eli.djot'
                 }
               }
             })
 
-          if (result?.local?.third?.path) {
-            // openFile: result.third.path
+          if (result?.local?.action) {
             setSystemCommand({
-              action: 'open-file',
-              path: result.local.third.path
+              action: result.local.action,
+              payload: result.local.payload
             })
           }
 
@@ -62,6 +69,8 @@ export const SystemService: React.FC = props => {
       console.log('🏙 System Service Dettaching', system)
       setSystem(v => ({ ...v, serviceAttached: false }))
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return <></>

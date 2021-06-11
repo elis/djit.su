@@ -4,16 +4,16 @@ import YAML from 'yaml'
 
 const initialied = {}
 
-export default function Messaging (app, wm, config) {
+export default function Messaging(app, wm, config) {
   console.log('Messaging Initialized!!')
   const onBootup = (event, windowId, ...args) => {
     console.log('Bootup received!!', windowId)
-    const window = wm.getWindows().find(({id}) => id === windowId)
+    const window = wm.getWindows().find(({ id }) => id === windowId)
     return {
       staticPath: `file://${config.dirname}/`,
       local: {
-        ...config.local || {},
-        ...window.context || {}
+        ...(config.local || {}),
+        ...(window.context || {})
       }
     }
   }

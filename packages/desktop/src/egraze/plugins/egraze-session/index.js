@@ -15,21 +15,25 @@ export const main = {
     const makeWindow = wm.createWindow
 
     const onActivate = async () => {
-      console.log('[==] Window onActivate', JSON.stringify(wm.getMainWindow() || {}).substr(0, 60))
+      console.log(
+        '[==] Window onActivate',
+        JSON.stringify(wm.getMainWindow() || {}).substr(0, 60)
+      )
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
-      if (!wm.getMainWindow()) wm.createWindow({
-        context: {
-          action: 'new-window'
-        }
-      })
+      if (!wm.getMainWindow())
+        wm.createWindow({
+          context: {
+            action: 'new-window'
+          }
+        })
     }
 
     const onReady = (_event, info) => {
       local.info = info
     }
 
-    const onOpenFile =  async (_event, path) => {
+    const onOpenFile = async (_event, path) => {
       console.log('[==] Open File', path)
 
       wm.createWindow({
@@ -40,7 +44,7 @@ export const main = {
       })
     }
 
-    const onOpenUrl =  async (_event, path, ...rest) => {
+    const onOpenUrl = async (_event, path, ...rest) => {
       console.log('[==] Open URL', path, rest)
 
       wm.createWindow({

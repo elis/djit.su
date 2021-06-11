@@ -1,6 +1,6 @@
 import config from './egraze.config.renderer'
 import buildPlugins from './egraze-plugins'
-import { cache, plugin } from './'
+import { cache } from '.'
 
 export default async function renderer(App, options) {
   const plugins = await buildPlugins(config.plugins)

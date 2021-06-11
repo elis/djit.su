@@ -1,13 +1,15 @@
 export type BootupData = {
   staticPath: string
   local: {
-    options?: Record<string, unknown>,
+    options?: Record<string, unknown>
     third?: {
       path: string
-    },
+    }
     ready?: {
       info: Record<string, unknown>
     }
+    action?: string
+    payload?: Record<string, unknown>
   }
 }
 
@@ -25,17 +27,31 @@ export enum SystemStatus {
   Unavailable = 'unavaiable'
 }
 
-export type SystemCommand = {
-  action: string
-  [key: string]: unknown
-} | null
+export type SystemCommand = OpenFileSystemCommand | GenericSystemCommand | null
 
-export type SystemLoading = {
-  message?: string | React.ReactElement
-  Message?: (props: any) => React.ReactElement
-  start?: number
-  spinner?: SystemSpinner
-} | false | null
+export type GenericSystemCommand = {
+  action: string
+  payload?: {
+    [key: string]: unknown
+  }
+}
+
+export type OpenFileSystemCommand = {
+  action: 'open-file'
+  payload: {
+    path: string
+  }
+}
+
+export type SystemLoading =
+  | {
+      message?: string | React.ReactElement
+      Message?: (props: Record<string, unknown>) => React.ReactElement
+      start?: number
+      spinner?: SystemSpinner
+    }
+  | false
+  | null
 
 export enum SystemSpinner {
   Impulse = 'impulse',
