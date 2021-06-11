@@ -128,7 +128,7 @@
     "protocols": [
       {
         "name": "djitsu",
-        "schemas": [
+        "schemes": [
           "djitsu"
         ]
       }
