@@ -122,9 +122,17 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
-    }
+      "owner": "elis",
+      "repo": "djit.su"
+    },
+    "protocols": [
+      {
+        "name": "djitsu",
+        "schemas": [
+          "djitsu"
+        ]
+      }
+    ]
   },
   "repository": {
     "type": "git",
