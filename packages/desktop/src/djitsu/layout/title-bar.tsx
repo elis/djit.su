@@ -7,7 +7,7 @@ import { useSystem } from '../services/system'
 import { ThemeDropdown } from './header'
 
 export type TitleBarProps = {
-  children: React.ReactChildren
+  children?: React.ReactChildren
 }
 
 export const TitleBar: React.FC<TitleBarProps> = ({ children }) => {

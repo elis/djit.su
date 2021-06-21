@@ -2,11 +2,9 @@ import path from 'path'
 import { ipcMain } from 'electron'
 import YAML from 'yaml'
 
-const initialied = {}
-
 export default function Messaging(app, wm, config) {
   console.log('Messaging Initialized!!')
-  const onBootup = (event, windowId, ...args) => {
+  const onBootup = (event, windowId) => {
     console.log('Bootup received!!', windowId)
     const window = wm.getWindows().find(({ id }) => id === windowId)
     return {
@@ -82,5 +80,15 @@ export default function Messaging(app, wm, config) {
   ipcMain.handle('open-dev-tools', onOpenDevTools)
   ipcMain.handle('get-local', onGetLocal)
 
-  return {}
+  const subscribe = (channel, handler) => {
+    ipcMain.handle(channel, handler)
+
+    return () => {
+      ipcMain.removeHandler(channel)
+    }
+  }
+
+  return {
+    subscribe
+  }
 }

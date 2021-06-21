@@ -3,18 +3,16 @@ import React, { useEffect } from 'react'
 import { useRecoilState } from 'recoil'
 import { bootError, systemCommand, systemState } from '../state/atoms/system'
 import { useIPCRenderer } from './ipc/renderer'
-
 import { BootupData, SystemStatus } from '../schema/system'
 
-export const SystemService: React.FC = props => {
+export const SystemService: React.FC = () => {
   const { invoke } = useIPCRenderer()
   const [system, setSystem] = useRecoilState(systemState)
-  const [systemCommandState, setSystemCommand] = useRecoilState(systemCommand)
-  const [bootErrorState, setBootError] = useRecoilState(bootError)
+  const [, setSystemCommand] = useRecoilState(systemCommand)
+  const [, setBootError] = useRecoilState(bootError)
 
   useEffect(() => {
     console.log('🏙 System Service Attaching', system)
-    console.log('Location:', window.location)
     const { search } = window.location
     const windowId = search
       .split('?')[1]
@@ -25,9 +23,12 @@ export const SystemService: React.FC = props => {
     if (windowId) setSystem(v => ({ ...v, serviceAttached: true, windowId }))
     else throw new Error('WindowID is not defined')
 
-    console.log('🏙 windowId:', windowId)
+    console.log('🏙 windowId:', windowId, 'System status:', system.status)
 
-    if (system.status === SystemStatus.Unavailable) {
+    if (
+      system.status === SystemStatus.Unavailable ||
+      system.status === SystemStatus.Ready
+    ) {
       setSystem(v => ({ ...v, serviceAttached: true }))
 
       invoke('bootup', windowId)

@@ -6,12 +6,11 @@ import React, {
   useRef
 } from 'react'
 import Helmet from 'react-helmet'
-// import { logEvent, setProperty } from 'djitsu/services/telemetry'
-// import { useUser } from 'djitsu/providers/user'
-import { access } from 'fs'
 import { useThemeSwitcher } from './css-theme-switcher'
 
 import themesConfig from '../../dist/themes/themes.json'
+import { ThemeService, useThemeService } from '../services/theme'
+import { plugin } from '../../egraze'
 
 type ThemeContextTuple = [ThemeContextState, ThemeContextActions]
 interface ThemeContextState {
@@ -61,15 +60,19 @@ interface DjitsuThemeProps {
 }
 
 export const DjitsuTheme: React.FC<DjitsuThemeProps> = props => {
+  const themePlugin = plugin('theme')
+  const pluginContext = useContext(themePlugin.Context)
+  console.log('Plugin context value:', pluginContext)
   // const [user, userActions] = useUser()
-  const { switcher, themes, currentTheme, status } = useThemeSwitcher()
+  const [, setThemeService] = useThemeService()
+  const { switcher, themes } = useThemeSwitcher()
   const [isDark, setIsDark] = useState(false)
 
   const themeRef = useRef('')
   const [themeInStore, setThemeInStore] = useState(
     props.theme || 'djitsu-light-theme'
   )
-  const [activation, _setActivation] = useState()
+  const [activation] = useState()
   // user?.options?.['theme-activation'] ?? true
 
   useEffect(() => {
@@ -79,6 +82,13 @@ export const DjitsuTheme: React.FC<DjitsuThemeProps> = props => {
     const dark = availableThemes.find(({ name }) => name === themeInStore)?.dark
     props.onTypeChange?.(dark ? 'dark' : 'light')
     setIsDark(!!dark)
+    setThemeService(v => ({
+      ...v,
+      theme: themeInStore,
+      darkMode: !!dark
+    }))
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [themeInStore])
 
   useEffect(() => {
@@ -110,6 +120,8 @@ export const DjitsuTheme: React.FC<DjitsuThemeProps> = props => {
         mql.removeEventListener('change', onChangeMql)
       }
     }
+    return () => {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activation])
 
   const [availableThemes, setAvailableThemes] = useState<ThemeOption[]>([])
@@ -172,6 +184,7 @@ export const DjitsuTheme: React.FC<DjitsuThemeProps> = props => {
           />
         </Helmet>
         {props.children}
+        <ThemeService />
       </div>
     </ThemeContext.Provider>
   )

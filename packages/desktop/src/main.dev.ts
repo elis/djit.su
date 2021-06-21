@@ -1,7 +1,6 @@
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 import { app } from 'electron'
-
 import main from './egraze/main.process'
 
 if (

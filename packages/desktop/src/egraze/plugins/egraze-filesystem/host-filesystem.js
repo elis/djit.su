@@ -4,8 +4,7 @@ import { plugin } from '../../index'
 
 const { readFile, writeFile } = fs.promises
 
-const bindLocalFilesystem = (app, config) => {
-
+const bindLocalFilesystem = app => {
   const onGetFileSelection = async (event, ...args) => {
     const session = plugin('session')
 

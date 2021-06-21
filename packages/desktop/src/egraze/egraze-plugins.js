@@ -1,17 +1,46 @@
 import React from 'react'
 
+const cache = {
+  plugins: new Map()
+}
+export const plugin = name => {
+  if (!cache.plugins.has(name))
+    throw new Error(`Plugin ${name} is not available`)
+
+  return cache.plugins.get(name)
+}
+
 /**
  * Build Egraze plugins
  * @param {PluginConfiguration[]} list - List of plugin configurations
  * @returns {EgrazeApi}
  */
 export default async function buildEgrazePlugins(list) {
-  const cache = {}
   const plugins = getPlugins(list)
   // console.log('🏮🧸 [BUILD PLUGINS] plugins', plugins)
 
   const initMain = (app, options) => {
-    const activated = activatePlugins(plugins, 'main', 'init', [app, options])
+    const registerPlugin = (plugin, fn) => {
+      const res = fn()
+      if (res && plugin.name) {
+        if (!cache.plugins.has(plugin.name)) cache.plugins.set(plugin.name, res)
+        else {
+          console.log(
+            'Error: Plugin already exists. Existing plugin fields:',
+            cache.plugins.get(plugin.name)
+          )
+          throw new Error(`Plugin named "${plugin.name}" already exists`)
+        }
+      }
+      return res
+    }
+    const activated = overloadPlugins(
+      plugins,
+      'main',
+      'init',
+      [app, options],
+      registerPlugin
+    )
     const initialized = initializePlugins(plugins, activated)
     cache.initialized = initialized
     // console.log('🏮🧸 [MAIN] INITIALIZED', initialized)
@@ -25,31 +54,60 @@ export default async function buildEgrazePlugins(list) {
     }
   }
 
-  const initRenderer = (App, options) => {
-    const activated = activatePlugins(plugins, 'renderer', 'init', [options])
+  const initRenderer = options => {
+    const registerPlugin = (plg, fn) => {
+      const res = fn()
+      if (res && plg.name) {
+        if (!cache.plugins.has(plg.name)) cache.plugins.set(plg.name, res)
+        else {
+          console.log(
+            'Error: Plugin already exists. Existing plugin fields:',
+            cache.plugins.get(plg.name)
+          )
+          throw new Error(`Plugin named "${plg.name}" already exists`)
+        }
+      }
+      return res
+    }
+    const activated = overloadPlugins(
+      plugins,
+      'renderer',
+      'init',
+      [options],
+      registerPlugin
+    )
+    // const activated = activatePlugins(plugins, 'renderer', 'init', [options])
     const initialized = initializePlugins(plugins, activated)
     // console.log('🏮🧸 [RENDERER] INITIALIZED', initialized)
     cache.initialized = initialized
-    const Wrapped = wrapApp(App, activated)
+    cache.activated = activated
     // console.log('🏮🧸 [MAIN] INITIALIZED', initialized)
     const apis = preparePluginAPI(plugins, activated)
     cache.apis = apis
 
     return {
-      App,
-      Wrapped,
       apis,
       initialized
     }
   }
 
-  const onReadyMain = () => {
-    const results = activatePlugins(
+  const onReadyMain = async () => {
+    const results = await invokePlugins(
       cache.initialized || plugins,
       'main',
       'onReady'
     )
+
     return results
+  }
+
+  const onReadyRenderer = async App => {
+    const results = onLoadApp(App, cache.activated)
+    // const Wrapped = await wrapApp(App)
+    // eslint-disable-next-line react/display-name
+    const WrappedApp = await results()
+    const Wrapped = wrapApp(WrappedApp, cache.activated)
+    return Wrapped
   }
 
   return {
@@ -58,7 +116,8 @@ export default async function buildEgrazePlugins(list) {
       onReady: onReadyMain
     },
     renderer: {
-      init: initRenderer
+      init: initRenderer,
+      onReady: onReadyRenderer
     }
   }
 }
@@ -70,7 +129,7 @@ const fold = (reducer, init, xs) => {
   let counter = 0
   // eslint-disable-next-line no-restricted-syntax
   for (const x of xs) {
-    acc = reducer(acc, x, counter)
+    acc = reducer(acc, x, counter, xs)
     counter += 1
   }
   return acc
@@ -138,6 +197,42 @@ const onPlugin = what => (acc, plugin) => [
     fields: plugin?.[what]?.(plugin.options, ...(plugin.args || []))
   }
 ]
+
+/**
+ * Fold plugins activation
+ * @param {PluckedPlugin[]} plugins - Plugins to use
+ * @param {keyof PluginModule} part - Plugin part to load
+ * @param {keyof (MainPlugin | RendererPlugin)} what - 'init', 'onReady'
+ * @param {unknown[]} args - Arguments to pass to activation function
+ * @returns {ActivatedPlugin[]}
+ */
+const overloadPlugins = (plugins, part, what, args, overloadFn) =>
+  fold(
+    overloadPlugin(what, overloadFn),
+    [],
+    getPlugin(plugins, part, what, args)
+  )
+
+/**
+ * Plugin activation reducer wrapper
+ * @param {keyof (MainPlugin | RendererPlugin)} what - Section of plugin
+ * @returns {PluginActivationReducer}
+ */
+const overloadPlugin = (what, overloadFn) => (acc, plugin) => [
+  ...acc,
+  {
+    ...plugin,
+    fields: overloadFn(plugin, () =>
+      plugin?.[what]?.(plugin.options, ...(plugin.args || []))
+    )
+  }
+]
+
+const invokePlugins = (plugins, part, what, args) =>
+  fold(invokePlugin(what), () => {}, getPlugin(plugins, part, what, args))
+
+const invokePlugin = what => (acc, plg) =>
+  plg?.[what]?.(plg.options, ...(plg.args || []))
 
 // Select plugins
 /**
@@ -272,6 +367,25 @@ const pluginWrapper = (Wrapped, plugin) =>
       )
     : Wrapped
 
+/**
+ *
+ * @param {import('react').ReactElement} App - React component to wrap
+ * @param {ActivatedPlugin[]} plugins - Activated plugins
+ * @returns {WrappedEgrazeApp}
+ */
+const onLoadApp = (App, plugins) => fold(pluginOnLoader, () => App, plugins)
+
+/**
+ *
+ * @param {import('react').ReactElement} Wrapped
+ * @param {ActivatedPlugin} plugin
+ * @returns {import('react').ReactElement}
+ */
+const pluginOnLoader = (wrapped, plugin) =>
+  plugin?.renderer?.onLoad
+    ? async () => plugin.renderer.onLoad(await wrapped(), plugin.fields)
+    : wrapped
+
 //
 //
 //
@@ -368,6 +482,8 @@ const pluginWrapper = (Wrapped, plugin) =>
  * Renderer Process plugin
  * @typedef {Object} RendererPlugin
  * @property {InitializeRendererPlugin} init - Initialize the renderer
+ * @property {OnLoadPlugin} onLoad
+ * @property {JSX.Element} Wrapper - Plugin Wrapper
  */
 
 /**
@@ -376,6 +492,13 @@ const pluginWrapper = (Wrapped, plugin) =>
  * @param {PluginFields} fields - Plugin initialization result
  * @param {import('electron').app} app - Electron app instance
  * @param {InstanceOptions} config - Instance configuration
+ */
+
+/**
+ * @callback OnLoadPlugin
+ * @param {JSX.Element} Wrapped - Thw Wrapped component to wrap your content around
+ * @param {PluginFields} fields - Plugin initialization result
+ * @param {InstanceOptions} options - Instance configuration
  */
 
 /**
@@ -429,7 +552,13 @@ const pluginWrapper = (Wrapped, plugin) =>
 /**
  * @typedef {Object} EgrazeApi
  * @property {{ init: InitializeMain, onReady: () => void }} main - Main process API
- * @property {{ init: InitializeRenderer }} renderer - Renderer process API
+ * @property {{ init: InitializeRenderer, onReady: onReadyRenderer }} renderer - Renderer process API
+ */
+
+/**
+ * @callback onReadyRenderer
+ * @param {JSX.Element<Record<string, any>} Wrapped - Wrapped component to wrap your content
+ * @returns {JSX.Element<Record<string, any>}
  */
 
 /**

@@ -89,7 +89,7 @@ export default function WindowManager(app, config) {
       if (!window.window) {
         throw new Error('"window.window" is not defined')
       }
-      window.window.webContents.closeDevTools()
+      // window.window.webContents.closeDevTools()
 
       if (process.env.START_MINIMIZED) {
         window.window.minimize()

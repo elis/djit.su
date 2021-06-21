@@ -1,5 +1,3 @@
-import { ipcMain, nativeTheme } from 'electron'
-
 import Messaging from './messaging'
 import WindowManager from './window-manager'
 
@@ -85,6 +83,7 @@ export const main = {
     return {
       app,
       makeWindow,
+      messaging,
       dev: {
         makeWindow,
         onActivate,
@@ -96,7 +95,6 @@ export const main = {
     }
   },
   onReady: (options, fields) => {
-    console.log('🙎‍♂️ Egraze Session Plugin Ready!', { fields, options })
     fields.makeWindow({
       context: {
         action: 'initial'

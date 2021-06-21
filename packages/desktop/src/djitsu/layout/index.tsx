@@ -1,47 +1,39 @@
-import { Breadcrumb, Dropdown, Layout, Menu } from 'antd'
-import React, { useCallback, useMemo, useState } from 'react'
-
+import React from 'react'
+import { Breadcrumb, Layout, Menu } from 'antd'
 import {
   UserOutlined,
   LaptopOutlined,
-  NotificationOutlined,
-  DownOutlined
+  NotificationOutlined
 } from '@ant-design/icons'
-import DjitsuSymbol from '../components/djitsu-symbol';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { useTheme } from '../theme'
-import Spinner from '../components/spinner';
-import LoadingScreen from '../components/loading-screen';
-import Header from './header';
-import TitleBar from './title-bar';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { layoutState } from '../state/atoms/layout';
-import { systemLoading } from '../state/atoms/system';
-import { SystemSpinner } from '../schema/system';
+import styled from 'styled-components'
+import { useRecoilState } from 'recoil'
+import LoadingScreen from '../components/loading-screen'
+import Header from './header'
+import TitleBar from './title-bar'
+import { layoutState } from '../state/atoms/layout'
 
-
-
-const { SubMenu } = Menu;
-const { Content, Sider } = Layout;
+const { SubMenu } = Menu
+const { Content, Sider } = Layout
 
 export type DjitsuLayoutProps = {
   loading?: boolean
 }
 
-export const DjitsuLayout: React.FC<DjitsuLayoutProps> = (props) => {
+export const DjitsuLayout: React.FC<DjitsuLayoutProps> = props => {
   const { loading } = props
-  const [layout, setLayout] = useRecoilState(layoutState)
-  const systemLoadingState = useRecoilValue(systemLoading)
+  const [layout] = useRecoilState(layoutState)
 
-  if (loading) return <StyledLayout>
-    <TitleBar />
-    <Layout>
-      <Layout>
-        <LoadingScreen />
-      </Layout>
-    </Layout>
-  </StyledLayout>
+  if (loading)
+    return (
+      <StyledLayout>
+        <TitleBar />
+        <Layout>
+          <Layout>
+            <LoadingScreen />
+          </Layout>
+        </Layout>
+      </StyledLayout>
+    )
 
   return (
     <StyledLayout>
@@ -49,7 +41,6 @@ export const DjitsuLayout: React.FC<DjitsuLayoutProps> = (props) => {
       <Header />
       <Layout>
         {layout.sidebar && (
-
           <Sider width={200} className="site-layout-background">
             <Menu
               mode="inline"
@@ -69,7 +60,11 @@ export const DjitsuLayout: React.FC<DjitsuLayoutProps> = (props) => {
                 <Menu.Item key="7">option7</Menu.Item>
                 <Menu.Item key="8">option8</Menu.Item>
               </SubMenu>
-              <SubMenu key="sub3" icon={<NotificationOutlined />} title="subnav 3">
+              <SubMenu
+                key="sub3"
+                icon={<NotificationOutlined />}
+                title="subnav 3"
+              >
                 <Menu.Item key="9">option9</Menu.Item>
                 <Menu.Item key="10">option10</Menu.Item>
                 <Menu.Item key="11">option11</Menu.Item>
@@ -91,7 +86,7 @@ export const DjitsuLayout: React.FC<DjitsuLayoutProps> = (props) => {
             style={{
               padding: layout.noPadding ? 0 : 24,
               margin: 0,
-              minHeight: 280,
+              minHeight: 280
             }}
           >
             {props.children}
@@ -107,12 +102,9 @@ export const useLayoutState = () => {
 }
 
 const StyledLayout = styled(Layout)`
-
   &.ant-layout {
     min-height: calc(100vh - 1px);
-    > .ant-layout
-    > .ant-layout
-    > .ant-layout-content {
+    > .ant-layout > .ant-layout > .ant-layout-content {
       display: flex;
       flex-direction: column;
     }

@@ -7,7 +7,7 @@ import {
 } from '../../schema/system'
 
 export const systemState = atom({
-  key: 'themeState',
+  key: 'systemState',
   default: {
     serviceAttached: false,
     status: SystemStatus.Unavailable,
