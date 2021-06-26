@@ -7,7 +7,7 @@ import YAML from 'yaml'
 import { useLayoutSettings } from '../../layout/hooks'
 import { systemStateData } from '../../state/selectors/system'
 
-export const DjitsuHome: React.FC = (props) => {
+export const DjitsuHome: React.FC = props => {
   const { staticPath, status } = useRecoilValue(systemStateData)
   useLayoutSettings({
     sidebar: true,
@@ -19,14 +19,19 @@ export const DjitsuHome: React.FC = (props) => {
     <StyleLauncher>
       <h2>Hello to Home!</h2>
 
-      <Button type='primary' onClick={() => history.push('/editor')}>Go to Editor</Button>
+      <Button type="primary" onClick={() => history.push('/editor')}>
+        Go to Editor
+      </Button>
       <Button onClick={() => history.push('/djot')}>Djot Something</Button>
-      <Button type='ghost' onClick={() => history.push('/clean')}>Clean</Button>
-      <pre style={{width: 'auto', 'overflowX': 'auto'}}>{YAML.stringify({ staticPath, status, 'process.env': process.env })}</pre>
+      <Button type="ghost" onClick={() => history.push('/clean')}>
+        Clean
+      </Button>
+      <pre style={{ width: '100%', overflowX: 'auto' }}>
+        {YAML.stringify({ staticPath, status, 'process.env': process.env })}
+      </pre>
     </StyleLauncher>
   )
 }
-
 
 const StyleLauncher = styled.div`
   display: flex;
