@@ -3,6 +3,7 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 import styled from 'styled-components'
+import YAML from 'yaml'
 import { useLayoutSettings } from '../../layout/hooks'
 import { systemStateData } from '../../state/selectors/system'
 
@@ -14,18 +15,16 @@ export const DjitsuHome: React.FC = (props) => {
     noPadding: false
   })
   const history = useHistory()
-  return (<StyleLauncher>
-    <h2>Hello to Home!</h2>
+  return (
+    <StyleLauncher>
+      <h2>Hello to Home!</h2>
 
-    <Button type='primary' onClick={() => history.push('/editor')}>Go to Editor</Button>
-    <Button onClick={() => history.push('/djot')}>Djot Something</Button>
-    <Button type='ghost' onClick={() => history.push('/clean')}>Clean</Button>
-    <pre>{JSON.stringify({ staticPath, status }, 1, 1)}</pre>
-    <Table dataSource={Object.entries(process.env).filter(([name]) => !name.match(/^npm/))} columns={[
-      {title: 'Key', width: 220, ellipsis: true, render: (text) => <code>{text}</code>},
-      {title: 'Value', render: (text) => <code>{text}</code>}
-    ]} pagination={{pageSize: 1200}}/>
-  </StyleLauncher>)
+      <Button type='primary' onClick={() => history.push('/editor')}>Go to Editor</Button>
+      <Button onClick={() => history.push('/djot')}>Djot Something</Button>
+      <Button type='ghost' onClick={() => history.push('/clean')}>Clean</Button>
+      <pre style={{width: 'auto', 'overflowX': 'auto'}}>{YAML.stringify({ staticPath, status, 'process.env': process.env })}</pre>
+    </StyleLauncher>
+  )
 }
 
 

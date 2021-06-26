@@ -3,6 +3,10 @@ import { ipcMain, ipcRenderer, nativeTheme } from 'electron'
 import { plugin } from '../..'
 import { themes } from '../../../djitsu/theme'
 import { ThemeSwitcherProvider } from '../../../djitsu/theme/css-theme-switcher'
+import {
+  ThemePluginAction,
+  ThemePluginChannel
+} from '../../../djitsu/schema/theme'
 
 export const name = 'theme'
 
@@ -34,12 +38,19 @@ export const main = {
 
     // ! NEW STUFF
 
-    ipcMain.handle('plugin:theme', (event, action, payload) => {
-      console.log('requested plugin theme action:', action, payload)
-      if (action === 'get-theme') {
+    ipcMain.handle(ThemePluginChannel, (event, action, payload) => {
+      if (action === ThemePluginAction.GET_THEME) {
         const themeData = userSettings.get('theme') || defaultTheme
         return themeData
       }
+      if (action === ThemePluginAction.SET_THEME) {
+        userSettings.set('theme', v => ({
+          ...(v || {}),
+          theme: payload.theme,
+          isDark: payload.isDark
+        }))
+      }
+      return null
     })
 
     return {
@@ -56,7 +67,18 @@ export const renderer = {
         // ipcRenderer.invoke('plugin:theme', 'test-action', { isDark })
       },
       getTheme: async () => {
-        const result = await ipcRenderer.invoke('plugin:theme', 'get-theme')
+        const result = await ipcRenderer.invoke(
+          ThemePluginChannel,
+          ThemePluginAction.GET_THEME
+        )
+        return result
+      },
+      setTheme: async (theme, isDark) => {
+        const result = await ipcRenderer.invoke(
+          ThemePluginChannel,
+          ThemePluginAction.SET_THEME,
+          { theme, isDark }
+        )
         return result
       },
       Context: React.createContext({})

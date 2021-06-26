@@ -3,6 +3,12 @@ import React from 'react'
 const cache = {
   plugins: new Map()
 }
+
+/**
+ *
+ * @param {string} name
+ * @returns {import('../schema/egraze').PluginAPI}
+ */
 export const plugin = name => {
   if (!cache.plugins.has(name))
     throw new Error(`Plugin ${name} is not available`)

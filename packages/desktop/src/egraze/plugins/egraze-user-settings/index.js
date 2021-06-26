@@ -16,7 +16,12 @@ export const main = {
       get: prop =>
         prop ? state.userSettings[prop] : { ...state.userSettings },
       set: (prop, value) => {
-        state.userSettings[prop] = value
+        let newValue = value
+        if (typeof value === 'function') {
+          const oldValue = api.get(prop)
+          newValue = value(oldValue)
+        }
+        state.userSettings[prop] = newValue
         saveSettings()
       }
     }
