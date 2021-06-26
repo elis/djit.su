@@ -7,6 +7,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'import/no-named-as-default': 'off',
     'promise/always-return': 'off',
+    'consistent-return': 'off',
     'global-require': 'off',
     'no-console': 'off',
     'no-nested-ternary': 'off',

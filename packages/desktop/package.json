@@ -181,7 +181,7 @@
     ]
   },
   "devDependencies": {
-    "@ant-design/icons": "^4.4.0",
+    "@ant-design/icons": "4.6.2",
     "@babel/core": "^7.12.9",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-decorators": "^7.12.1",
@@ -305,7 +305,7 @@
     "@babel/standalone": "^7.12.15",
     "@isomorphic-git/lightning-fs": "^4.4.1",
     "@monaco-editor/react": "^4.0.9",
-    "antd": "^4.10.3",
+    "antd": "4.16.5",
     "buffer": "^6.0.3",
     "commander": "^7.0.0",
     "copy-webpack-plugin": "^7.0.0",
