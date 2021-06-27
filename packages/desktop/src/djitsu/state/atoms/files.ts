@@ -1,25 +1,19 @@
-import { atom, atomFamily, selectorFamily } from 'recoil'
-import { DjotEditorState, DjotStatus } from '../../schema/djot'
+import { atomFamily, selectorFamily } from 'recoil'
+import { plugin } from '../../../egraze'
 import { File } from '../../schema/files'
-import useIPCRenderer from '../../services/ipc/renderer'
-import { systemState } from './system'
 
 export const file = atomFamily({
   key: 'fileSthing',
   default: selectorFamily({
     key: 'file/Default',
-    get: (filepath) => async ({get}) => {
-      const { invoke } = useIPCRenderer()
-      console.log('getting file', filepath)
-      const state = get(systemState)
+    get: filepath => async () => {
+      const fsp = plugin('file-system')
       const retfile = {
-        path: filepath,
+        path: filepath
       } as File
-      console.log('system state', state)
 
       if (filepath) {
-        const filedata = retfile.contents = await invoke('read-file', filepath)
-        console.log('file data:', filedata)
+        const filedata = await fsp.readFile(filepath)
 
         return filedata
       }
@@ -27,6 +21,4 @@ export const file = atomFamily({
       return retfile
     }
   })
-
-
 })

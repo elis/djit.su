@@ -324,6 +324,7 @@
     "react-css-theme-switcher": "^0.2.2",
     "react-dom": "^17.0.1",
     "react-helmet": "^6.1.0",
+    "react-query": "^3.17.3",
     "react-router-dom": "^5.2.0",
     "react-spinners-kit": "^1.9.1",
     "react-split-pane": "^0.1.92",

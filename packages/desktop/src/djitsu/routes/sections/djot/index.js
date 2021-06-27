@@ -1,11 +1,11 @@
-// @flow
-
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import SplitPane from 'react-split-pane'
 import styled from 'styled-components'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useDebounceFn, useThrottle } from 'ahooks'
 import { useMonaco } from '@monaco-editor/react'
+import { Alert, Button, Result } from 'antd'
+import { ReloadOutlined } from '@ant-design/icons'
 
 import MonacoEditor from '../../../components/monaco-editor'
 import DjotPanes from '../../../components/djot-panes'
@@ -30,7 +30,9 @@ export const DjotSection = (props) => {
   const [paneWidth, setPaneWidth] = useState(0)
   const [debugData, setDebugData] = useStates({})
 
-  const file = useFileHandler(props)
+  const file = useFileHandler({
+    filePath: props.match.params?.path
+  })
 
   useLayoutSettings({
     sidebar: false,
@@ -114,21 +116,47 @@ export const DjotSection = (props) => {
 
   const showExtra = false
 
-  useEffect(() => {
-    console.log('🗃 🗂 file updated:', file)
-  }, [file])
-
   const saveToFile = useCallback(async (newData) => {
     const result = await file.setFileContents(newData)
-    console.log('Result of set file contents:', result)
   }, [file])
+
+  const [reloading, setReloading] = useState(false)
+  const reloadFile = useCallback(async () => {
+    console.log('🏄🎊', 'Reloading File!')
+    setReloading(true)
+    await file.reload()
+    setReloading(false)
+  }, [reloading])
 
   return (
     <StyledContainer
     className={offset.scrollTop > 0 ? 'scrl-top' : ''}
     >
-      {file.loading && <LoadingScreen {...file.loading} />}
-      {file.status === DjotStatus.Ready && panesReady && <DjotPanes
+      {/* {file.fileState.state === 'hasError' && (
+        console.log('')
+      )}
+      {file.fileState.state === 'hasError' && (
+        <Result
+          status="error"
+          title="File Error"
+          subTitle={
+            <Alert message={<code>{file.fileState.contents.message}</code>} type="error" />}
+          style={{margin: 'auto 0'}}
+          extra={[
+            <Button type="primary" key="home">
+              Back to Home
+            </Button>,
+            <Button key="again" onClick={reloadFile}>Try Again</Button>,
+          ]}
+        >
+          {file.fileState.contents.stack && (
+            <pre>{`${file.fileState.contents.stack}`}</pre>
+          )}
+        </Result>
+      )}
+    */}
+      {file.status === 'loading' && <LoadingScreen {...file.loading} />}
+      {file.status === 'success' && panesReady && <DjotPanes
       onChange={onPanesChange}
       style={{ '--scroll-height': offset?.scrollHeight + 'px', '--scroll-top': (offset?.scrollTop * -1) + 'px' }}
       size={paneWidth}
@@ -156,13 +184,20 @@ export const DjotSection = (props) => {
         lines={compiled?.display?.output}
         // offset={offset}
         >
-        <MonacoEditor
-          code={file.contents}
-          onSave={saveToFile}
-          onMount={onEditorMount}
-          onScroll={onEditorScroll}
-          onChange={onEditorChange}
-      />
+
+          <div>
+            {/* <Button type='primary' icon={<ReloadOutlined />} onClick={reloadFile}>Reload File</Button> */}
+            {reloading ? 'reloading...' : (
+              <MonacoEditor
+                code={file.data}
+                onSave={saveToFile}
+                onMount={onEditorMount}
+                onScroll={onEditorScroll}
+                onChange={onEditorChange}
+              />
+            )}
+
+          </div>
       </DjotPanes>}
     </StyledContainer>
   )
