@@ -389,7 +389,11 @@ const onLoadApp = (App, plugins) => fold(pluginOnLoader, () => App, plugins)
  */
 const pluginOnLoader = (wrapped, plugin) =>
   plugin?.renderer?.onLoad
-    ? async () => plugin.renderer.onLoad(await wrapped(), plugin.fields)
+    ? async () => {
+        const prev = await wrapped()
+        const next = await plugin.renderer.onLoad(prev, plugin.fields)
+        return next || prev
+      }
     : wrapped
 
 //
