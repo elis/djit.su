@@ -1,6 +1,7 @@
-import { ipcMain, ipcRenderer } from 'electron'
+import { dialog, ipcMain, ipcRenderer } from 'electron'
 import { promises } from 'fs'
 import path from 'path'
+import { plugin } from '../../egraze-plugins'
 import { FilesystemPluginAction, FilesystemPluginChannelName } from './types.d'
 
 export const name = 'filesystem'
@@ -49,6 +50,16 @@ export const main = {
         )
         return result
       }
+      if (action.type === FilesystemPluginAction.ShowSaveDialog) {
+        const session = plugin('session')
+        const windows = session.getWindows()
+        const window = windows.find(win => win.id === action.windowId)
+        const result = await apis.os.selectFileLocation(
+          window?.window,
+          action.payload.existingName
+        )
+        return result
+      }
       throw new Error(`Unhandled action type "${action.type}"`)
     })
 
@@ -72,11 +83,15 @@ export const main = {
  */
 export const renderer = {
   init: () => {
-    const sendMessage = (action, payload) =>
-      ipcRenderer.invoke(FilesystemPluginChannelName, {
+    const sendMessage = (action, payload) => {
+      const session = plugin('session')
+
+      return ipcRenderer.invoke(FilesystemPluginChannelName, {
         type: action,
+        windowId: session.windowId,
         payload
       })
+    }
     const rendererAPI = {
       readFile: async filePath => {
         const result = await sendMessage(FilesystemPluginAction.ReadFile, {
@@ -90,6 +105,13 @@ export const renderer = {
           filePath
         })
         return result
+      },
+      selectFileLocation: async existingName => {
+        const result = await sendMessage(
+          FilesystemPluginAction.ShowSaveDialog,
+          { existingName }
+        )
+        return result
       }
     }
     return rendererAPI
@@ -102,20 +124,12 @@ function FileSystem(driver, basepath, options) {
     fileSystemDrivers[driver] &&
     new fileSystemDrivers[driver](basepath, options)
 
-  console.log('created file system with driver', driver, fsd)
-
   return fsd
 }
 
 const fileSystemDrivers = {
   os: function OSFileSystem(basepath, options) {
-    const getFilePath = filename =>
-      console.log(
-        'Joining path:',
-        filename,
-        basepath,
-        path.join(basepath, filename)
-      ) || path.join(basepath, filename)
+    const getFilePath = filename => path.join(basepath, filename)
     return {
       listDirectory: () => {},
       deleteFile: () => {},
@@ -125,7 +139,21 @@ const fileSystemDrivers = {
       writeFile: (filename, contents, opts) =>
         writeFile(getFilePath(filename), contents, opts).then(() => contents),
       watchFile: () => {},
-      watchDirectory: () => {}
+      watchDirectory: () => {},
+      selectFileLocation: async (window, defaultPath) => {
+        const res = await dialog.showSaveDialog(window, {
+          title: 'Save File',
+          defaultPath,
+          buttonLabel: 'Save Djot',
+          filters: [
+            {
+              name: 'Djot File',
+              extensions: ['.djot']
+            }
+          ]
+        })
+        return res
+      }
     }
   }
 }

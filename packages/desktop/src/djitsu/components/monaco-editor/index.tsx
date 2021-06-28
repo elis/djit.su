@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import Editor, { EditorProps, loader, useMonaco } from '@monaco-editor/react'
+import Editor, { loader, useMonaco } from '@monaco-editor/react'
 import Monaco from 'monaco-editor'
 import { merge } from 'lodash'
-import { useTheme } from '../../theme'
 import { useThrottle } from 'ahooks'
+import { useTheme } from '../../theme'
 
 interface MonacoEditorProps extends React.FC {
   code?: string
   onSave?: (newContents: string) => void
+  onSaveAs?: (newContents: string) => void
   onMount?: (editor: Monaco.editor.IEditor) => void
   onScroll?: (scrollEvent: Monaco.IScrollEvent) => void
   options: Monaco.editor.IStandaloneEditorConstructionOptions
@@ -33,7 +34,7 @@ export const Main = (props) => {
 
 `
 
-export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
+export const MonacoEditor: React.FC<MonacoEditorProps> = props => {
   const [themeState] = useTheme()
   const [loaded, setLoaded] = useState(false)
   const defaultProps = {
@@ -48,13 +49,13 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
         enabled: false,
         side: 'left',
         renderCharacters: false
-      },
+      }
 
       // Tried wordwrapping - its breaking the result output
       // wordWrap: 'on',
       // wordWrapMinified: true,
       // wrappingIndent: 'indent'
-    },
+    }
   }
   const userProps = merge(defaultProps, props)
 
@@ -64,11 +65,11 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
 
   const monaco = useMonaco()
 
-  const onDidScroll = useCallback((scrollEvent) => {
+  const onDidScroll = useCallback(scrollEvent => {
     userProps.onScroll?.(scrollEvent)
   }, [])
 
-  const onEditorMounted = useCallback((editor) => {
+  const onEditorMounted = useCallback(editor => {
     editorRef.current = editor
     if (userProps.onMount) userProps.onMount(editor)
   }, [])
@@ -76,7 +77,7 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
   // Subscribe to monaco editor scroll event
   useEffect(() => {
     if (monaco?.editor)
-      monaco.editor.onDidCreateEditor((codeEditor) => {
+      monaco.editor.onDidCreateEditor(codeEditor => {
         codeEditor.onDidScrollChange(onDidScroll)
       })
   }, [editorRef.current, monaco])
@@ -86,7 +87,6 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
   useEffect(() => {
     const editor = editorRef.current
     if (!keybound && monaco?.editor && editor) {
-
       editor.addAction({
         // An unique identifier of the contributed action.
         id: 'save',
@@ -96,7 +96,8 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
 
         // An optional array of keybindings for the action.
         keybindings: [
-          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S,
+          // eslint-disable-next-line no-bitwise
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S
           // chord
           // monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K, monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M)
         ],
@@ -113,13 +114,47 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
 
         // Method that will be executed when the action is triggered.
         // @param editor The editor instance is passed in as a convinience
-        run: async (ed) => {
-          console.log("save me => " + ed.getPosition(), ed);
-          const model = ed.getModel();
+        run: async ed => {
+          console.log(`save me => ${ed.getPosition()}`, ed)
+          const model = ed.getModel()
           const value = model?.getValue()
           props.onSave?.(value || '')
         }
-      });
+      })
+      editor.addAction({
+        // An unique identifier of the contributed action.
+        id: 'save-as',
+
+        // A label of the action that will be presented to the user.
+        label: 'Save File As',
+
+        // An optional array of keybindings for the action.
+        keybindings: [
+          // eslint-disable-next-line no-bitwise
+          monaco.KeyMod.Shift | monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S
+          // chord
+          // monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K, monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M)
+        ],
+
+        // A precondition for this action.
+        precondition: undefined,
+
+        // A rule to evaluate on top of the precondition in order to dispatch the keybindings.
+        keybindingContext: undefined,
+
+        contextMenuGroupId: 'navigation',
+
+        contextMenuOrder: 1.5,
+
+        // Method that will be executed when the action is triggered.
+        // @param editor The editor instance is passed in as a convinience
+        run: async ed => {
+          console.log(`save me as => ${ed.getPosition()}`, ed)
+          const model = ed.getModel()
+          const value = model?.getValue()
+          props.onSaveAs?.(value || '')
+        }
+      })
 
       editor.addAction({
         // An unique identifier of the contributed action.
@@ -130,7 +165,8 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
 
         // An optional array of keybindings for the action.
         keybindings: [
-          monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+          // eslint-disable-next-line no-bitwise
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter
           // chord
           // monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K, monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M)
         ],
@@ -147,11 +183,10 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
 
         // Method that will be executed when the action is triggered.
         // @param editor The editor instance is passed in as a convinience
-        run: async (ed) => {
-          console.log("Run Code! => " + ed.getPosition());
-
+        run: async ed => {
+          console.log(`Run Code! => ${ed.getPosition()}`)
         }
-      });
+      })
       editor.addAction({
         // An unique identifier of the contributed action.
         id: 'run-line',
@@ -161,7 +196,8 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
 
         // An optional array of keybindings for the action.
         keybindings: [
-          monaco.KeyMod.Alt | monaco.KeyCode.Enter,
+          // eslint-disable-next-line no-bitwise
+          monaco.KeyMod.Alt | monaco.KeyCode.Enter
           // chord
           // monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K, monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M)
         ],
@@ -178,11 +214,10 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
 
         // Method that will be executed when the action is triggered.
         // @param editor The editor instance is passed in as a convinience
-        run: async (ed) => {
-          console.log("Run Line! => " + ed.getPosition());
-
+        run: async ed => {
+          console.log(`Run Line! => ${ed.getPosition()}`)
         }
-      });
+      })
 
       console.log('Bound')
       setKyebound(true)
@@ -190,12 +225,16 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
   }, [monaco, editorRef.current, keybound])
 
   useEffect(() => {
-    loadTheme(userProps.theme).then(() => setLoaded(true))
+    loadTheme(userProps.theme)
+      .then(() => setLoaded(true))
+      .catch(() => {})
   }, [userProps.theme])
 
-  return loaded
-    ? <Editor {...userProps} onMount={onEditorMounted} />
-    : <div>Loading...</div>
+  return loaded ? (
+    <Editor {...userProps} onMount={onEditorMounted} />
+  ) : (
+    <div>Loading...</div>
+  )
 }
 
 const loadTheme = (() => {
@@ -207,16 +246,16 @@ const loadTheme = (() => {
     if (!loaded[theme]) {
       configPaths()
       if (theme in availableThemes) {
-        const themeJson = require('../../../dist/themes/monaco/' + theme + '.json')
+        const themeJson = require(`../../../dist/themes/monaco/${theme}.json`)
 
-        loader.init().then(monaco => {
+        await loader.init().then(monaco => {
           if (!jsxConfigured) {
             configureJSX(monaco)
             jsxConfigured = true
           }
           monaco.editor.defineTheme(theme, themeJson)
           loaded[theme] = true
-        });
+        })
       }
     }
   }
@@ -229,31 +268,26 @@ const configureJSX = (monaco: typeof Monaco) => {
     moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
     module: monaco.languages.typescript.ModuleKind.CommonJS,
     noEmit: true,
-    typeRoots: ["node_modules/@types"],
+    typeRoots: ['node_modules/@types'],
     jsx: monaco.languages.typescript.JsxEmit.React,
-    jsxFactory: 'JSXAlone.createElement',
+    jsxFactory: 'JSXAlone.createElement'
   })
-
 }
 
-const configPaths = () => loader.config({
-  paths: {
-    vs: uriFromPath(
-      require('path').join(__dirname, 'dist/vs')
-    )
-  }
-})
+const configPaths = () =>
+  loader.config({
+    paths: {
+      vs: uriFromPath(require('path').join(__dirname, 'dist/vs'))
+    }
+  })
 
 function ensureFirstBackSlash(str: string) {
-  return str.length > 0 && str.charAt(0) !== '/'
-    ? '/' + str
-    : str;
+  return str.length > 0 && str.charAt(0) !== '/' ? `/${str}` : str
 }
 
 function uriFromPath(_path: string) {
-  const pathName = require('path').resolve(_path).replace(/\\/g, '/');
-  return encodeURI('file://' + ensureFirstBackSlash(pathName));
+  const pathName = require('path').resolve(_path).replace(/\\/g, '/')
+  return encodeURI(`file://${ensureFirstBackSlash(pathName)}`)
 }
-
 
 export default MonacoEditor

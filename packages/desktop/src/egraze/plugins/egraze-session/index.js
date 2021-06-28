@@ -84,6 +84,7 @@ export const main = {
       app,
       makeWindow,
       messaging,
+      getWindows: () => wm.getWindows(),
       dev: {
         makeWindow,
         onActivate,

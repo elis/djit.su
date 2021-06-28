@@ -1,33 +1,58 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import SplitPane from 'react-split-pane'
 import styled from 'styled-components'
 
-export const DjotPanes = (props) => {
-  const { lines, lineComponent: Line, linePropsHandler, extra, style = {}, onChange, defaultSize, size } = props
+export const DjotPanes = props => {
+  const {
+    lines,
+    lineComponent: Line,
+    linePropsHandler,
+    extra,
+    style = {},
+    onChange,
+    defaultSize,
+    size
+  } = props
+
+  const renderedLines = useMemo(
+    () =>
+      !!lines?.length &&
+      lines.map((row, rowIndex) => (
+        <div
+          {...(typeof linePropsHandler === 'function'
+            ? linePropsHandler(row, rowIndex)
+            : {})}
+          className="line"
+          data-line-number={rowIndex}
+          key={`djot-line-${rowIndex.toString(32)}`}
+        >
+          <div className="container">
+            {Line ? <Line data={row} index={rowIndex} /> : row}
+          </div>
+        </div>
+      )),
+    [Line, linePropsHandler, lines]
+  )
+
   return (
     <StyledPanes
       onChange={onChange}
       size={size}
       defaultSize={defaultSize}
-      split="vertical" minSize={120} style={style} >
+      split="vertical"
+      minSize={120}
+      style={style}
+    >
       {props.children}
       <StyledCompanionPane>
-        <div className='content'>
-          {!!lines?.length && lines.map((row, rowIndex) => (
-            <div
-              {...(typeof linePropsHandler === 'function' ? linePropsHandler(row, rowIndex) : {})}
-              className='line' data-line-number={rowIndex} key={'djot-line-' + rowIndex}>
-              <div className='container'>
-                {Line ? <Line data={row} index={rowIndex} /> : row}
-              </div>
-            </div>
-          ))}
+        <div className="content">
+          {renderedLines}
 
           {extra}
         </div>
-
       </StyledCompanionPane>
-    </StyledPanes>)
+    </StyledPanes>
+  )
 }
 
 const StyledCompanionPane = styled.div`
@@ -36,8 +61,8 @@ const StyledCompanionPane = styled.div`
   position: relative;
   > .content {
     position: relative;
-    /* height: ${({offset}) => offset?.scrollHeight ?? 0}px;
-    top: ${({offset}) => offset?.scrollTop ?? 0 * -1}px; */
+    /* height: ${({ offset }) => offset?.scrollHeight ?? 0}px;
+    top: ${({ offset }) => offset?.scrollTop ?? 0 * -1}px; */
     height: var(--scroll-height);
     top: var(--scroll-top);
     background: var(--popover-background);
@@ -129,59 +154,58 @@ const StyledCompanionPane = styled.div`
 `
 
 const StyledPanes = styled(SplitPane)`
-&.SplitPane {
-  overflow-y: auto;
-}
-.Resizer {
-  background: #000;
-  opacity: 0.2;
-  z-index: 1;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding;
-  background-clip: padding-box;
-}
+  &.SplitPane {
+    overflow-y: auto;
+  }
+  .Resizer {
+    background: #000;
+    opacity: 0.2;
+    z-index: 1;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding;
+    background-clip: padding-box;
+  }
 
-.Resizer:hover {
-  -webkit-transition: all 2s ease;
-  transition: all 2s ease;
-}
+  .Resizer:hover {
+    -webkit-transition: all 2s ease;
+    transition: all 2s ease;
+  }
 
-.Resizer.horizontal {
-  height: 11px;
-  margin: -5px 0;
-  border-top: 5px solid rgba(255, 255, 255, 0);
-  border-bottom: 5px solid rgba(255, 255, 255, 0);
-  cursor: row-resize;
-  width: 100%;
-}
+  .Resizer.horizontal {
+    height: 11px;
+    margin: -5px 0;
+    border-top: 5px solid rgba(255, 255, 255, 0);
+    border-bottom: 5px solid rgba(255, 255, 255, 0);
+    cursor: row-resize;
+    width: 100%;
+  }
 
-.Resizer.horizontal:hover {
-  border-top: 5px solid rgba(0, 0, 0, 0.5);
-  border-bottom: 5px solid rgba(0, 0, 0, 0.5);
-}
+  .Resizer.horizontal:hover {
+    border-top: 5px solid rgba(0, 0, 0, 0.5);
+    border-bottom: 5px solid rgba(0, 0, 0, 0.5);
+  }
 
-.Resizer.vertical {
-  width: 11px;
-  margin: 0 -5px;
-  border-left: 5px solid rgba(255, 255, 255, 0);
-  border-right: 5px solid rgba(255, 255, 255, 0);
-  cursor: col-resize;
-}
+  .Resizer.vertical {
+    width: 11px;
+    margin: 0 -5px;
+    border-left: 5px solid rgba(255, 255, 255, 0);
+    border-right: 5px solid rgba(255, 255, 255, 0);
+    cursor: col-resize;
+  }
 
-.Resizer.vertical:hover {
-  border-left: 5px solid rgba(0, 0, 0, 0.5);
-  border-right: 5px solid rgba(0, 0, 0, 0.5);
-}
-.Resizer.disabled {
-  cursor: not-allowed;
-}
-.Resizer.disabled:hover {
-  border-color: transparent;
-}
+  .Resizer.vertical:hover {
+    border-left: 5px solid rgba(0, 0, 0, 0.5);
+    border-right: 5px solid rgba(0, 0, 0, 0.5);
+  }
+  .Resizer.disabled {
+    cursor: not-allowed;
+  }
+  .Resizer.disabled:hover {
+    border-color: transparent;
+  }
 `
-
 
 export default DjotPanes

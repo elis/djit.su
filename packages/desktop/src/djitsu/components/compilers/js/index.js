@@ -1,30 +1,36 @@
-import WorkerApi from './WorkerApi'
-import execute from './execute'
-import djot from './djot'
-
 import merge from 'lodash/fp/merge'
+import WorkerApi from './WorkerApi'
+import Execute from './execute'
+import Djot from './djot'
+
 import { babelConfig } from './settings'
+
 export default class JavascriptCompiler {
   options = {
     useWorker: true
   }
-  constructor (options = {}) {
+
+  constructor(options = {}) {
     this.options = options
 
-    this._worker =
-      new WorkerApi({
-        useWorker: this.options.useWorker
-      })
+    // eslint-disable-next-line no-underscore-dangle
+    this.worker = new WorkerApi({
+      useWorker: this.options.useWorker
+    })
   }
-  async compile (code, config = {}) {
+
+  async compile(code, config = {}) {
     const conf = merge({}, babelConfig, config)
-    const compiled = await this._worker.compile(code, conf)
+    const compiled = await this.worker.compile(code, conf)
     return compiled
   }
-  async djot (code, options) {
-    return djot(code, options)
+
+  // eslint-disable-next-line class-methods-use-this
+  async djot(code, options) {
+    return Djot(code, options)
   }
-  async execute (code, config) {
-    return execute(code, config)
+
+  async execute(code, config) {
+    return Execute(code, config)
   }
 }

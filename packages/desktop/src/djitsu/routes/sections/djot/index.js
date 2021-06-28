@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import SplitPane from 'react-split-pane'
-import styled from 'styled-components'
 import { ErrorBoundary } from 'react-error-boundary'
+import ReactJson from 'react-json-view'
+import * as ReactIs from 'react-is';
+import { useHistory } from 'react-router-dom'
 import { useDebounceFn, useThrottle } from 'ahooks'
 import { useMonaco } from '@monaco-editor/react'
 import { Alert, Button, Result } from 'antd'
 import { ReloadOutlined } from '@ant-design/icons'
+import SplitPane from 'react-split-pane'
+import styled from 'styled-components'
 
 import MonacoEditor from '../../../components/monaco-editor'
 import DjotPanes from '../../../components/djot-panes'
@@ -21,6 +24,7 @@ import { DjotStatus } from '../../../schema/djot'
 
 export const DjotSection = (props) => {
   const ipc = useIPCRenderer()
+  const history = useHistory()
 
   const [offset, setOffset] = useState({})
   const [compiled, setCompiled]= useState({})
@@ -31,7 +35,7 @@ export const DjotSection = (props) => {
   const [debugData, setDebugData] = useStates({})
 
   const file = useFileHandler({
-    filePath: props.match.params?.path
+    filePath: props.match.params?.path || 'untitiled'
   })
 
   useLayoutSettings({
@@ -116,46 +120,54 @@ export const DjotSection = (props) => {
 
   const showExtra = false
 
-  const saveToFile = useCallback(async (newData) => {
-    const result = await file.setFileContents(newData)
+  const saveToFile = useCallback(async (newData, setNewName) => {
+    if (setNewName || !file.filePath || file.filePath === 'untitiled') {
+      const newFilePath = await file.saveFileAs(newData)
+      if (newFilePath) history.push(`/djot/file/${newFilePath}`)
+    }
+    else
+      await file.setFileContents(newData)
   }, [file])
 
   const [reloading, setReloading] = useState(false)
   const reloadFile = useCallback(async () => {
-    console.log('🏄🎊', 'Reloading File!')
     setReloading(true)
     await file.reload()
     setReloading(false)
   }, [reloading])
 
+  const linePropsHandler = useCallback(([line], lineIndex) => {
+    return line.result ? ({
+      style: {
+        '--lines': line.lines || 0
+      }
+    }) : {}
+  }, [])
+
   return (
     <StyledContainer
     className={offset.scrollTop > 0 ? 'scrl-top' : ''}
     >
-      {/* {file.fileState.state === 'hasError' && (
-        console.log('')
-      )}
-      {file.fileState.state === 'hasError' && (
+      {file.error && (
         <Result
           status="error"
           title="File Error"
           subTitle={
-            <Alert message={<code>{file.fileState.contents.message}</code>} type="error" />}
+            <Alert message={<code>{file.error.message}</code>} type="error" />}
           style={{margin: 'auto 0'}}
           extra={[
-            <Button type="primary" key="home">
+            <Button type="primary" key="home" onClick={() => history.push('/')}>
               Back to Home
             </Button>,
             <Button key="again" onClick={reloadFile}>Try Again</Button>,
           ]}
         >
-          {file.fileState.contents.stack && (
-            <pre>{`${file.fileState.contents.stack}`}</pre>
+          {file.error.stack && (
+            <pre>{`${file.error.stack}`}</pre>
           )}
         </Result>
       )}
-    */}
-      {file.status === 'loading' && <LoadingScreen {...file.loading} />}
+      {!file.error && file.status === 'loading' && <LoadingScreen {...file.loading} />}
       {file.status === 'success' && panesReady && <DjotPanes
       onChange={onPanesChange}
       style={{ '--scroll-height': offset?.scrollHeight + 'px', '--scroll-top': (offset?.scrollTop * -1) + 'px' }}
@@ -173,13 +185,7 @@ export const DjotSection = (props) => {
           {JSON.stringify(debugData, 1, 1)}
         </pre>
       </>)}
-        linePropsHandler={([line], lineIndex) => {
-          return line.result ? ({
-            style: {
-              '--lines': line.lines || 0
-            }
-          }) : {}
-        }}
+        linePropsHandler={linePropsHandler}
         lineComponent={LineComponent}
         lines={compiled?.display?.output}
         // offset={offset}
@@ -191,6 +197,7 @@ export const DjotSection = (props) => {
               <MonacoEditor
                 code={file.data}
                 onSave={saveToFile}
+                onSaveAs={newData => saveToFile(newData, true)}
                 onMount={onEditorMount}
                 onScroll={onEditorScroll}
                 onChange={onEditorChange}
@@ -239,25 +246,38 @@ const StyledContainer = styled.div`
 const LineComponent = (props) => {
   const { data: [data], index } = props
   if (data.result) {
-    try {
-      const res = (
+    // console.log('line component renderering result:', data.result)
+    if (typeof data.result === 'string' || typeof data.result === 'number')
+      try {
+        const res = (
+          <ErrorBoundary FallbackComponent={() => <>Error :(</>}>
+            {/* Show Result */}
+            {data.result}
+          </ErrorBoundary>
+        )
+
+        return res
+      } catch (error) {
+        console.error('unable to res', error)
+        return <>errored</>
+      }
+    else if ([ReactIs.Element, ReactIs.ForwardRef].indexOf(ReactIs.typeOf(data.result)) >= 0)
+      return (
         <ErrorBoundary FallbackComponent={() => <>Error :(</>}>
-          {/* Show Result */}
           {data.result}
         </ErrorBoundary>
       )
-
-      return res
-    } catch (error) {
-      console.error('unable to res', error)
-      return <>errored</>
-    }
+    else
+      return (
+        <ErrorBoundary FallbackComponent={() => <>Error :(</>}>
+          {/* {console.log('Typeof:', ReactIs.typeOf(data.result))} */}
+          <ReactJson src={data.result} />
+        </ErrorBoundary>
+      )
   }
   return <>
     &nbsp;
   </>
 }
-
-
 
 export default DjotSection
