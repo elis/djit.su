@@ -32,6 +32,11 @@ const addVar = (varName, jsonPath) => {
 
 // addVar('primary-color', ['colors', 'terminal.ansiBrightGreen'])
 addVar('component-background', ['colors', 'editorGroup.background'])
-addVar('body-background', ['colors', 'editorGroup.background'])
+addVar('body-background', ['colors', 'editor.background'])
+addVar('layout-header-background', ['colors', 'editorGroup.background'])
+addVar('layout-sider-background', ['colors', 'sideBar.background'])
+addVar('normal-text', ['colors', 'editor.forground'])
+addVar('layout-header-color', ['colors', 'editorGroup.forground'])
+addVar('layout-sider-color', ['colors', 'sideBar.forground'])
 // console.log('vars:', vars)
 process.stdout.write(Object.entries(vars).map(([n, v]) => `--modify-var="${n}=${v}"`).join(' '))
