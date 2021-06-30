@@ -1,0 +1,71 @@
+@vars: {
+  primary-color: primary-color;
+  info-color: info-color;
+  success-color: success-color;
+
+  processing-color: processing-color;
+  error-color: error-color;
+  highlight-color: highlight-color;
+  warning-color: warning-color;
+  normal-color: normal-color;
+
+  menu-bg: menu-bg;
+
+  // Values are actually ignored - only keys are used
+
+  // Color used by default to control hover and active backgrounds and for
+  // alert info backgrounds.
+  primary-1: primary-1; // replace tint(primary-color, 90%)
+  primary-2: primary-2; // replace tint(primary-color, 80%)
+  primary-3: primary-3; // unused
+  primary-4: primary-4; // unused
+  primary-5: primary-5; // color used to control the text color in many active and hover states, replace tint(primary-color, 20%)
+  primary-7: primary-7; // replace shade(primary-color, 5%)
+  primary-8: primary-8; // unused
+  primary-9: primary-9; // unused
+  primary-10: primary-10; // unused
+
+  // Base Scaffolding Variables
+  // ---
+
+  // Background color for <body>
+  body-background: body-background;
+  // Base background color for most components
+  component-background: component-background;
+  // Popover background color
+  popover-background: popover-background;
+  popover-customize-border-color: popover-customize-border-color;
+  font-family: font-family;
+  code-family: code-family;
+  text-color: text-color;
+  text-color-secondary: text-color-secondary;
+  text-color-inverse: text-color-inverse;
+  icon-color: icon-color;
+  icon-color-hover: icon-color-hover;
+  heading-color: heading-color;
+  text-color-dark: text-color-dark;
+  text-color-secondary-dark: text-color-secondary-dark;
+  text-selection-bg: text-selection-bg;
+  font-variant-base: font-variant-base;
+  font-feature-settings-base: font-feature-settings-base;
+  font-size-base: font-size-base;
+  font-size-lg: font-size-lg;
+  font-size-sm: font-size-sm;
+  heading-1-size: heading-1-size;
+  heading-2-size: heading-2-size;
+  heading-3-size: heading-3-size;
+  heading-4-size: heading-4-size;
+  heading-5-size: heading-5-size;
+  // https://github.com/ant-design/ant-design/issues/20210
+  line-height-base: line-height-base;
+  border-radius-base: border-radius-base;
+  border-radius-sm: border-radius-sm;
+
+}
+
+
+:root {
+  each(@vars, {
+    --@{key}: @@key;
+  })
+}

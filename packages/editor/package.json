@@ -62,11 +62,11 @@
     "dist"
   ],
   "dependencies": {
-    "@editorjs/editorjs": "^2.19.1",
+    "@editorjs/editorjs": "2.22.1",
     "@editorjs/embed": "^2.4.0",
     "@editorjs/header": "^2.6.1",
     "@editorjs/paragraph": "^2.8.0",
     "@editorjs/simple-image": "^1.4.0",
-    "react-editor-js": "^1.7.0"
+    "react-editor-js": "1.9.0"
   }
 }

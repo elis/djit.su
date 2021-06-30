@@ -1,8 +1,12 @@
-import React from 'react';
-import { render } from 'react-dom';
-import App from './App';
-// import './App.global.css';
+import React from 'react'
+import { render } from 'react-dom'
+import DjitsuApp from './djitsu'
+import renderer from './egraze/renderer.process'
 
-// import './theme/index.less';
-
-render(<App />, document.getElementById('root'));
+const launch = async () => {
+  const egraze = await renderer({})
+  const { onReady } = egraze
+  const App = await onReady(DjitsuApp)
+  render(<App />, document.getElementById('root'))
+}
+launch()

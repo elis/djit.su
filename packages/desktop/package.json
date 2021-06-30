@@ -2,9 +2,10 @@
   "name": "@djitsu/desktop",
   "version": "1.3.0",
   "productName": "Djitsu",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Fast Refresh for rapid application development",
+  "description": "Advanced Code Editor",
   "scripts": {
-    "build": "yarn build:themes && concurrently \"yarn build:main\" \"yarn build:renderer\"",
+    "build": "yarn build:themes && yarn build:app",
+    "build:app": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
     "build:main": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.main.prod.babel.js",
     "build:renderer": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.renderer.prod.babel.js",
     "build:themes": "./scripts/compile-themes.sh",
@@ -12,11 +13,12 @@
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.tsx",
     "package": "yarn build && electron-builder build --publish never",
     "postinstall": "node -r @babel/register .erb/scripts/CheckNativeDep.js && electron-builder install-app-deps && yarn cross-env NODE_ENV=development webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.babel.js && opencollective-postinstall && yarn-deduplicate yarn.lock",
-    "start": "yarn build:themes && concurrently \"yarn start:dev\" \"yarn start:themes\"",
+    "start": "yarn build && concurrently \"yarn start:dev\" \"yarn start:themes\"",
     "start:dev": "node -r @babel/register ./.erb/scripts/CheckPortInUse.js && cross-env yarn start:renderer",
     "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/BabelRegister ./src/main.dev.ts",
+    "start:dev:main": "onchange -i -k 'src/**/*.*' -- yarn start:dev",
     "start:renderer": "cross-env NODE_ENV=development webpack serve --config ./.erb/configs/webpack.config.renderer.dev.babel.js",
-    "start:themes": "nodemon -e less -w ./src/theme/ --exec \"yarn build:themes\"",
+    "start:themes": "nodemon -e less -w ./src/djitsu/theme/ --exec \"yarn build:themes\"",
     "test": "jest"
   },
   "lint-staged": {
@@ -34,7 +36,7 @@
     ]
   },
   "build": {
-    "productName": "Djitsu",
+    "productName": "djitsu",
     "appId": "org.djitsu.Djitsu",
     "files": [
       "dist/",
@@ -49,14 +51,31 @@
       "fileAssociations": [
         {
           "ext": [
-            "jpg",
-            "jpeg",
-            "png",
-            "PNG",
-            "tiff"
+            "djit",
+            "djitsu",
+            "dsu"
           ],
-          "description": "Image files",
+          "description": "Djitsu File",
           "role": "Viewer"
+        },
+        {
+          "ext": [
+            "djit",
+            "djitsu",
+            "dsu"
+          ],
+          "description": "Djitsu File",
+          "role": "Editor"
+        },
+        {
+          "ext": "djot",
+          "description": "Djot File",
+          "role": "Viewer"
+        },
+        {
+          "ext": "djot",
+          "description": "Djot File",
+          "role": "Editor"
         }
       ],
       "target": [
@@ -103,31 +122,27 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
-    }
+      "owner": "elis",
+      "repo": "djit.su"
+    },
+    "protocols": [
+      {
+        "name": "djitsu",
+        "schemes": [
+          "djitsu"
+        ]
+      }
+    ]
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
   },
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "Eli Sklar",
+    "email": "eli.sklar@gmail.com",
+    "url": "https://github.com/elis"
   },
-  "contributors": [
-    {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
-    },
-    {
-      "name": "John Tran",
-      "email": "jptran318@gmail.com",
-      "url": "https://github.com/jooohhn"
-    }
-  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues"
@@ -166,8 +181,7 @@
     ]
   },
   "devDependencies": {
-    "@djitsu/editor": "*",
-    "@ant-design/icons": "^4.4.0",
+    "@ant-design/icons": "4.6.2",
     "@babel/core": "^7.12.9",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-decorators": "^7.12.1",
@@ -192,6 +206,7 @@
     "@babel/preset-react": "^7.12.7",
     "@babel/preset-typescript": "^7.12.7",
     "@babel/register": "^7.12.1",
+    "@djitsu/editor": "*",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "@teamsupercell/typings-for-css-modules-loader": "^2.4.0",
     "@testing-library/jest-dom": "^5.11.6",
@@ -211,6 +226,9 @@
     "@types/webpack-env": "^1.15.2",
     "@typescript-eslint/eslint-plugin": "^4.8.1",
     "@typescript-eslint/parser": "^4.8.1",
+    "acorn": "^8.0.5",
+    "acorn-jsx": "^5.3.1",
+    "ahooks": "^2.9.6",
     "autoprefixer": "^10.2.3",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.1.0",
@@ -230,6 +248,7 @@
     "electron-devtools-installer": "^3.1.1",
     "electron-notarize": "^1.0.0",
     "electron-rebuild": "^2.3.2",
+    "electron-regedit": "^2.0.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.3",
     "enzyme-to-json": "^3.5.0",
@@ -247,6 +266,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.20.6",
     "eslint-plugin-react-hooks": "^4.0.8",
+    "estree-walker": "^3.0.0",
     "file-loader": "^6.0.0",
     "husky": "^4.2.5",
     "identity-obj-proxy": "^3.0.0",
@@ -256,9 +276,11 @@
     "monaco-vscode-textmate-theme-converter": "^0.1.1",
     "node-sass": "^5.0.0",
     "nodemon": "^2.0.7",
+    "object-hash": "^2.1.1",
     "object-path": "^0.11.5",
     "opencollective-postinstall": "^2.0.3",
     "prettier": "^2.0.5",
+    "react-error-boundary": "^3.1.1",
     "react-refresh": "^0.9.0",
     "react-remixicon": "^1.0.3",
     "react-test-renderer": "^17.0.1",
@@ -275,33 +297,43 @@
     "webpack-cli": "^4.2.0",
     "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^5.4.0",
-    "yarn-deduplicate": "^3.1.0",
-    "worker-loader": "^3.0.7"
+    "worker-loader": "^3.0.7",
+    "yaml": "^2.0.0-3",
+    "yarn-deduplicate": "^3.1.0"
   },
   "dependencies": {
+    "@babel/standalone": "^7.12.15",
+    "@isomorphic-git/lightning-fs": "^4.4.1",
     "@monaco-editor/react": "^4.0.9",
-    "antd": "^4.10.3",
+    "antd": "4.16.5",
+    "buffer": "^6.0.3",
     "commander": "^7.0.0",
     "copy-webpack-plugin": "^7.0.0",
     "electron-debug": "^3.1.0",
     "electron-log": "^4.2.4",
     "electron-updater": "^4.3.4",
+    "fix-path": "^3.0.0",
     "history": "^5.0.0",
+    "isomorphic-git": "^1.0.0-beta.36",
     "less": "^4.1.0",
     "less-loader": "^7.2.1",
     "lodash": "^4.17.20",
     "monaco-editor": "^0.22.1",
+    "node-localstorage": "^2.2.1",
     "react": "^17.0.1",
     "react-css-theme-switcher": "^0.2.2",
     "react-dom": "^17.0.1",
     "react-helmet": "^6.1.0",
+    "react-is": "^17.0.2",
+    "react-json-view": "^1.21.3",
+    "react-query": "^3.17.3",
     "react-router-dom": "^5.2.0",
+    "react-spinners-kit": "^1.9.1",
     "react-split-pane": "^0.1.92",
     "recoil": "^0.1.2",
     "regenerator-runtime": "^0.13.5",
     "source-map-support": "^0.5.19",
-    "styled-components": "^5.2.1",
-    "@babel/standalone": "^7.12.15"
+    "styled-components": "^5.2.1"
   },
   "devEngines": {
     "node": ">=10.x",

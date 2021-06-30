@@ -307,7 +307,6 @@ export default merge(baseConfig, {
      */
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
-      SKLAR: 'ELI'
     }),
 
     new webpack.LoaderOptionsPlugin({
