@@ -1,8 +1,8 @@
 {
   "name": "@djitsu/desktop",
   "productName": "Djitsu",
-  "version": "1.3.0",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "version": "1.4.0",
+  "description": "Djitsu Desktop Client",
   "main": "./main.prod.js",
   "author": {
     "name": "Eli Sklar",
