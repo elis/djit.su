@@ -7,8 +7,10 @@ import DjitsuSymbol from '../components/djitsu-symbol'
 import { useTheme } from '../theme'
 
 export const Header = () => {
+  const [theme] = useTheme()
+
   return (
-    <StyledHeader theme="light">
+    <StyledHeader theme={theme.isDark ? 'dark' : 'light'}>
       <div className="logo">
         <Link to="/">
           <DjitsuSymbol size={16} />
@@ -16,7 +18,7 @@ export const Header = () => {
       </div>
       <Menu
         className="main-menu"
-        theme="dark"
+        theme={theme.isDark ? 'dark' : 'light'}
         mode="horizontal"
         defaultSelectedKeys={['2']}
       />
@@ -30,8 +32,10 @@ const StyledHeader = styled(Layout.Header)`
     padding-left: 0;
     height: 48px;
     line-height: 48px;
-    position: relative;
     z-index: 50;
+    position: sticky;
+    top: var(--titlebar-height);
+    -webkit-app-region: drag;
     span:empty {
       flex: 1 1 auto;
     }

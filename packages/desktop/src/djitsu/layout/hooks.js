@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useLayoutState } from '.'
 
 export const useLayoutSettings = settings => {
@@ -9,11 +9,22 @@ export const useLayoutSettings = settings => {
       .filter(([name, value]) => value !== layout[name])
       .reduce((acc, [name]) => ({ ...acc, [name]: layout[name] }), {})
 
-    setLayout(settings)
-
     return () => {
       setLayout(preSettings)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    const newSettings = Object.entries(settings)
+      .filter(([name, value]) => value !== layout[name])
+      .reduce((acc, [name]) => ({ ...acc, [name]: layout[name] }), {})
+
+    if (Object.keys(newSettings).length) {
+      setLayout(settings)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings, layout])
+
+  return 'Come on!'
 }

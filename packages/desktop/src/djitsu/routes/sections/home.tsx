@@ -14,6 +14,7 @@ export const DjitsuHome: React.FC = props => {
     breadcrumbs: true,
     noPadding: false
   })
+
   const history = useHistory()
   return (
     <StyleLauncher>

@@ -59,7 +59,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({ children }) => {
 const StyledTitleBar = styled(Layout.Header)`
   &.ant-layout-header {
     top: 0;
-    --height: 28px;
+    --height: var(--titlebar-height);
     -webkit-app-region: drag;
     display: grid;
     grid-template-columns: repeat(3, 1fr);

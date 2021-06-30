@@ -103,6 +103,7 @@ export const useLayoutState = () => {
 
 const StyledLayout = styled(Layout)`
   &.ant-layout {
+    --titlebar-height: 28px;
     min-height: calc(100vh - 1px);
     > .ant-layout > .ant-layout > .ant-layout-content {
       display: flex;
