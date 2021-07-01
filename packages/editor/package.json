@@ -7,15 +7,15 @@
  "license": "MIT",
  "repository": "elis/@djitsu/editor",
  "main": "dist/index.js",
- "module": "dist/index.modern.js",
+ "module": "dist/index.m.js",
  "source": "src/index.js",
  "engines": {
   "node": ">=10"
  },
  "scripts": {
-  "build": "microbundle-crl --no-compress --format modern,cjs",
-  "start": "microbundle-crl watch --no-compress --format modern,cjs",
-  "prepare": "install-peers",
+  "build": "microbundle-crl --no-compress",
+  "start": "microbundle-crl watch --no-compress",
+  "prepare": "",
   "test": "run-s test:unit test:lint test:build",
   "test:build": "run-s build",
   "test:lint": "eslint .",
@@ -26,7 +26,8 @@
  },
  "peerDependencies": {
   "antd": "^4.0.0",
-  "react": "^16.0.0",
+  "react": "^17.0.0",
+  "react-dom": "^17.0.0",
   "styled-components": "^5.0.0"
  },
  "devDependencies": {
