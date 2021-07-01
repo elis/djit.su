@@ -1,7 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
-import { MyEditor } from '@djitsu/editor'
+// import { Editor, DefaultDocument } from '@djitsu/editor'
 import { useLayoutSettings } from '../../layout/hooks'
+
+const DefaultDocument = {}
+const Editor = ({ data }: { data: unknown }) => (
+  <>Mock Editor {data ? 'Data!' : 'No data.'}</>
+)
 
 export const DjitsuEditor: React.FC = () => {
   useLayoutSettings({
@@ -12,7 +17,7 @@ export const DjitsuEditor: React.FC = () => {
 
   return (
     <Container>
-      <MyEditor />
+      <Editor data={DefaultDocument} />
     </Container>
   )
 }
