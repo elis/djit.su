@@ -8,12 +8,13 @@
     "package:add": "node ./scripts/package-add"
   },
   "devDependencies": {
-    "chalk": "^4.1.0",
+    "chalk": "^4.1.1",
     "listr": "^0.14.3",
     "lodash": "^4.17.21"
   },
   "engines": {
     "node": ">=14"
   },
-  "version": "1.4.0"
+  "version": "1.4.0",
+  "dependencies": {}
 }
