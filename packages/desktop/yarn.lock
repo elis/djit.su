@@ -1199,47 +1199,6 @@
     ajv "^6.12.0"
     ajv-keywords "^3.4.1"
 
-"@djitsu/editor@*":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@djitsu/editor/-/editor-0.0.1.tgz#ca1f194bfc1e128f4dced883b9fe77f0a98d4109"
-  integrity sha512-WHNZ8Nm78KBB++gJAVuwa00CMowPrpTGuCye/eR48Zi8NiiKOK+DdgJm4AIOStk1lxeZ+RfzcgpRKYgeB//PQg==
-  dependencies:
-    "@editorjs/editorjs" "^2.19.1"
-    "@editorjs/embed" "^2.4.0"
-    "@editorjs/header" "^2.6.1"
-    "@editorjs/paragraph" "^2.8.0"
-    "@editorjs/simple-image" "^1.4.0"
-    react-editor-js "^1.7.0"
-
-"@editorjs/editorjs@^2.19.1":
-  version "2.22.0"
-  resolved "https://registry.yarnpkg.com/@editorjs/editorjs/-/editorjs-2.22.0.tgz#440ba336e0a20898b365a316adb78debe0e92c42"
-  integrity sha512-BwHuY8hUcN3A67AykWd8uRwUWMoQQKSjfnlFD0r6W5cD/niLznxFC5iF/uA8QEVHMvU0Rl9UluHdzpZZbAB2bQ==
-  dependencies:
-    codex-notifier "^1.1.2"
-    codex-tooltip "^1.0.2"
-    nanoid "^3.1.22"
-
-"@editorjs/embed@^2.4.0":
-  version "2.4.6"
-  resolved "https://registry.yarnpkg.com/@editorjs/embed/-/embed-2.4.6.tgz#7db8bc84d90c947d1fff037c96973d587168692e"
-  integrity sha512-c/1TzBBMrU1hpPHRWXlVanBhgyoPZvE2A3qHt23rMVxJVvzu13Zozj0ZOO8pL1XGcubf+Yvalxu7AURn7X3jPw==
-
-"@editorjs/header@^2.6.1":
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/@editorjs/header/-/header-2.6.1.tgz#454a46e4dbb32ae3aa1db4d22b0ddf2cc36c3134"
-  integrity sha512-EsnyVFv5uThpU9tbQ/dUPFCQoa/sBFy2n+9tN3wOXJGx7sjea4fdcacJ2UYhO+7pCgZ+aSgmMOyGLYHUFbchvA==
-
-"@editorjs/paragraph@^2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@editorjs/paragraph/-/paragraph-2.8.0.tgz#11cc381fcafaf8b9160517ce65d59eee93fc4af9"
-  integrity sha512-z6w5ZR0ru3p/IjxJW/tb7OcSnVttkZukQMIsnBMX1FIKc1BNdr7NwM1YoCyTl4OnC90YfL0xgES6/20/W267pw==
-
-"@editorjs/simple-image@^1.4.0":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@editorjs/simple-image/-/simple-image-1.4.1.tgz#16a847e0f21041dfac0af8235d19b8a8a756c493"
-  integrity sha512-8lqcMYKrxhnDNasqq4Id9/SwXymSofVb4SJBC7gQoJmNG9bfRgVEXLsEUnuLzn8ixkAYlK2oNTc7ioZdD8bEOw==
-
 "@electron/get@^1.0.1":
   version "1.12.2"
   resolved "https://registry.yarnpkg.com/@electron/get/-/get-1.12.2.tgz#6442066afb99be08cefb9a281e4b4692b33764f3"
@@ -3729,16 +3688,6 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
-
-codex-notifier@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/codex-notifier/-/codex-notifier-1.1.2.tgz#a733079185f4c927fa296f1d71eb8753fe080895"
-  integrity sha512-DCp6xe/LGueJ1N5sXEwcBc3r3PyVkEEDNWCVigfvywAkeXcZMk9K41a31tkEFBW0Ptlwji6/JlAb49E3Yrxbtg==
-
-codex-tooltip@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/codex-tooltip/-/codex-tooltip-1.0.2.tgz#81a9d3e2937658c6e5312106b47b9f094ff7be63"
-  integrity sha512-oC+Bu5X/zyhbPydgMSLWKoM/+vkJMqaLWu3Dt/jZgXS3MWK23INwC5DMBrVXZSufAFk0i0SUni38k9rLMyZn/w==
 
 collect-v8-coverage@^1.0.0:
   version "1.0.1"
@@ -8838,7 +8787,7 @@ nano-time@1.0.0:
   dependencies:
     big-integer "^1.6.16"
 
-nanoid@^3.1.16, nanoid@^3.1.22:
+nanoid@^3.1.16:
   version "3.1.23"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.23.tgz#f744086ce7c2bc47ee0a8472574d5c78e4183a81"
   integrity sha512-FiB0kzdP0FFVGDKlRLEQ1BgDzU87dy5NnzjeW9YZNt+/c3+q82EQDUwniSAUxp/F0gFNI1ZhKU1FqYsMuqZVnw==
@@ -10756,11 +10705,6 @@ react-dom@^17.0.1:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     scheduler "^0.20.1"
-
-react-editor-js@^1.7.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/react-editor-js/-/react-editor-js-1.9.0.tgz#cfe80e3bf01fe0b0f06939826c7778c2ae3b96f3"
-  integrity sha512-Frg7cTO5cM6oFJF+cb3y/qhMc6e6ipEJi+EkiER2ajn19CmYxg+c+vttuGJIxXc5TE/ZzTTuTM5PqP1MjmCR3A==
 
 react-error-boundary@^3.1.1:
   version "3.1.1"
