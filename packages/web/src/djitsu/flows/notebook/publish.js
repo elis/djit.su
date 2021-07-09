@@ -251,7 +251,7 @@ export const usePublishFlow = () => {
           disabled: !allowProceed
         }}
       >
-        <>
+        <div style={!isPublished ? { height: '320px' } : { height: '190px' }}>
           <Row gutter={majorGutter}>
             <Col flex='auto'>
               <PublishSteps steps={steps} />
@@ -666,7 +666,7 @@ export const usePublishFlow = () => {
             </Col>
           </Row>
           <div style={{ clear: 'both' }} />
-        </>
+        </div>
       </Modal>
     </>
   )

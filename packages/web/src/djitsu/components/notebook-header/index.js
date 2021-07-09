@@ -450,6 +450,12 @@ export const NotebookHeader = (props) => {
 const VersionStatus = ({ notebook = {} }) => {
   const { isPublic, isPublished, isShared } = notebook?.meta || {}
 
+  const [state] = useNotebook()
+
+  const { isDeployed = 'unknown' } = state.currentNotebook.notebook?.meta || {}
+
+  console.log({ state, isDeployed })
+
   return (
     <Space className='published'>
       {isPublished ? (

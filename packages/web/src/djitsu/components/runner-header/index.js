@@ -34,6 +34,8 @@ import { Link } from 'react-router-dom'
 import moment from 'moment'
 import { useHistory } from 'djitsu/adapters/routes'
 
+import { useNotebook } from 'djitsu/providers/notebook'
+
 export const RunnerHeader = (props) => {
   const history = useHistory()
   const {
