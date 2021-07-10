@@ -1,19 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
-import * as editor from '@djitsu/editor'
+import { Editor, DefaultDocument } from '../../../modules/adapters/editorjs'
 import { useLayoutSettings } from '../../layout/hooks'
-
-// console.log('WHAT IS EDITOR?', { Editor, DefaultDocument })
-console.log('WHAT IS EDITOR?', editor)
-
-const { Editor, DefaultDocument } = editor
 
 // const DefaultDocument = {}
 // const Editor = ({ data }: { data: unknown }) => (
 //   <>Mock Editor {data ? 'Data!' : 'No data.'}</>
 // )
 
-export const DjitsuEditor: React.FC = () => {
+export const DjitsuEditorOld: React.FC = () => {
   useLayoutSettings({
     sidebar: false,
     breadcrumbs: false,
@@ -30,4 +25,4 @@ export const DjitsuEditor: React.FC = () => {
 
 const Container = styled.div``
 
-export default DjitsuEditor
+export default DjitsuEditorOld

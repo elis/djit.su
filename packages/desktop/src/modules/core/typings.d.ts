@@ -1,0 +1,5 @@
+import './schema/djot'
+import './schema/egraze'
+import './schema/files'
+import './schema/system'
+import './schema/theme'

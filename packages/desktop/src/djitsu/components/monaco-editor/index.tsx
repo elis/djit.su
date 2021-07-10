@@ -35,6 +35,11 @@ export const Main = (props) => {
 `
 
 export const MonacoEditor: React.FC<MonacoEditorProps> = props => {
+  // const tt = useTheme()
+  // console.log('🕋', 'My Props:', props)
+  // console.log('🕋', 'useTheme:', tt)
+  // return (<>😒</>)
+
   const [themeState] = useTheme()
   const [loaded, setLoaded] = useState(false)
   const defaultProps = {

@@ -12,7 +12,7 @@ import themesConfig from '../../dist/themes/themes.json'
 import { useThemeService } from '../services/theme'
 import { plugin } from '../../egraze'
 
-const ThemeContext = createContext()
+export const ThemeContext = createContext()
 
 export const useTheme = () => useContext(ThemeContext)
 
