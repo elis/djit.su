@@ -28,7 +28,7 @@ export const BrandButton = (props) => {
         >
           <AntIcon component={() => '⟑'} />
         </Badge>
-        {screens.sm && <em>djit.su</em>}
+        {screens.sm && <em>djit.su - Modded by Rick</em>}
       </Link>
     </StyledButton>
   )
