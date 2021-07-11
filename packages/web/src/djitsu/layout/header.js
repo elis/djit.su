@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Divider, Layout } from 'antd'
+import { Button, Divider, Layout, notification } from 'antd'
 import { useTheme } from 'djitsu/theme'
 import styled from 'styled-components'
 import BrandButton from './components/brand-button'
@@ -13,6 +13,12 @@ const { Header: AntHeader } = Layout
 export const Header = () => {
   const [theme] = useTheme()
   const displayItems = <></>
+
+  // set global notification settings
+  notification.config({
+    duration: 1.8,
+    top: '0px'
+  })
 
   return (
     <StyledHeader
