@@ -37,6 +37,8 @@ export const useDeployFlow = () => {
 
   const { isDeployed, isPublished } = state.currentNotebook.notebook?.meta || {}
 
+  console.log({ isDeployed })
+
   const deploy = () => {
     const state = getFreshState()
     if (state.currentNotebook.unsavedNotebook) {
@@ -181,7 +183,7 @@ export const useDeployFlow = () => {
           disabled: !allowProceed
         }}
       >
-        <>
+        <div style={{ height: '200px' }}>
           <Row gutter={majorGutter}>
             <Col flex='auto'>
               <DeploySteps steps={steps} />
@@ -592,7 +594,7 @@ export const useDeployFlow = () => {
             </Col>
           </Row>
           <div style={{ clear: 'both' }} />
-        </>
+        </div>
       </Modal>
     </>
   )
