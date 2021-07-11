@@ -14,6 +14,11 @@ export const Application = ({ appName = 'djitsu', children }) => {
 
   const [currentTheme, setCurrentTheme] = useState(themed || 'light')
 
+  // this is a test
+  // this should be the only change on `next`
+  // even though this branch is based on the ricks mod
+  // branch ....
+
   const themeSwitched = (theme = 'light') => {
     setCurrentTheme(theme)
     const expires = new Date()
