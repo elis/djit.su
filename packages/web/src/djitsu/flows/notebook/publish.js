@@ -58,7 +58,7 @@ export const usePublishFlow = () => {
   const publish = () => {
     const state = getFreshState()
     if (state.currentNotebook.unsavedNotebook) {
-      notifications.error({ message: 'Save before publish' })
+      notifications.error({ message: 'Save before publishing' })
     } else if (
       isPublished &&
       state.currentNotebook.notebook.meta.published ===
@@ -100,7 +100,7 @@ export const usePublishFlow = () => {
   }
 
   const beginPublish = async () => {
-    notifications.info({ message: 'publish start...' })
+    notifications.info({ message: 'Publishing started' })
     setPublishing(true)
 
     const notebookId = state.currentNotebook.notebookId
@@ -225,7 +225,13 @@ export const usePublishFlow = () => {
         visible={showPublish}
         okText={publishing ? <>Publishing...</> : <>Continue</>}
         cancelText={
-          steps.step === 1 ? <>Cancel</> : steps.step > 1 ? <>Back</> : <>:D</>
+          steps.step === 1 ? (
+            <>Cancel</>
+          ) : steps.step > 1 ? (
+            <>Back</>
+          ) : (
+            <>Cancel</>
+          )
         }
         title={
           <>
@@ -243,7 +249,7 @@ export const usePublishFlow = () => {
           if (steps.step > 1) {
             setStep('step', steps.step - 1)
           } else {
-            notifications.warning({ message: 'publish cancel...' })
+            notifications.warning({ message: 'Publishing cancelled' })
             setShowPublish(false)
           }
         }}
