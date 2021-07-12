@@ -73,7 +73,7 @@ export const useDeployFlow = () => {
   }
 
   const beginDeploy = async () => {
-    notifications.info({ message: 'deploy start...' })
+    notifications.info({ message: 'Deployment started' })
     setDeploying(true)
 
     const notebookId = state.currentNotebook.notebookId
@@ -173,7 +173,7 @@ export const useDeployFlow = () => {
           if (steps.step > 1) {
             setStep('step', steps.step - 1)
           } else {
-            notifications.warning({ message: 'deploy cancel...' })
+            notifications.warning({ message: 'Deployment cancelled' })
             setShowDeploy(false)
           }
         }}
