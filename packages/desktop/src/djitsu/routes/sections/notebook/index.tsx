@@ -23,7 +23,7 @@ export const DjitsuEditor: React.FC = () => {
       <Editor
         data={DefaultDocument}
         toolProps={{
-          getTheme: () => { return themeState.theme },
+          getTheme: () => themeState.theme,
           addErrorListener: () => () => {},
           addCompiledListener: () => {}
         }}
