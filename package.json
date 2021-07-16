@@ -8,7 +8,7 @@
     "package:add": "node ./scripts/package-add"
   },
   "devDependencies": {
-    "chalk": "^4.1.1",
+    "chalk": "^4.1.0",
     "listr": "^0.14.3",
     "lodash": "^4.17.21"
   },
