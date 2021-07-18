@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import AceEditor from 'react-ace'
+
+import { useMonaco } from '@monaco-editor/react'
 
 import { Select, Tooltip } from 'antd'
 import {
@@ -20,12 +21,50 @@ import compare from 'react-fast-compare'
 
 export const ViewCode = (props) => {
   const { baseEditorProps = {}, input, onChange } = props
+  const theme = baseEditorProps.theme
   const [codeInput, setCodeInput] = useState(input?.code)
   const [options, setOption] = useStates({
     language: 'js',
     ...(input.options || {})
   })
   const [annotations, setAnnotations] = useState()
+
+  const monaco = useMonaco()
+
+  useEffect(() => {
+    if (monaco) {
+      const editor = monaco.editor.create(
+        document.getElementById('Monaco-Container'),
+        {
+          value: codeInput,
+          language: 'javascript',
+          theme: theme === 'monokai' ? 'vs-dark' : 'vs-light',
+          fontSize: 10,
+          glyphMargin: true,
+          wordWrap: 'wordWrapColumn',
+          wordWrapColumn: 80,
+          wordWrapMinified: true,
+          wrappingIndent: 'indent'
+        }
+      )
+      editor.addAction({
+        id: 'beautify',
+        label: 'Beautify The Code',
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.F10],
+        precondition: null,
+        keybindingContext: null,
+        contextMenuGroupId: 'navigation',
+        contextMenuOrder: 1.5,
+        run: function (ed) {
+          alert("i'm running => " + ed.getPosition())
+          return null
+        }
+      })
+      editor.onDidChangeModelContent(function () {
+        onChangeInput(editor.getValue())
+      })
+    }
+  }, [monaco])
 
   const onChangeInput = useCallback((value) => {
     setCodeInput(value)
@@ -59,6 +98,7 @@ export const ViewCode = (props) => {
   }, [input?.options])
 
   useEffect(() => {
+    console.log(input)
     // console.log('∂∂∂∂∂ CHANGED INPUT ERROR: ', input.error)
     if (input.error) {
       const annot = [
@@ -70,6 +110,8 @@ export const ViewCode = (props) => {
         }
       ]
       // console.log('∂∂∂∂∂ SETTING ANNOTATIONS: ', annot)
+
+      console.log(annot)
       setAnnotations(annot)
     } else setAnnotations()
   }, [input.error])
@@ -127,17 +169,7 @@ export const ViewCode = (props) => {
         </>
       }
     >
-      <AceEditor
-        value={codeInput}
-        mode='jsx'
-        className='code-editor'
-        {...baseEditorProps}
-        onChange={onChangeInput}
-        // onInput={onChange}
-        // onLoad={onEditorLoad('input')}
-        annotations={annotations}
-        // markers={markers}
-      />
+      <div id='Monaco-Container' />
     </Tool.View>
   )
 }

@@ -15,5 +15,8 @@
   "engines": {
     "node": ">=14"
   },
-  "version": "1.4.0"
+  "version": "1.4.0",
+  "dependencies": {
+    "@monaco-editor/react": "^4.2.1"
+  }
 }
