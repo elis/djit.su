@@ -20,14 +20,31 @@ const newDocumentBlocks = [
   {
     type: 'header',
     data: {
-      text: 'Unnamed Notebook',
+      text: 'unnamed-notebook (kebab-case name for import/export)',
       level: 1
     }
   },
   {
     type: 'paragraph',
     data: {
-      text: 'Type here...'
+      text:
+        'Write about your notebook here. You can also add headings and text by clicking the + icon. Make your notebook look great!'
+    }
+  },
+  {
+    type: 'dcode',
+    data: {
+      data: {
+        code: {
+          options: { language: 'js' },
+          code:
+            "//////////////////////////\n//\n// Write your code here!!\n//\n// \n\nimport React from 'react'\n\nexport const Main = () => {\n  return (\n    <>\n      <h1>Welcome To Djitsu!</h1>\n      <p>It's in the code!</p>\n    </>\n  )\n}\n\n"
+        },
+        demo: '<Main />',
+        preview: ''
+      },
+      tool: { options: {}, viewOptions: {} },
+      tune: {}
     }
   }
 ]
