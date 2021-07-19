@@ -1,6 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useRef } from 'react'
 
 import { useMonaco } from '@monaco-editor/react'
+
+import prettier from 'prettier/standalone'
+import babylon from 'prettier/parser-babel'
+
+import styled from 'styled-components'
 
 import { Select, Tooltip } from 'antd'
 import {
@@ -27,13 +32,16 @@ export const ViewCode = (props) => {
     language: 'js',
     ...(input.options || {})
   })
-  const [, setWarnings] = useState()
+  const [annotations, setAnnotations] = useState()
 
   const monaco = useMonaco()
 
+  const editor = useRef()
+  const glyphs = useRef()
+
   useEffect(() => {
     if (monaco) {
-      const editor = monaco.editor.create(
+      editor.current = monaco.editor.create(
         document.getElementById('Monaco-Container'),
         {
           value: codeInput,
@@ -47,24 +55,100 @@ export const ViewCode = (props) => {
           wrappingIndent: 'indent'
         }
       )
-      editor.addAction({
+
+      editor.current.addAction({
         id: 'beautify',
         label: 'Beautify The Code',
-        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.F10],
+        keybindings: [
+          monaco.KeyMod.chord(
+            monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K,
+            monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M
+          )
+        ],
         precondition: null,
         keybindingContext: null,
         contextMenuGroupId: 'navigation',
         contextMenuOrder: 1.5,
         run: function (ed) {
-          alert("i'm running => " + ed.getPosition())
+          format()
           return null
         }
       })
-      editor.onDidChangeModelContent(function () {
-        onChangeInput(editor.getValue())
+
+      editor.current.onDidChangeModelContent(function () {
+        onChangeInput(editor.current.getValue())
       })
+
+      if (annotations) {
+        const line = annotations[0].row + 1
+        glyphs.current = editor.current.deltaDecorations(
+          [],
+          [
+            {
+              range: new monaco.Range(line, 1, line, 1),
+              options: {
+                isWholeLine: true,
+                linesDecorationsClassName: 'myLineDecoration'
+              }
+            }
+          ]
+        )
+      }
     }
   }, [monaco])
+
+  /////////////////
+  // Code Formatter
+
+  const format = () => {
+    const options = {
+      filepath:
+        '/home/rick/Documents/Djitsu/djit.su/packages/web/src/mods/editorjs/react-tools/live-code/view-code.js',
+      parser: 'typescript',
+      trailingComma: 'none',
+      semi: false,
+      singleQuote: true,
+      tabWidth: 2,
+      useTabs: false,
+      printWidth: 80,
+      jsxBracketSameLine: false,
+      jsxSingleQuote: true
+    }
+    console.log('Oh hi there')
+    const formattedCode = prettier.format(codeInput, {
+      parser: 'babel',
+      plugins: [babylon],
+      ...options
+    })
+
+    setCodeInput(formattedCode)
+  }
+
+  //
+  ////////////////////////////////////
+
+  useEffect(() => {
+    if (!editor.current) return
+
+    if (!annotations) {
+      const targetId = glyphs.current[0]
+      editor.current.deltaDecorations(
+        [targetId],
+        [
+          {
+            range: new monaco.Range(2, 1, 2, 1),
+            options: {
+              isWholeLine: true,
+              className: '',
+              linesDecorationsClassName: '',
+              glyphMarginClassName: ''
+            }
+          }
+        ]
+      )
+      // editor.current.deltaDecorations([], [])
+    }
+  }, [annotations])
 
   const onChangeInput = useCallback((value) => {
     setCodeInput(value)
@@ -98,10 +182,10 @@ export const ViewCode = (props) => {
   }, [input?.options])
 
   useEffect(() => {
-    console.log(input)
     // console.log('∂∂∂∂∂ CHANGED INPUT ERROR: ', input.error)
+
     if (input.error) {
-      const warns = [
+      const annot = [
         {
           row: (input.error?.loc?.line ?? 1) - 1,
           column: (input.error?.loc?.column ?? 1) - 1,
@@ -111,10 +195,32 @@ export const ViewCode = (props) => {
       ]
       // console.log('∂∂∂∂∂ SETTING ANNOTATIONS: ', annot)
 
-      console.log(warns)
-      setWarnings(warns)
-    } else setWarnings()
+      if (editor.current) {
+        const line = annot[0].row + 1
+        glyphs.current = editor.current.deltaDecorations(
+          [],
+          [
+            {
+              range: new monaco.Range(line, 1, line, 1),
+              options: {
+                isWholeLine: true,
+                linesDecorationsClassName: 'myLineDecoration'
+              }
+            }
+          ]
+        )
+      }
+
+      setAnnotations(annot)
+    } else setAnnotations()
   }, [input.error])
+
+  const handleMoveCursor = () => {
+    const lineToMoveTo = annotations[0].row + 1
+    editor.current.setPosition({ column: 1, lineNumber: lineToMoveTo })
+    editor.current.revealLine(lineToMoveTo)
+    editor.current.focus()
+  }
 
   return (
     <Tool.View
@@ -169,9 +275,36 @@ export const ViewCode = (props) => {
         </>
       }
     >
-      <div id='Monaco-Container' />
+      <MonacoContainer id='Monaco-Container' />
+      {annotations ? (
+        <Error onClick={handleMoveCursor}>
+          ⚠️ line {annotations[0].row + 1}: {annotations[0].text}
+        </Error>
+      ) : null}
     </Tool.View>
   )
 }
 
 export default ViewCode
+
+const MonacoContainer = styled.div`
+  height: 110px;
+
+  .myLineDecoration {
+    background: #ea4639;
+    width: 5px !important;
+    margin-left: 3px;
+  }
+`
+
+const Error = styled.div`
+  cursor: pointer;
+  background: pink;
+  padding: 0 0 0 10px !important;
+  background: white;
+  color: red;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  position: absolute;
+  z-index: 99999999;
+  width: 100%;
+`
