@@ -27,7 +27,7 @@ export const ViewCode = (props) => {
     language: 'js',
     ...(input.options || {})
   })
-  const [annotations, setAnnotations] = useState()
+  const [, setWarnings] = useState()
 
   const monaco = useMonaco()
 
@@ -101,7 +101,7 @@ export const ViewCode = (props) => {
     console.log(input)
     // console.log('∂∂∂∂∂ CHANGED INPUT ERROR: ', input.error)
     if (input.error) {
-      const annot = [
+      const warns = [
         {
           row: (input.error?.loc?.line ?? 1) - 1,
           column: (input.error?.loc?.column ?? 1) - 1,
@@ -111,9 +111,9 @@ export const ViewCode = (props) => {
       ]
       // console.log('∂∂∂∂∂ SETTING ANNOTATIONS: ', annot)
 
-      console.log(annot)
-      setAnnotations(annot)
-    } else setAnnotations()
+      console.log(warns)
+      setWarnings(warns)
+    } else setWarnings()
   }, [input.error])
 
   return (
