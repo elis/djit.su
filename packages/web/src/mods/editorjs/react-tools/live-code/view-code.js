@@ -39,108 +39,103 @@ export const ViewCode = (props) => {
   const editor = useRef()
   const glyphs = useRef()
 
-  useEffect(() => {
-    if (monaco) {
-      // monaco.languages.registerCompletionItemProvider('javascript', {
-      //   triggerCharacters: ['>'],
-      //   provideCompletionItems: (model, position) => {
-      //     const codePre = model.getValueInRange({
-      //       startLineNumber: position.lineNumber,
-      //       startColumn: 1,
-      //       endLineNumber: position.lineNumber,
-      //       endColumn: position.column
-      //     })
+  const closingTags = () => {
+    monaco.languages.registerCompletionItemProvider('javascript', {
+      triggerCharacters: ['>'],
+      provideCompletionItems: (model, position) => {
+        const codePre = model.getValueInRange({
+          startLineNumber: position.lineNumber,
+          startColumn: 1,
+          endLineNumber: position.lineNumber,
+          endColumn: position.column
+        })
 
-      //     const tag = codePre.match(/.*<(\w+)>$/)?.[1]
+        const tag = codePre.match(/.*<(\w+)>$/)?.[1]
 
-      //     if (!tag) {
-      //       return
-      //     }
-
-      //     const word = model.getWordUntilPosition(position)
-
-      //     return {
-      //       suggestions: [
-      //         {
-      //           label: `</${tag}>`,
-      //           kind: monaco.languages.CompletionItemKind.EnumMember,
-      //           insertText: `</${tag}>`,
-      //           range: {
-      //             startLineNumber: position.lineNumber,
-      //             endLineNumber: position.lineNumber,
-      //             startColumn: word.startColumn,
-      //             endColumn: word.endColumn
-      //           }
-      //         }
-      //       ]
-      //     }
-      //   }
-      // })
-
-      editor.current = monaco.editor.create(
-        document.getElementById('Monaco-Container'),
-        {
-          value: codeInput,
-          language: 'javascript',
-          theme: theme === 'monokai' ? 'vs-dark' : 'vs-light',
-          fontSize: 10,
-          glyphMargin: true,
-          wordWrap: 'wordWrapColumn',
-          wordWrapColumn: 80,
-          wordWrapMinified: true,
-          wrappingIndent: 'indent'
+        if (!tag) {
+          return
         }
-      )
 
-      editor.current.addAction({
-        id: 'beautify',
-        label: 'Beautify The Code',
-        keybindings: [
-          monaco.KeyMod.chord(
-            monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K,
-            monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M
-          )
-        ],
-        precondition: null,
-        keybindingContext: null,
-        contextMenuGroupId: 'navigation',
-        contextMenuOrder: 1.5,
-        run: function (ed) {
-          format()
-          return null
-        }
-      })
+        const word = model.getWordUntilPosition(position)
 
-      editor.current.onDidChangeModelContent(function () {
-        onChangeInput(editor.current.getValue())
-      })
-
-      if (annotations) {
-        const line = annotations[0].row + 1
-        glyphs.current = editor.current.deltaDecorations(
-          [],
-          [
+        return {
+          suggestions: [
             {
-              range: new monaco.Range(line, 1, line, 1),
-              options: {
-                isWholeLine: true,
-                linesDecorationsClassName: 'myLineDecoration'
+              label: `</${tag}>`,
+              kind: monaco.languages.CompletionItemKind.EnumMember,
+              insertText: `</${tag}>`,
+              range: {
+                startLineNumber: position.lineNumber,
+                endLineNumber: position.lineNumber,
+                startColumn: word.startColumn,
+                endColumn: word.endColumn
               }
             }
           ]
-        )
+        }
       }
-    }
-  }, [monaco])
+    })
+  }
 
-  /////////////////
-  // Code Formatter
+  const closingTagsFragment = () => {
+    monaco.languages.registerCompletionItemProvider('javascript', {
+      triggerCharacters: ['>'],
+      provideCompletionItems: (model, position) => {
+        const codePre = model.getValueInRange({
+          startLineNumber: position.lineNumber,
+          startColumn: 1,
+          endLineNumber: position.lineNumber,
+          endColumn: position.column
+        })
+
+        const tag = codePre.match(`<`)?.[1]
+
+        if (!tag) {
+          return
+        }
+
+        const word = model.getWordUntilPosition(position)
+
+        return {
+          suggestions: [
+            {
+              label: `</>`,
+              kind: monaco.languages.CompletionItemKind.EnumMember,
+              insertText: `</>`,
+              range: {
+                startLineNumber: position.lineNumber,
+                endLineNumber: position.lineNumber,
+                startColumn: word.startColumn,
+                endColumn: word.endColumn
+              }
+            }
+          ]
+        }
+      }
+    })
+  }
+
+  const createMonaco = () => {
+    editor.current = monaco.editor.create(
+      document.getElementById('Monaco-Container'),
+      {
+        value: codeInput,
+        language: 'javascript',
+        theme: theme === 'monokai' ? 'vs-dark' : 'vs-light',
+        fontSize: 10,
+        glyphMargin: true,
+        wordWrap: 'wordWrapColumn',
+        wordWrapColumn: 80,
+        wordWrapMinified: true,
+        wrappingIndent: 'indent'
+      }
+    )
+  }
 
   const format = () => {
     const options = {
       filepath:
         '/home/rick/Documents/Djitsu/djit.su/packages/web/src/mods/editorjs/react-tools/live-code/view-code.js',
-      parser: 'typescript',
       trailingComma: 'none',
       semi: false,
       singleQuote: true,
@@ -150,18 +145,76 @@ export const ViewCode = (props) => {
       jsxBracketSameLine: false,
       jsxSingleQuote: true
     }
-    console.log('Oh hi there')
-    const formattedCode = prettier.format(codeInput, {
+    const formattedCode = prettier.format(editor.current.getValue(), {
       parser: 'babel',
       plugins: [babylon],
       ...options
     })
 
+    const lastPos = editor.current.getPosition()
+
+    editor.current.setValue(formattedCode)
+
+    editor.current.setPosition(lastPos)
+
     setCodeInput(formattedCode)
   }
 
-  //
-  ////////////////////////////////////
+  const addPrettier = () => {
+    editor.current.addAction({
+      id: 'prettier',
+      label: 'Prettierify The Code',
+      keybindings: [
+        monaco.KeyMod.chord(
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K,
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M
+        )
+      ],
+      precondition: null,
+      keybindingContext: null,
+      contextMenuGroupId: 'navigation',
+      contextMenuOrder: 1.5,
+      run: function () {
+        format()
+        return null
+      }
+    })
+  }
+
+  const setOnChange = () => {
+    editor.current.onDidChangeModelContent(function () {
+      onChangeInput(editor.current.getValue())
+    })
+  }
+
+  const setGlyphs = () => {
+    if (annotations) {
+      const line = annotations[0].row + 1
+      glyphs.current = editor.current.deltaDecorations(
+        [],
+        [
+          {
+            range: new monaco.Range(line, 1, line, 1),
+            options: {
+              isWholeLine: true,
+              linesDecorationsClassName: 'myLineDecoration'
+            }
+          }
+        ]
+      )
+    }
+  }
+
+  useEffect(() => {
+    if (monaco) {
+      closingTags()
+      // closingTagsFragment()
+      createMonaco()
+      addPrettier()
+      setOnChange()
+      setGlyphs()
+    }
+  }, [monaco])
 
   useEffect(() => {
     if (!editor.current) return
@@ -182,7 +235,6 @@ export const ViewCode = (props) => {
           }
         ]
       )
-      // editor.current.deltaDecorations([], [])
     }
   }, [annotations])
 
