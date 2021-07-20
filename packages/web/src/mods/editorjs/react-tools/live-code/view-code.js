@@ -77,44 +77,6 @@ export const ViewCode = (props) => {
     })
   }
 
-  const closingTagsFragment = () => {
-    monaco.languages.registerCompletionItemProvider('javascript', {
-      triggerCharacters: ['>'],
-      provideCompletionItems: (model, position) => {
-        const codePre = model.getValueInRange({
-          startLineNumber: position.lineNumber,
-          startColumn: 1,
-          endLineNumber: position.lineNumber,
-          endColumn: position.column
-        })
-
-        const tag = codePre.match(`<`)?.[1]
-
-        if (!tag) {
-          return
-        }
-
-        const word = model.getWordUntilPosition(position)
-
-        return {
-          suggestions: [
-            {
-              label: `</>`,
-              kind: monaco.languages.CompletionItemKind.EnumMember,
-              insertText: `</>`,
-              range: {
-                startLineNumber: position.lineNumber,
-                endLineNumber: position.lineNumber,
-                startColumn: word.startColumn,
-                endColumn: word.endColumn
-              }
-            }
-          ]
-        }
-      }
-    })
-  }
-
   const createMonaco = () => {
     editor.current = monaco.editor.create(
       document.getElementById('Monaco-Container'),
@@ -208,7 +170,6 @@ export const ViewCode = (props) => {
   useEffect(() => {
     if (monaco) {
       closingTags()
-      // closingTagsFragment()
       createMonaco()
       addPrettier()
       setOnChange()
