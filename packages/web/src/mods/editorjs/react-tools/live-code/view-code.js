@@ -167,10 +167,72 @@ export const ViewCode = (props) => {
     }
   }
 
+  const tagWrap = () => {
+    var selection = editor.current.getSelection()
+
+    const { endColumn, endLineNumber, startColumn, startLineNumber } = selection
+
+    if (startLineNumber === endLineNumber && startColumn === endColumn) return
+
+    const myTag = prompt('Tag?')
+    if (myTag === null) return
+
+    const range = new monaco.Range(
+      startLineNumber,
+      startColumn,
+      startLineNumber,
+      startColumn
+    )
+    const id = { major: 1, minor: 1 }
+    const openingTag = `<${myTag}>`
+    const closingTag = `</${myTag}>`
+    const op = {
+      identifier: id,
+      range: range,
+      text: openingTag,
+      forceMoveMarkers: false
+    }
+    const range2 = new monaco.Range(
+      endLineNumber,
+      endColumn,
+      endLineNumber,
+      endColumn
+    )
+    const op2 = {
+      identifier: id,
+      range: range2,
+      text: closingTag,
+      forceMoveMarkers: false
+    }
+    editor.current.executeEdits('my-source', [op, op2])
+  }
+
+  const addTagWrapper = () => {
+    editor.current.addAction({
+      id: 'tag-wrap',
+      label: 'Add tag around selection',
+      keybindings: [
+        monaco.KeyMod.chord(
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K,
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_B
+        )
+      ],
+      precondition: null,
+      keybindingContext: null,
+      contextMenuGroupId: 'navigation',
+      contextMenuOrder: 1.5,
+      run: function () {
+        tagWrap()
+        return null
+      }
+    })
+  }
+
   useEffect(() => {
     if (monaco) {
       closingTags()
       createMonaco()
+      addTagWrapper()
       addPrettier()
       setOnChange()
       setGlyphs()
