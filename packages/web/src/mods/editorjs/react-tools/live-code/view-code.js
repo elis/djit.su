@@ -399,7 +399,7 @@ export const ViewCode = (props) => {
 
 export default ViewCode
 
-const MonacoContainer = styled.div.attrs((props) => ({}))`
+const MonacoContainer = styled.div.attrs((props) => ({ props }))`
   height: ${(props) => props.height};
 
   .myLineDecoration {
