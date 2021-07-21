@@ -7,14 +7,14 @@ import Icon from '@mdi/react'
 import { mdiOpenInNew } from '@mdi/js'
 import Mdx from '@mdx-js/runtime'
 
-export const ViewMeta = (props) => {
+export const ViewMeta = props => {
   return (
-    <Divi orientation={props.orientation} className='block-meta smart-divi'>
-      <span className='title'>{props.children}</span>
+    <Divi orientation={props.orientation} className="block-meta smart-divi">
+      <span className="title">{props.children}</span>
       {props.actions && (
         <>
-          <Divider type='vertical' />
-          <div className='actions'>{props.actions}</div>
+          <Divider type="vertical" />
+          <div className="actions">{props.actions}</div>
         </>
       )}
     </Divi>
@@ -162,11 +162,11 @@ const Divi = styled(Divider)`
   }
 `
 
-const HelpTitle = (props) => (
-  <Divider orientation='left'>{props.children}</Divider>
+const HelpTitle = props => (
+  <Divider orientation="left">{props.children}</Divider>
 )
-export const ExternalA = (props) => (
-  <a href={props.href} target='_blank' rel='noopener noreferrer'>
+export const ExternalA = props => (
+  <a href={props.href} target="_blank" rel="noopener noreferrer">
     {props.children}&nbsp;
     <AntIcon component={() => <Icon path={mdiOpenInNew} size={0.4} />} />
   </a>
@@ -179,7 +179,7 @@ const PopoverDescription = styled.div`
   }
 `
 
-const mdxDescription = (mdx) => (
+const mdxDescription = mdx => (
   <PopoverDescription>
     <Mdx
       components={{

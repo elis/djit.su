@@ -18,6 +18,9 @@ export default {
     {
       plugin: require('./plugins/egraze-session/renderer'),
       options: {}
+    },
+    {
+      plugin: require('./plugins/egraze-notebooks')
     }
   ]
 }

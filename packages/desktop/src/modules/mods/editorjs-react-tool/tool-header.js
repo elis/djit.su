@@ -7,14 +7,14 @@ import styled from 'styled-components'
 import { useToggle } from '../../utils/hooks'
 import { useTool } from './tool.context'
 
-export const ToolHeader = (props) => {
+export const ToolHeader = props => {
   const { placeholder } = props
   const [editName, toggleEditName, setEditName] = useToggle(false)
   const usedTool = useTool()
   const [tos, toa] = usedTool
   const [inputValue, setInputValue] = useState(tos.options.name)
 
-  const toggleView = (name) => {
+  const toggleView = name => {
     toa.toggleView(name)
   }
 
@@ -41,28 +41,28 @@ export const ToolHeader = (props) => {
   const blockTitleValue = editName ? (
     <Form
       onFinish={onSubmitName}
-      layout='inline'
+      layout="inline"
       initialValues={{
         name: inputValue
       }}
     >
-      <Form.Item name='name'>
-        <Input placeholder='Block name' size='small' />
+      <Form.Item name="name">
+        <Input placeholder="Block name" size="small" />
       </Form.Item>
-      <Form.Item shouldUpdate className='actions'>
+      <Form.Item shouldUpdate className="actions">
         {() => (
           <Space>
             <VButton
-              type='primary'
-              size='small'
-              htmlType='submit'
+              type="primary"
+              size="small"
+              htmlType="submit"
               onClick={() => {
                 console.log('welp')
               }}
             >
               Save
             </VButton>
-            <VButton type='ghost' size='small' onClick={cancelEdit}>
+            <VButton type="ghost" size="small" onClick={cancelEdit}>
               Cancel
             </VButton>
           </Space>
@@ -87,9 +87,9 @@ export const ToolHeader = (props) => {
               console.log('ON CLICK ON editBlockName()')
               editBlockName()
             }}
-            size='small'
+            size="small"
           >
-            <EditOutlined size='42' />
+            <EditOutlined size="42" />
           </VButton>
         </>
       }
@@ -97,28 +97,26 @@ export const ToolHeader = (props) => {
         <>
           <span>
             {!!tos?.views?.length &&
-              tos.views
-                .sort(() => -1)
-                .map(({ name, details: { icon, label } }) => (
-                  <Tooltip
-                    mouseEnterDelay={0.5}
-                    title={
-                      (tos.viewOptions?.[name]?.hidden ? `Show ` : `Hide `) +
-                      label
-                    }
-                    key={name}
-                    placement='bottom'
+              tos.views.map(({ name, details: { icon, label } }) => (
+                <Tooltip
+                  mouseEnterDelay={0.5}
+                  title={
+                    (tos.viewOptions?.[name]?.hidden ? `Show ` : `Hide `) +
+                    label
+                  }
+                  key={name}
+                  placement="bottom"
+                >
+                  <VButton
+                    size="small"
+                    onClick={() => toggleView(name)}
+                    ghost
+                    active={!tos.viewOptions?.[name]?.hidden}
                   >
-                    <VButton
-                      size='small'
-                      onClick={() => toggleView(name)}
-                      ghost
-                      active={!tos.viewOptions?.[name]?.hidden}
-                    >
-                      {icon}
-                    </VButton>
-                  </Tooltip>
-                ))}
+                    {icon}
+                  </VButton>
+                </Tooltip>
+              ))}
           </span>
         </>
       }

@@ -41,7 +41,10 @@ export const DjitsuRoutes: React.FC = () => {
             path={['/djitsu/:type/:path(.*)', '/djitsu']}
             component={DjitsuRoute}
           />
-          <Route path="/editor" component={DjitsuEditor} />
+          <Route
+            path={['/editor', '/notebook/d:notebookId', '/notebook/:filepath(.*)']}
+            component={DjitsuEditor}
+          />
           <Route path="/clean" component={CleanSection} />
           <Route path="/" component={DjitsuHome} />
         </Switch>

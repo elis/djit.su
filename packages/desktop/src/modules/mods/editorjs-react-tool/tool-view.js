@@ -39,6 +39,7 @@ export const ToolView = ({
               {icon}
               {icon && <>&nbsp;</>}
               {label}
+              <span />
               {description && (
                 <>
                   <Divider type='vertical' />

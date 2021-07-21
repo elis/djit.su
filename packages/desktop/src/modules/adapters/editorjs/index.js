@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo, useRef } from 'react'
 import EditorJS from 'react-editor-js'
 import { BlockType } from '../../core/schema/block'
 import { liveCodeTool } from '../../mods/react-tools/live-code-tool'
 import editorTools from './editor-tools'
 
-const EditorJSAdapter = ({ data, toolProps }) => {
+const EditorJSAdapter = ({ data, toolProps, onReady }) => {
+  const editorRef = useRef()
   // const source
   const componentTools = useMemo(
     () => ({
@@ -20,6 +21,13 @@ const EditorJSAdapter = ({ data, toolProps }) => {
     [toolProps]
   )
 
+  const editorReadyHandler = useCallback(editor => {
+    editorRef.current = editor
+
+    if (typeof onReady === 'function') onReady(editor)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <EditorJS
       data={data}
@@ -27,6 +35,10 @@ const EditorJSAdapter = ({ data, toolProps }) => {
         ...componentTools,
         ...editorTools
       }}
+      onChange={(...args) => {
+        console.log('📝', 'editor changed!', args)
+      }}
+      onReady={editorReadyHandler}
     />
   )
 }
