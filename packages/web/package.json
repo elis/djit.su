@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "4.3.0",
+    "@djitsu/editor": "*",
     "@editorjs/embed": "^2.3.1",
     "@editorjs/simple-image": "^1.4.0",
     "@mdi/js": "^5.3.45",
@@ -61,7 +62,6 @@
     "razzle-plugin-less": "https://github.com/elis/razzle-plugin-less#fe88976",
     "razzle-plugin-typescript": "^3.1.4",
     "react": "^16.13.1",
-    "react-ace": "^9.1.1",
     "react-cookie": "^4.0.3",
     "react-dom": "^16.13.1",
     "react-editor-js": "^1.6.2",
@@ -81,8 +81,7 @@
     "ssl-express-www": "^3.0.7",
     "ssr-window": "^2.0.0",
     "styled-components": "5.2.0",
-    "vhost": "^3.0.2",
-    "@djitsu/editor": "*"
+    "vhost": "^3.0.2"
   },
   "devDependencies": {
     "@editorjs/editorjs": "https://github.com/codex-team/editor.js#c1f9dd6",
@@ -93,7 +92,6 @@
     "@types/react-redux": "^7.1.9",
     "@typescript-eslint/eslint-plugin": "^3.4.0",
     "@typescript-eslint/parser": "^3.4.0",
-    "ace-builds": "^1.4.12",
     "chalk": "^4.1.0",
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^6.11.0",

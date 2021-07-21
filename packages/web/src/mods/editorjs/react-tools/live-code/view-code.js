@@ -39,7 +39,7 @@ export const ViewCode = (props) => {
   const editor = useRef()
   const glyphs = useRef()
 
-  const closingTags = () => {
+  const suggestClosingTags = () => {
     monaco.languages.registerCompletionItemProvider('javascript', {
       triggerCharacters: ['>'],
       provideCompletionItems: (model, position) => {
@@ -230,7 +230,7 @@ export const ViewCode = (props) => {
 
   useEffect(() => {
     if (monaco) {
-      closingTags()
+      suggestClosingTags()
       createMonaco()
       addTagWrapper()
       addPrettier()
