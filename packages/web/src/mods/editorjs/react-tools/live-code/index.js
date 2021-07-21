@@ -33,8 +33,6 @@ export const LiveCodeComponent = (props) => {
     demo: data?.demo || '',
     preview: data?.preview || ''
   })
-  console.log('🥥', inputs)
-
   const [errors, setErrors] = useState()
 
   const [codeExports, setCodeExports] = useState()
