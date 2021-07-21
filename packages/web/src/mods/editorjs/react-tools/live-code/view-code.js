@@ -245,6 +245,7 @@ export const ViewCode = (props) => {
     if (!editor.current) return
 
     if (!annotations) {
+      if (!glyphs.current) return
       const targetId = glyphs.current[0]
       editor.current.deltaDecorations(
         [targetId],
