@@ -1,0 +1,19 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "bootstrap": "node ./scripts/package-bootstrap",
+    "setup": "node ./scripts/package-setup",
+    "start": "node ./scripts/package-start",
+    "package:add": "node ./scripts/package-add"
+  },
+  "devDependencies": {
+    "chalk": "^4.1.0",
+    "listr": "^0.14.3",
+    "lodash": "^4.17.21"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "version": "1.4.0"
+}
