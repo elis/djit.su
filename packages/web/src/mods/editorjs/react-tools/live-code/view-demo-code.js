@@ -40,7 +40,8 @@ export const ViewDemoCode = (props) => {
         wordWrap: 'wordWrapColumn',
         wordWrapColumn: 80,
         wordWrapMinified: true,
-        wrappingIndent: 'indent'
+        wrappingIndent: 'indent',
+        height: '100%'
       }
     )
   }
@@ -158,7 +159,7 @@ export const ViewDemoCode = (props) => {
 }
 
 const MonacoContainer = styled.div`
-  height: 45px;
+  height: 30px;
 
   .myLineDecoration {
     background: #ea4639;

@@ -89,6 +89,7 @@ export const ViewCode = (props) => {
         wordWrap: 'wordWrapColumn',
         wordWrapColumn: 80,
         wordWrapMinified: true,
+        automaticLayout: true,
         wrappingIndent: 'indent'
       }
     )
@@ -145,6 +146,7 @@ export const ViewCode = (props) => {
 
   const setOnChange = () => {
     editor.current.onDidChangeModelContent(function () {
+      editor.current.layout()
       onChangeInput(editor.current.getValue())
     })
   }
@@ -385,7 +387,7 @@ export const ViewCode = (props) => {
         </>
       }
     >
-      <MonacoContainer id='Monaco-Container' />
+      <MonacoContainer id='Monaco-Container' height={`200px`} />
       {annotations ? (
         <Error onClick={handleMoveCursor}>
           ⚠️ line {annotations[0].row + 1}: {annotations[0].text}
@@ -397,8 +399,8 @@ export const ViewCode = (props) => {
 
 export default ViewCode
 
-const MonacoContainer = styled.div`
-  height: 110px;
+const MonacoContainer = styled.div.attrs((props) => ({}))`
+  height: ${(props) => props.height};
 
   .myLineDecoration {
     background: #ea4639;
