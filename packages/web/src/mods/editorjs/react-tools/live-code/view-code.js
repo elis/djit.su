@@ -294,7 +294,6 @@ export const ViewCode = (props) => {
 
   useEffect(() => {
     // console.log('∂∂∂∂∂ CHANGED INPUT ERROR: ', input.error)
-
     if (input.error) {
       const annot = [
         {
