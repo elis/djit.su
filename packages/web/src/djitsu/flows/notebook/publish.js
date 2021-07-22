@@ -224,7 +224,13 @@ export const usePublishFlow = () => {
         visible={showPublish}
         okText={publishing ? <>Publishing...</> : <>Continue</>}
         cancelText={
-          steps.step === 1 ? <>Cancel</> : steps.step > 1 ? <>Back</> : <>:D</>
+          steps.step === 1 ? (
+            <>Cancel</>
+          ) : steps.step > 1 ? (
+            <>Back</>
+          ) : (
+            <>Cancel</>
+          )
         }
         title={
           <>
