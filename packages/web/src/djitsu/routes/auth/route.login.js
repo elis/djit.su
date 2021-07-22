@@ -5,7 +5,7 @@ import { Link, useHistory } from 'react-router-dom'
 import {
   AuditOutlined,
   SmileOutlined,
-  HomeOutlined,
+  BookOutlined,
   FileAddOutlined
 } from '@ant-design/icons'
 
@@ -186,9 +186,9 @@ export const Login = () => {
                 <FileAddOutlined />
                 New Document
               </Button>
-              <Button key='home' onClick={() => goto('/')}>
-                <HomeOutlined />
-                Home
+              <Button key='notebooks' onClick={() => goto('/notebooks')}>
+                <BookOutlined />
+                Notebooks
               </Button>
             </>
           }
@@ -247,7 +247,7 @@ export const Login = () => {
 const smartAss = [
   `We've missed your creative touch`,
   `Your presence was notably absent`,
-  `Our records have missed your activety`
+  `Our records have missed your activity`
 ]
 
 export default Login
