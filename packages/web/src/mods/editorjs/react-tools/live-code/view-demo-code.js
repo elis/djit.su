@@ -21,6 +21,7 @@ export const ViewDemoCode = (props) => {
 
   const editor = useRef()
   const glyphs = useRef()
+  const containerDemo = useRef()
 
   const handleMoveCursor = () => {
     const lineToMoveTo = annotations[0].row + 1
@@ -29,21 +30,19 @@ export const ViewDemoCode = (props) => {
     editor.current.focus()
   }
   const createMonaco = () => {
-    editor.current = monaco.editor.create(
-      document.getElementById('Monaco-Container-Demo'),
-      {
-        value: input,
-        language: 'javascript',
-        theme: theme === 'monokai' ? 'vs-dark' : 'vs-light',
-        fontSize: 10,
-        glyphMargin: true,
-        wordWrap: 'wordWrapColumn',
-        wordWrapColumn: 80,
-        wordWrapMinified: true,
-        wrappingIndent: 'indent',
-        height: '100%'
-      }
-    )
+    editor.current = monaco.editor.create(containerDemo.current, {
+      value: input,
+      language: 'javascript',
+      theme: theme === 'monokai' ? 'vs-dark' : 'vs-light',
+      fontSize: 10,
+      glyphMargin: true,
+      wordWrap: 'wordWrapColumn',
+      wordWrapColumn: 80,
+      wordWrapMinified: true,
+      automaticLayout: true,
+      wrappingIndent: 'indent',
+      height: 30
+    })
   }
 
   const setOnChange = () => {
@@ -141,7 +140,7 @@ export const ViewDemoCode = (props) => {
       label='Demo Code'
       description='Demo code...'
     >
-      <MonacoContainer id='Monaco-Container-Demo' />
+      <MonacoContainer ref={containerDemo} />
       {annotations ? (
         <Error onClick={handleMoveCursor}>
           {annotations.text ? (
@@ -159,7 +158,8 @@ export const ViewDemoCode = (props) => {
 }
 
 const MonacoContainer = styled.div`
-  height: 30px;
+  height: 50px;
+  padding: 0 !important;
 
   .myLineDecoration {
     background: #ea4639;

@@ -38,6 +38,7 @@ export const ViewCode = (props) => {
 
   const editor = useRef()
   const glyphs = useRef()
+  const container = useRef()
 
   const suggestClosingTags = () => {
     monaco.languages.registerCompletionItemProvider('javascript', {
@@ -78,21 +79,18 @@ export const ViewCode = (props) => {
   }
 
   const createMonaco = () => {
-    editor.current = monaco.editor.create(
-      document.getElementById('Monaco-Container'),
-      {
-        value: codeInput,
-        language: 'javascript',
-        theme: theme === 'monokai' ? 'vs-dark' : 'vs-light',
-        fontSize: 10,
-        glyphMargin: true,
-        wordWrap: 'wordWrapColumn',
-        wordWrapColumn: 80,
-        wordWrapMinified: true,
-        automaticLayout: true,
-        wrappingIndent: 'indent'
-      }
-    )
+    editor.current = monaco.editor.create(container.current, {
+      value: codeInput,
+      language: 'javascript',
+      theme: theme === 'monokai' ? 'vs-dark' : 'vs-light',
+      fontSize: 10,
+      glyphMargin: true,
+      wordWrap: 'wordWrapColumn',
+      wordWrapColumn: 80,
+      wordWrapMinified: true,
+      automaticLayout: true,
+      wrappingIndent: 'indent'
+    })
   }
 
   const format = () => {
@@ -388,7 +386,7 @@ export const ViewCode = (props) => {
         </>
       }
     >
-      <MonacoContainer id='Monaco-Container' height={`200px`} />
+      <MonacoContainer ref={container} height={`200px`} />
       {annotations ? (
         <Error onClick={handleMoveCursor}>
           ⚠️ line {annotations[0].row + 1}: {annotations[0].text}
