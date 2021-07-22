@@ -416,6 +416,6 @@ const Error = styled.div`
   color: red;
   border: 1px solid rgba(0, 0, 0, 0.06) !important;
   position: absolute;
-  z-index: 99999999;
+  z-index: 1;
   width: 100%;
 `
