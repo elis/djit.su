@@ -9,6 +9,8 @@ import userApp from 'apps/user-app/server'
 
 const wrapper = express()
 wrapper
+  .use(vhost('djit.su', mainApp))
+  .use(vhost('djitsu.com', mainApp))
   .use(vhost('djitsu.local', externalApp))
   .use(vhost('*.djitsu.local', userApp))
   .use(vhost('*.*.djitsu.local', userApp))
