@@ -17,6 +17,8 @@ import AntIconMDI from 'djitsu/components/anticon-mdi'
 import { mdiPackageUp } from '@mdi/js'
 import useStates from 'djitsu/utils/hooks/use-states'
 
+import styled from 'styled-components'
+
 const { Step } = Steps
 
 export const useDeployFlow = () => {
@@ -181,7 +183,7 @@ export const useDeployFlow = () => {
           disabled: !allowProceed
         }}
       >
-        <>
+        <ModalWrapper>
           <Row gutter={majorGutter}>
             <Col flex='auto'>
               <DeploySteps steps={steps} />
@@ -592,7 +594,7 @@ export const useDeployFlow = () => {
             </Col>
           </Row>
           <div style={{ clear: 'both' }} />
-        </>
+        </ModalWrapper>
       </Modal>
     </>
   )
@@ -648,3 +650,7 @@ const DeploySteps = (props) => {
 //   preminor: 'Preminor',
 //   major: 'Major'
 // }
+
+const ModalWrapper = styled.div`
+  height: 200px;
+`
