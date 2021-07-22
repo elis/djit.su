@@ -32,6 +32,8 @@ import semverValid from 'semver/functions/valid'
 import semverGt from 'semver/functions/gt'
 import semverDiff from 'semver/functions/diff'
 
+import styled from 'styled-components'
+
 const { Step } = Steps
 
 export const usePublishFlow = () => {
@@ -251,7 +253,7 @@ export const usePublishFlow = () => {
           disabled: !allowProceed
         }}
       >
-        <>
+        <ModalWrapper isPublished={isPublished}>
           <Row gutter={majorGutter}>
             <Col flex='auto'>
               <PublishSteps steps={steps} />
@@ -666,7 +668,7 @@ export const usePublishFlow = () => {
             </Col>
           </Row>
           <div style={{ clear: 'both' }} />
-        </>
+        </ModalWrapper>
       </Modal>
     </>
   )
@@ -722,3 +724,7 @@ const RELEASE_TYPES = {
   preminor: 'Preminor',
   major: 'Major'
 }
+
+const ModalWrapper = styled.div`
+  height: ${(props) => (props.isPublished ? '190px' : '320px')};
+`
