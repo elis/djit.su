@@ -65,6 +65,8 @@ export const NotebookHeader = (props) => {
   const [, publishActions, publishContext] = usePublishFlow()
   const [, deployActions, deployContext] = useDeployFlow()
 
+  const publishedLocation = isPublished ? `@${createdBy}/${notebookName}` : null
+
   const notebookRef = useRef()
   // const getFreshNotebook = useCallback(() => notebookRef.current, [
   //   notebookRef.current
@@ -290,6 +292,45 @@ export const NotebookHeader = (props) => {
   //   '📒 notebook, userProfile, notebookId, isOwner UPDATED FOR HEADER:',
   //   { hasMain, notebook, userProfile, notebookId, isOwner }
   // )
+  const fallbackCopyTextToClipboard = (text) => {
+    const textArea = document.createElement('textarea')
+    textArea.value = text
+
+    // Avoid scrolling to bottom
+    textArea.style.top = '0'
+    textArea.style.left = '0'
+    textArea.style.position = 'fixed'
+
+    document.body.appendChild(textArea)
+    textArea.focus()
+    textArea.select()
+
+    try {
+      const successful = document.execCommand('copy')
+      successful
+        ? message.success('Copied published location')
+        : message.error('Failed to copy')
+    } catch (err) {
+      message.error('Fallback: Oops, unable to copy', err)
+    }
+
+    document.body.removeChild(textArea)
+  }
+
+  const copyTextToClipboard = (text) => {
+    if (!navigator.clipboard) {
+      fallbackCopyTextToClipboard(text)
+      return
+    }
+    navigator.clipboard.writeText(text).then(
+      function () {
+        message.success('Import address copied to clipboard')
+      },
+      function (err) {
+        message.error('Import address copied to clipboard', err)
+      }
+    )
+  }
 
   const handleSelfClick = useCallback(
     (event) => {
@@ -324,7 +365,7 @@ export const NotebookHeader = (props) => {
           />
           <main>
             <Space direction='vertical' size='small'>
-              <Space direction='horizontal' size='small'>
+              <Space direction='vertical' size='small'>
                 {userProfile?.displayName && (
                   <>
                     <strong>
@@ -345,6 +386,14 @@ export const NotebookHeader = (props) => {
                   @{createdBy || user.currentUsername}
                 </Link>
               </Space>
+              {isPublished ? (
+                <span
+                  className='click-to-copy-import-location'
+                  onClick={() => copyTextToClipboard(publishedLocation)}
+                >
+                  {publishedLocation}
+                </span>
+              ) : null}
               {userProfile?.url && (
                 <a
                   className='profile-link'
@@ -576,6 +625,21 @@ const StyledPageHeader = styled(PageHeader)`
     background: transparent;
     .ant-page-header-heading-sub-title {
       /* margin-right: 0; */
+    }
+
+    .click-to-copy-import-location {
+      cursor: pointer;
+
+      &:hover:after {
+        content: 'click to copy';
+        border: 1px solid grey;
+        background: grey;
+        color: white;
+        padding: 3px;
+        position: relative;
+        left: 5px;
+        border-radius: 10px;
+      }
     }
     .ant-page-header-content {
       display: grid;
