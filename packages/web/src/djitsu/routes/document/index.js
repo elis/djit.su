@@ -20,7 +20,7 @@ const newDocumentBlocks = [
   {
     type: 'header',
     data: {
-      text: 'unnamed-notebook (kebab-case-for-import-and-export)',
+      text: 'Name Your Notebook For Import/Export Here',
       level: 1
     }
   },
