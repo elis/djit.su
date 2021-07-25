@@ -27,6 +27,14 @@ module.exports = (api) => {
       [require('@babel/preset-react'), { development }],
     ],
     plugins: [
+      [
+        'babel-plugin-module-resolver',
+        {
+          alias: {
+            '#modules': './src/modules',
+          },
+        },
+      ],
       // Stage 0
       require('@babel/plugin-proposal-function-bind'),
 

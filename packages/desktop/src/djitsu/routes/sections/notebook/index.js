@@ -1,15 +1,11 @@
 import React, { useCallback, useRef } from 'react'
 import styled from 'styled-components'
 import { useNotebooks } from '../../../../egraze/plugins/egraze-notebooks/notebooks.context'
-import Editor from '../../../../modules/adapters/editorjs' // '../../../../modules/adapters/editorjs'
-import { Notebook } from '../../../../modules/core/schema/notebook'
+import Editor from '#modules/adapters/editorjs' // '../../../../modules/adapters/editorjs'
+import { Notebook } from '#modules/core/schema/notebook'
 import { useLayoutSettings } from '../../../layout/hooks'
 import { useTheme } from '../../../theme'
 import DefaultDocument from './default-document'
-// const DefaultDocument = {}
-// const Editor = ({ data }: { data: unknown }) => (
-//   <>Mock Editor {data ? 'Data!' : 'No data.'}</>
-// )
 
 export const DjitsuEditor = props => {
   const editorRef = useRef()
