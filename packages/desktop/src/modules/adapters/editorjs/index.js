@@ -1,9 +1,12 @@
 import React, { useCallback, useMemo, useRef } from 'react'
 import EditorJS from 'react-editor-js'
-import { BlockType } from '../../core/schema/block'
-import { liveCodeTool } from '../../mods/react-tools/live-code-tool'
+import { BlockType } from '#modules/core/schema/block'
+import { liveCodeTool } from '#modules/mods/react-tools/live-code-tool'
 import editorTools from './editor-tools'
 
+/**
+ * @type {React.Component<EditorJSAdapterProps>}
+ */
 const EditorJSAdapter = ({ data, toolProps, onReady }) => {
   const editorRef = useRef()
   // const source
@@ -44,3 +47,19 @@ const EditorJSAdapter = ({ data, toolProps, onReady }) => {
 }
 
 export default EditorJSAdapter
+
+/**
+ * @typedef {JSX.Element<EditorJSAdapterProps>}
+ */
+
+/**
+ * @typedef EditorJSAdapterProps
+ * @property {object} data Data to invoke the editor with
+ * @property {object} toolProps Properties passed on to tools
+ * @property {OnEditorReady} onReady onReady handler
+ */
+
+/**
+ * @callback OnEditorReady
+ * @param {EditorJSInstance} editor EditorJS instance
+ */
