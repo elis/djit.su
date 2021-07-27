@@ -54,6 +54,12 @@ export const main = {
     })
 
     return {
+      isDarkMode: () => nativeTheme.shouldUseDarkColors,
+      onDarkModeChange: callback => {
+        nativeTheme.on('updated', () =>
+          callback(nativeTheme.shouldUseDarkColors)
+        )
+      },
       darkMode
     }
   }

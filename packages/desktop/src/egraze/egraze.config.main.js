@@ -20,6 +20,9 @@ export default {
     },
     {
       plugin: require('./plugins/egraze-notebooks')
+    },
+    {
+      plugin: require('./plugins/egraze-tray')
     }
   ]
 }
