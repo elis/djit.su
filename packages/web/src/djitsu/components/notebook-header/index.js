@@ -10,7 +10,8 @@ import {
   Avatar,
   Menu,
   Dropdown,
-  notification
+  notification,
+  Tooltip
 } from 'antd'
 import styled from 'styled-components'
 import Helmet from 'react-helmet'
@@ -56,6 +57,9 @@ export const NotebookHeader = (props) => {
 
   const [state, actions] = useNotebook()
   const [documentMenuVisible, setDocumentMenuVisible] = useState()
+
+  let exports = []
+  if (notebook.compiled) exports = notebook?.compiled.exports
 
   const { isPublic, isPublished, createdBy } = notebook?.meta || {}
   const { name: notebookName } = notebook?.properties || {}
@@ -292,6 +296,7 @@ export const NotebookHeader = (props) => {
   //   '📒 notebook, userProfile, notebookId, isOwner UPDATED FOR HEADER:',
   //   { hasMain, notebook, userProfile, notebookId, isOwner }
   // )
+
   const fallbackCopyTextToClipboard = (text) => {
     const textArea = document.createElement('textarea')
     textArea.value = text
@@ -330,6 +335,11 @@ export const NotebookHeader = (props) => {
         message.error('Import address copied to clipboard', err)
       }
     )
+  }
+
+  const initCopy = () => {
+    const text = `import { ${exports} } from '${publishedLocation}'`
+    copyTextToClipboard(text)
   }
 
   const handleSelfClick = useCallback(
@@ -387,12 +397,14 @@ export const NotebookHeader = (props) => {
                 </Link>
               </Space>
               {isPublished ? (
-                <span
-                  className='click-to-copy-import-location'
-                  onClick={() => copyTextToClipboard(publishedLocation)}
-                >
-                  {publishedLocation}
-                </span>
+                <Tooltip placement='bottom' title={'Copy Import Location'}>
+                  <span
+                    className='click-to-copy-import-location'
+                    onClick={() => initCopy()}
+                  >
+                    {publishedLocation}
+                  </span>
+                </Tooltip>
               ) : null}
               {userProfile?.url && (
                 <a
@@ -627,19 +639,13 @@ const StyledPageHeader = styled(PageHeader)`
       /* margin-right: 0; */
     }
 
+    .profile-username {
+      font-weight: 400;
+    }
+
     .click-to-copy-import-location {
       cursor: pointer;
-
-      &:hover:after {
-        content: 'click to copy';
-        border: 1px solid grey;
-        background: grey;
-        color: white;
-        padding: 3px;
-        position: relative;
-        left: 5px;
-        border-radius: 10px;
-      }
+      font-weight: 300;
     }
     .ant-page-header-content {
       display: grid;
