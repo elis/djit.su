@@ -338,7 +338,13 @@ export const NotebookHeader = (props) => {
   }
 
   const initCopy = () => {
-    const text = `import { ${exports} } from '${publishedLocation}'`
+    let exportsAsString = ''
+    exports.forEach((item, i) => {
+      i === exports.length - 1
+        ? (exportsAsString += item)
+        : (exportsAsString += `${item}, `)
+    })
+    const text = `import { ${exportsAsString} } from '${publishedLocation}'`
     copyTextToClipboard(text)
   }
 
@@ -637,10 +643,6 @@ const StyledPageHeader = styled(PageHeader)`
     background: transparent;
     .ant-page-header-heading-sub-title {
       /* margin-right: 0; */
-    }
-
-    .profile-username {
-      font-weight: 400;
     }
 
     .click-to-copy-import-location {
