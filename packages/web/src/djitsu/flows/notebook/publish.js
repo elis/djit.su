@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import {
   Divider,
-  notification,
+  message,
   Select,
   Steps,
   Form,
@@ -36,7 +36,6 @@ const { Step } = Steps
 
 export const usePublishFlow = () => {
   const [state, actions] = useNotebook()
-  const [notifications, notificationContext] = notification.useNotification()
   // const [modal, modalContext] = Modal.useModal()
   const [showPublish, setShowPublish] = useState()
   const [publishing, setPublishing] = useState()
@@ -58,13 +57,13 @@ export const usePublishFlow = () => {
   const publish = () => {
     const state = getFreshState()
     if (state.currentNotebook.unsavedNotebook) {
-      notifications.error({ message: 'Save before publish' })
+      message.warning('Save your document before publishlishing', 1.5)
     } else if (
       isPublished &&
       state.currentNotebook.notebook.meta.published ===
         state.currentNotebook.notebook.meta.updated
     ) {
-      notifications.error({ message: 'No new revisions available to publish' })
+      message.warning('Most recent revisions already published')
     } else {
       const title = (
         state.currentNotebook.notebook.blocks.find(
@@ -100,7 +99,7 @@ export const usePublishFlow = () => {
   }
 
   const beginPublish = async () => {
-    notifications.info({ message: 'publish start...' })
+    message.info('Publishing has begun')
     setPublishing(true)
 
     const notebookId = state.currentNotebook.notebookId
@@ -113,7 +112,7 @@ export const usePublishFlow = () => {
       name
     )
     await actions.loadNotebook(notebookId)
-    notifications.success({ message: <>Published v{publishResult}</> })
+    message.success(`Published v${publishResult}`)
     setShowPublish(false)
   }
 
@@ -225,7 +224,13 @@ export const usePublishFlow = () => {
         visible={showPublish}
         okText={publishing ? <>Publishing...</> : <>Continue</>}
         cancelText={
-          steps.step === 1 ? <>Cancel</> : steps.step > 1 ? <>Back</> : <>:D</>
+          steps.step === 1 ? (
+            <>Cancel</>
+          ) : steps.step > 1 ? (
+            <>Back</>
+          ) : (
+            <>Cancel</>
+          )
         }
         title={
           <>
@@ -243,7 +248,7 @@ export const usePublishFlow = () => {
           if (steps.step > 1) {
             setStep('step', steps.step - 1)
           } else {
-            notifications.warning({ message: 'publish cancel...' })
+            message.info('Publishing cancelled')
             setShowPublish(false)
           }
         }}
@@ -671,14 +676,7 @@ export const usePublishFlow = () => {
     </>
   )
 
-  return [
-    {},
-    { publish },
-    <>
-      {notificationContext}
-      {modalContext}
-    </>
-  ]
+  return [{}, { publish }, <>{modalContext}</>]
 }
 
 const PublishSteps = (props) => {
