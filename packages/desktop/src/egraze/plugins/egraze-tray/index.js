@@ -10,14 +10,16 @@ export const main = {
   onReady: async (options, fields) => {
     const theme = plugin('theme')
     const path = require('path')
-    const { Menu, Tray } = require('electron')
+    const { Menu, Tray, nativeImage } = require('electron')
 
     const trayIcons = path.resolve(__dirname, '../../../../assets/icons/tray/')
     const icons = { dark: 'djot-light.png', light: 'djot-light.png' }
     const icon = icons[theme.isDarkMode() ? 'dark' : 'light']
-    const icnsPath = path.join(trayIcons, icon)
+    const tplIcon = 'djotTemplate.png'
+    const icnsPath = path.join(trayIcons, tplIcon)
 
-    fields.tray = new Tray(icnsPath)
+    const native = nativeImage.createFromPath(icnsPath)
+    fields.tray = new Tray(native)
 
     fields.tray.on('right-click', () => {
       const contextMenu = Menu.buildFromTemplate([
