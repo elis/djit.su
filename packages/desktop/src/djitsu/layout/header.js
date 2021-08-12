@@ -108,6 +108,20 @@ export const ThemeDropdown = ({ children }) => {
     [themeState.availableThemes]
   )
 
+  const nameTheme = name => {
+    console.log(name.split('-'))
+    const words = name.split('-')
+
+    let newName = ''
+
+    words.forEach(word => {
+      const cap = word.charAt(0).toUpperCase() + word.slice(1)
+      newName += cap + ' '
+    })
+
+    return newName
+  }
+
   const enterTheme = useCallback(
     (event, theme) => {
       if (theme !== previewTheme.base && theme !== themeState.theme)
@@ -193,9 +207,9 @@ export const ThemeDropdown = ({ children }) => {
                   ? name === previewTheme.base
                   : name === themeState.theme
               ) ? (
-                <strong>{name}</strong>
+                <strong>{nameTheme(name)}</strong>
               ) : (
-                <span>{name}</span>
+                <span>{nameTheme(name)}</span>
               )}
 
               {name === previewTheme.theme &&
@@ -231,9 +245,9 @@ export const ThemeDropdown = ({ children }) => {
                   ? name === previewTheme.base
                   : name === themeState.theme
               ) ? (
-                <strong>{name}</strong>
+                <strong>{nameTheme(name)}</strong>
               ) : (
-                <span>{name}</span>
+                <span>{nameTheme(name)}</span>
               )}
               {name === previewTheme.theme &&
                 previewTheme.previewing &&
