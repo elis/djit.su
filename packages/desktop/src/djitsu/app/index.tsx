@@ -5,8 +5,6 @@ import DjitsuTheme from '../theme'
 import QueryService from '../services/react-query'
 import SystemService from '../services/system'
 
-import 'antd/dist/antd.css'
-
 import '../../App.global.less'
 import '../../App.global.scss'
 
