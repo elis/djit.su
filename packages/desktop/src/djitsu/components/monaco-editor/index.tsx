@@ -252,7 +252,10 @@ const loadTheme = (() => {
       configPaths()
       if (theme in availableThemes) {
         let themeJson = require(`../../../dist/themes/monaco/${theme}.json`)
-        if (!themeJson.inherit) themeJson.inherit = true
+        if (!themeJson.inherit) {
+          console.log('🎨 ', theme, ' is not inheriting')
+          themeJson.inherit = true
+        }
 
         await loader.init().then(monaco => {
           if (!jsxConfigured) {

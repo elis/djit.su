@@ -10,7 +10,7 @@ THEMES=$(find ./${THEMES_SOURCE}/ -name "*-theme" -type d -exec basename {} \;)
 
 THEMES_JSON="{"
 for THEME in $THEMES; do
-
+  echo ${THEME}
   THEME_JSON_FILE=$THEMES_SOURCE/$THEME/theme.json
   THEME_LESS_FILE=$THEMES_SOURCE/$THEME/theme.less
   THEME_MONACO_FILE=$THEMES_SOURCE/$THEME/monaco.json
@@ -28,8 +28,8 @@ for THEME in $THEMES; do
         read -p "🎨 Is ${THEME} a light theme ? [Y/n] " yn
         case $yn in
         [Yy]*)
-          cp ${THEMES_SOURCE}/djitsu-dark-theme/theme.less ${THEMES_SOURCE}/${THEME}/theme.less
-          cp ${THEMES_SOURCE}/djitsu-dark-theme/variables-dark.less ${THEMES_SOURCE}/${THEME}/variables-light.less
+          cp ${THEMES_SOURCE}/djitsu-light-theme/theme.less ${THEMES_SOURCE}/${THEME}/theme.less
+          cp ${THEMES_SOURCE}/djitsu-light-theme/variables-light.less ${THEMES_SOURCE}/${THEME}/variables-light.less
           break
           ;;
         [Nn]*)

@@ -1,12 +1,14 @@
-import React from 'react';
-import { RecoilRoot } from 'recoil';
-import DjitsuRoutes from '../routes';
+import React from 'react'
+import { RecoilRoot } from 'recoil'
+import DjitsuRoutes from '../routes'
 import DjitsuTheme from '../theme'
-import QueryService from '../services/react-query';
-import SystemService from '../services/system';
+import QueryService from '../services/react-query'
+import SystemService from '../services/system'
 
-import '../../App.global.less';
-import '../../App.global.scss';
+import 'antd/dist/antd.css'
+
+import '../../App.global.less'
+import '../../App.global.scss'
 
 export default function App() {
   return (
@@ -18,5 +20,5 @@ export default function App() {
         </DjitsuTheme>
       </RecoilRoot>
     </QueryService>
-  );
+  )
 }
