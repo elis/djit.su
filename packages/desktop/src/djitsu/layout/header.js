@@ -182,7 +182,6 @@ export const ThemeDropdown = ({ children }) => {
           {lightThemes.map(({ name, title }) => (
             <ThemeMenuItem
               key={`theme-${name}`}
-              isSelected={name === themeState.theme}
               onClick={event => selectTheme(event, name)}
               onMouseEnter={onMouseEnterItem(name)}
               onMouseLeave={() => leaveTheme()}
@@ -217,10 +216,9 @@ export const ThemeDropdown = ({ children }) => {
       )}
       {darkThemes.length > 0 && (
         <Menu.ItemGroup title={`Dark Themes — ${darkThemes.length}`}>
-          {darkThemes.map(({ name }) => (
+          {darkThemes.map(({ name, title }) => (
             <ThemeMenuItem
               key={`theme-${name}`}
-              isSelected={name === themeState.theme}
               onClick={event => selectTheme(event, name)}
               onMouseEnter={event => enterTheme(event, name)}
               onMouseLeave={() => leaveTheme()}
@@ -231,9 +229,9 @@ export const ThemeDropdown = ({ children }) => {
                   ? name === previewTheme.base
                   : name === themeState.theme
               ) ? (
-                <strong>{name}</strong>
+                <strong>{title || name}</strong>
               ) : (
-                <span>{name}</span>
+                <span>{title || name}</span>
               )}
               {name === previewTheme.theme &&
                 previewTheme.previewing &&
