@@ -100,11 +100,11 @@ export const ThemeDropdown = ({ children }) => {
   const [previewTheme, setPreviewTheme] = useState(DEFAULT_PREVIEW_THEME)
 
   const darkThemes = useMemo(
-    () => themeState.availableThemes?.filter(({ dark }) => dark),
+    () => themeState.availableThemes?.filter(({ isDark }) => isDark),
     [themeState.availableThemes]
   )
   const lightThemes = useMemo(
-    () => themeState.availableThemes?.filter(({ dark }) => !dark),
+    () => themeState.availableThemes?.filter(({ isDark }) => !isDark),
     [themeState.availableThemes]
   )
 
@@ -179,7 +179,7 @@ export const ThemeDropdown = ({ children }) => {
     <Menu>
       {lightThemes.length > 0 && (
         <Menu.ItemGroup title={`Light Themes — ${lightThemes.length}`}>
-          {lightThemes.map(({ name }) => (
+          {lightThemes.map(({ name, title }) => (
             <ThemeMenuItem
               key={`theme-${name}`}
               isSelected={name === themeState.theme}
@@ -193,9 +193,9 @@ export const ThemeDropdown = ({ children }) => {
                   ? name === previewTheme.base
                   : name === themeState.theme
               ) ? (
-                <strong>{name}</strong>
+                <strong>{title || name}</strong>
               ) : (
-                <span>{name}</span>
+                <span>{title || name}</span>
               )}
 
               {name === previewTheme.theme &&

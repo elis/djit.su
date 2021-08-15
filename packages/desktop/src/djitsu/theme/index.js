@@ -16,9 +16,22 @@ export const ThemeContext = createContext()
 
 export const useTheme = () => useContext(ThemeContext)
 
-const themes = Object.entries(themesConfig)
-  .map(([name, pub]) => [name, `static://${pub}`])
-  .reduce((acc, [name, pub]) => ({ ...acc, [name]: pub }), {})
+const themes = themesConfig.themes.reduce(
+  (result, theme) => ({
+    ...result,
+    ...theme.variants.reduce(
+      (vs, variant) => ({
+        ...vs,
+        [variant.name]: {
+          ...variant,
+          staticUrl: `static://themes/${variant.css}`
+        }
+      }),
+      {}
+    )
+  }),
+  {}
+)
 
 export { themes }
 
@@ -26,7 +39,7 @@ export const DjitsuTheme = props => {
   const themePlugin = plugin('theme')
   const pluginContext = useContext(themePlugin.Context)
   const { actions: themeActions } = useThemeService()
-  const { switcher, themes } = useThemeSwitcher()
+  const { switcher } = useThemeSwitcher()
   const [isDark, setIsDark] = useState(false)
 
   const themeRef = useRef('')
@@ -90,20 +103,8 @@ export const DjitsuTheme = props => {
   const [availableThemes, setAvailableThemes] = useState([])
 
   useEffect(() => {
-    ;(async () => {
-      const themesData = await Promise.all(
-        Object.keys(themes).map(async name => [
-          name,
-          await import(`./themes/${name}/theme.json`)
-        ])
-      )
-      const parsedData = themesData.map(([name, themeJson]) => ({
-        name,
-        dark: themeJson.type === 'dark'
-      }))
-      setAvailableThemes(parsedData)
-    })()
-  }, [themes])
+    setAvailableThemes(Object.values(themes))
+  }, [])
 
   const state = {
     theme: themeInStore,
@@ -138,7 +139,7 @@ export const DjitsuTheme = props => {
     getTheme: () => themeRef.current,
     getThemes: type =>
       type
-        ? availableThemes.filter(({ dark }) => dark === (type === 'dark'))
+        ? availableThemes.filter(({ isDark }) => isDark === (type === 'dark'))
         : availableThemes
   }
   const context = [state, actions]
