@@ -230,10 +230,10 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = props => {
   }, [monaco, editorRef.current, keybound])
 
   useEffect(() => {
-    loadTheme(userProps.theme)
+    loadTheme(themeState.theme)
       .then(() => setLoaded(true))
       .catch(() => {})
-  }, [userProps.theme])
+  }, [themeState.theme])
 
   return loaded ? (
     <Editor {...userProps} onMount={onEditorMounted} />
@@ -251,7 +251,10 @@ const loadTheme = (() => {
     (result: Record<string, any>, theme: Record<string, any>) => ({
       ...result,
       ...theme.variants.reduce(
-        (res: Record<string, any>, vari: Record<string, any>) => ({ ...res, [vari.name]: vari }),
+        (res: Record<string, any>, vari: Record<string, any>) => ({
+          ...res,
+          [vari.name]: vari
+        }),
         {}
       )
     }),
@@ -274,7 +277,10 @@ const loadTheme = (() => {
           loaded[theme] = true
         })
       }
-    }
+    } else
+      await loader.init().then(monaco => {
+        monaco.editor.setTheme(theme)
+      })
   }
 })()
 

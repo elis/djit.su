@@ -332,7 +332,7 @@
     "less": "^4.1.0",
     "less-loader": "^7.2.1",
     "lodash": "^4.17.20",
-    "monaco-editor": "^0.22.1",
+    "monaco-editor": "^0.26.1",
     "node-localstorage": "^2.2.1",
     "react": "^17.0.1",
     "react-css-theme-switcher": "^0.2.2",

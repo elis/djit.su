@@ -142,7 +142,7 @@ const Divi = styled(Divider)`
         &::after {
           height: 1px;
           margin-top: -2px;
-          border-color: var(--tool-outline-color);
+          border-color: var(--separator-color);
         }
         &::before {
           width: auto;

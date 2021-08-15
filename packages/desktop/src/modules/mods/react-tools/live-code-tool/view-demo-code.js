@@ -7,12 +7,14 @@ import Icon from '@mdi/react'
 import { Tool } from '../../editorjs-react-tool' // 'editorjs-react-tool'
 
 import AntIcon, { CodeOutlined } from '@ant-design/icons'
+import styled from 'styled-components'
+import MonacoEditor from '../../../../djitsu/components/monaco-editor'
 
-export const ViewDemoCode = (props) => {
+export const ViewDemoCode = props => {
   const { baseEditorProps = {}, input, onChange, errors } = props
   const [annotations, setAnnotations] = useState()
 
-  const onChangeInput = useCallback((value) => {
+  const onChangeInput = useCallback(value => {
     // eslint-disable-next-line no-unused-expressions
     onChange?.(value)
   }, [])
@@ -38,35 +40,34 @@ export const ViewDemoCode = (props) => {
   }, [errors])
   return (
     <Tool.View
-      name='demo'
+      name="demo"
       icon={
         input ? (
           <CodeOutlined />
         ) : (
           <AntIcon
             component={() => (
-              <Icon path={mdiPresentation} color='inherit' size='1em' />
+              <Icon path={mdiPresentation} color="inherit" size="1em" />
             )}
           />
         )
       }
-      label='Demo Code'
-      description='Demo code...'
+      label="Demo Code"
+      description="Demo code..."
     >
-      <AceEditor
-        value={input}
-        className='demo-editor'
-        mode='jsx'
-        {...baseEditorProps}
-        setOptions={{
-          ...baseEditorProps.setOptions,
-          minLines: 2
-        }}
-        onChange={onChangeInput}
-        // onLoad={onEditorLoad('input')}
-        annotations={annotations}
-        // markers={markers}
-      />
+      <EditorContainer style={{'--editor-height': '80px'}}>
+        <MonacoEditor
+          code={input}
+          path='demo.jsx'
+          onSave={val => {
+            console.log('saving', val)
+          }}
+          onSaveAs={newData => console.log('save as', newData, true)}
+          onMount={() => console.log('mounted')}
+          onScroll={() => console.log('scrolled')}
+          onChange={onChangeInput}
+        />
+      </EditorContainer>
     </Tool.View>
   )
 }
@@ -79,4 +80,8 @@ const AceEditor = () => {
   )
 }
 
+const EditorContainer = styled.div`
+  border-left: 1px solid var(--separator-color);
+  border-right: 1px solid var(--separator-color);
+`
 export default ViewDemoCode

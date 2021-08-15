@@ -9171,10 +9171,10 @@ moment@^2.24.0, moment@^2.25.3:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
 
-monaco-editor@^0.22.1:
-  version "0.22.1"
-  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.22.1.tgz#f8de346e573e5d63a9df01eab1179f15839b6e63"
-  integrity sha512-cq+P8EsIajYu25Ixz4CSgiYSiHZRX33WRXtSufPqfN1PGNAl18uK6W5QtA7k81acb/bxDh8LOQ2eEEU+MUtgQA==
+monaco-editor@^0.26.1:
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.26.1.tgz#62bb5f658bc95379f8abb64b147632bd1c019d73"
+  integrity sha512-mm45nUrBDk0DgZKgbD7+bhDOtcAFNGPJJRAdS6Su1kTGl6XEgC7U3xOmDUW/0RrLf+jlvCGaqLvD4p2VjwuwwQ==
 
 monaco-vscode-textmate-theme-converter@^0.1.7:
   version "0.1.7"

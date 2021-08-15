@@ -138,7 +138,7 @@ const StyledBlockHeader = styled(PageHeader)`
       /* VIEW MODE */
       /* ************/
 
-      border-bottom: 1px solid var(--tool-outline-color);
+      border-bottom: 1px solid var(--separator-color);
 
       padding: 0 var(--control-padding-horizontal);
       .ant-page-header-heading {

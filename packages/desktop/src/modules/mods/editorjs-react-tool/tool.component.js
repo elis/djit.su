@@ -19,6 +19,7 @@ Tool.View = ToolView
 const StyledToolContainer = styled.div`
   --meta-height: 29px;
   --last-padding: 14px;
+  --separator-color: var(--editor-word-highlight-background);
   margin: 0 0 18px 0;
   .tool-view {
     .ant-collapse-content {
@@ -27,7 +28,7 @@ const StyledToolContainer = styled.div`
         > .code-editor,
         > .demo-editor,
         > .demo {
-          border: 1px solid var(--peek-view-border);
+          border: 1px solid var(--separator-color);
           border-top: none;
           border-bottom: none;
         }

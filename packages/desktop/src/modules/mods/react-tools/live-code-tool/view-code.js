@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 // import AceEditor from 'react-ace'
+import styled from 'styled-components'
 
 import compare from 'react-fast-compare'
 import { Select, Tooltip } from 'antd'
@@ -99,7 +100,7 @@ export const ViewCode = (props) => {
                 <BugTwoTone
                   twoToneColor={[
                     'var(--error-color)',
-                    'var(--tool-outline-color)'
+                    'var(--separator-color)'
                   ]}
                 />
               ) : (
@@ -139,9 +140,10 @@ export const ViewCode = (props) => {
         annotations={annotations}
         // markers={markers}
       /> */}
-      <div style={{'--editor-height': '330px'}}>
+      <EditorContainer style={{'--editor-height': '330px'}}>
         <MonacoEditor
           code={codeInput}
+          path='code.jsx'
           onSave={(val) => { console.log('saving', val) }}
           onSaveAs={newData => console.log('save as', newData, true)}
           onMount={() => console.log('mounted')}
@@ -149,7 +151,7 @@ export const ViewCode = (props) => {
           onChange={onChangeInput}
         />
 
-      </div>
+      </EditorContainer>
     </Tool.View>
   )
 }
@@ -161,5 +163,10 @@ const AceEditor = () => {
     </>
   )
 }
+
+const EditorContainer = styled.div`
+  border-left: 1px solid var(--separator-color);
+  border-right: 1px solid var(--separator-color);
+`
 
 export default ViewCode
