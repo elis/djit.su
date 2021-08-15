@@ -1,0 +1,8 @@
+name: ayu-theme
+title: Ayu Theme
+version: 1.0.0
+variants:
+  - title: Ayu Light
+    less: theme.less
+    type: vsc
+    source: source.json

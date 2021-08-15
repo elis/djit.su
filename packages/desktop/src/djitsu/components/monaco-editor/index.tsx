@@ -247,11 +247,23 @@ const loadTheme = (() => {
   const loaded: Record<string, boolean> = {}
   const availableThemes = require('../../../dist/themes/themes.json')
 
+  const themes = availableThemes.themes.reduce(
+    (result: Record<string, any>, theme: Record<string, any>) => ({
+      ...result,
+      ...theme.variants.reduce(
+        (res: Record<string, any>, vari: Record<string, any>) => ({ ...res, [vari.name]: vari }),
+        {}
+      )
+    }),
+    {}
+  )
+
   return async (theme: string) => {
     if (!loaded[theme]) {
       configPaths()
-      if (theme in availableThemes) {
-        const themeJson = require(`../../../dist/themes/monaco/${theme}.json`)
+      if (theme in themes) {
+        const variant = themes[theme]
+        const themeJson = require(`../../../dist/themes/${variant.monaco}`)
 
         await loader.init().then(monaco => {
           if (!jsxConfigured) {

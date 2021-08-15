@@ -14,7 +14,7 @@ enum Status {
 
 interface IThemeSwitcherContext {
   currentTheme: string | undefined
-  themes: Record<any, string>
+  themes: Record<any, Record<string, any>>
   switcher: ({ theme }: { theme: string }) => void
   status: Status
 }
@@ -24,8 +24,8 @@ const ThemeSwitcherContext = React.createContext<
 >(undefined)
 
 interface Props {
-  themeMap: Record<any, string>
-  children?: React.ReactNode
+  themeMap: Record<any, Record<string, any>>
+  children: React.ReactNode
   insertionPoint?: string | HTMLElement | null
   id?: string
   defaultTheme?: string
@@ -72,17 +72,17 @@ export function ThemeSwitcherProvider({
   )
 
   const switcher = React.useCallback(
-    ({ theme }: { theme: string }) => {
-      if (theme === currentTheme) return
+    ({ theme }: { theme: Record<string, any> }) => {
+      if (theme.name === currentTheme) return
 
-      if (themeMap[theme]) {
+      if (theme) {
         setStatus(Status.loading)
 
         const linkElement = createLinkElement({
           type: 'text/css',
           rel: 'stylesheet',
           id: `${id}_temp`,
-          href: themeMap[theme],
+          href: theme.staticUrl,
           onload: () => {
             setStatus(Status.loaded)
             const previousStyle = document.getElementById(id)
@@ -96,7 +96,7 @@ export function ThemeSwitcherProvider({
         })
 
         insertStyle(linkElement)
-        setCurrentTheme(theme)
+        setCurrentTheme(theme.name)
       } else {
         return console.warn('Could not find specified theme')
       }
@@ -117,13 +117,13 @@ export function ThemeSwitcherProvider({
     const themes = Object.keys(themeMap)
 
     themes.map(theme => {
-      const themeAssetId = `theme-prefetch-${theme}`
+      const themeAssetId = `theme-prefetch-${theme.name}`
       if (!document.getElementById(themeAssetId)) {
         const stylePrefetch = document.createElement('link')
         stylePrefetch.rel = 'prefetch'
         stylePrefetch.type = 'text/css'
         stylePrefetch.id = themeAssetId
-        stylePrefetch.href = themeMap[theme]
+        stylePrefetch.href = themeMap[theme].staticUrl
 
         insertStyle(stylePrefetch)
       }

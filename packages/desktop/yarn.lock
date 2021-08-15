@@ -4001,6 +4001,11 @@ commander@^7.0.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-7.0.0.tgz#3e2bbfd8bb6724760980988fb5b22b7ee6b71ab2"
   integrity sha512-ovx/7NkTrnPuIV8sqk/GjUIIM1+iUQeqA3ye2VNpq9sVoiZsooObWlQy+OPWGI17GDaEoybuAGJm6U8yC077BA==
 
+commander@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-8.1.0.tgz#db36e3e66edf24ff591d639862c6ab2c52664362"
+  integrity sha512-mf45ldcuHSYShkplHHGKWb4TrmwQadxOn7v4WuhDJy0ZVoY5JFajaRDKD0PNe5qXzBX0rhovjTnP6Kz9LETcuA==
+
 commondir@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
@@ -9166,23 +9171,19 @@ moment@^2.24.0, moment@^2.25.3:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
 
-monaco-editor@^0.16.2:
-  version "0.16.2"
-  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.16.2.tgz#950084ed82eeaef1c8c9d3c1bcab849fe11b2415"
-  integrity sha512-NtGrFzf54jADe7qsWh3lazhS7Kj0XHkJUGBq9fA/Jbwc+sgVcyfsYF6z2AQ7hPqDC+JmdOt/OwFjBnRwqXtx6w==
-
 monaco-editor@^0.22.1:
   version "0.22.1"
   resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.22.1.tgz#f8de346e573e5d63a9df01eab1179f15839b6e63"
   integrity sha512-cq+P8EsIajYu25Ixz4CSgiYSiHZRX33WRXtSufPqfN1PGNAl18uK6W5QtA7k81acb/bxDh8LOQ2eEEU+MUtgQA==
 
-monaco-vscode-textmate-theme-converter@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/monaco-vscode-textmate-theme-converter/-/monaco-vscode-textmate-theme-converter-0.1.1.tgz#1c031447eef2ecd141bdebab866cede651882202"
-  integrity sha512-S60iZ32YHUbCmvHJQG+zKp/iuJORaQkdDwAiuJjvem/QQAuNxumx2fk1Q53jQyxkDE6SvusbKzVKTl0hrTUcmQ==
+monaco-vscode-textmate-theme-converter@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/monaco-vscode-textmate-theme-converter/-/monaco-vscode-textmate-theme-converter-0.1.7.tgz#3860ca08edb65f59354cbca6d301a9b28a663c59"
+  integrity sha512-ZMsq1RPWwOD3pvXD0n+9ddnhfzZoiUMwNIWPNUqYqEiQeH2HjyZ9KYOdt/pqe0kkN8WnYWLrxT9C/SrtIsAu2Q==
   dependencies:
+    commander "^8.1.0"
     fs-extra "^7.0.1"
-    monaco-editor "^0.16.2"
+    tslib "^2.3.0"
 
 moo@^0.5.0:
   version "0.5.1"
@@ -13276,10 +13277,10 @@ tslib@^1.10.0, tslib@^1.8.1, tslib@^1.9.0:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
-  integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==
+tslib@^2.1.0, tslib@^2.3.0:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
+  integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
 
 tsutils@^3.17.1, tsutils@^3.21.0:
   version "3.21.0"

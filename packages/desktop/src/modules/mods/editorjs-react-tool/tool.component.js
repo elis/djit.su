@@ -27,7 +27,7 @@ const StyledToolContainer = styled.div`
         > .code-editor,
         > .demo-editor,
         > .demo {
-          border: 1px solid var(--tool-outline-color);
+          border: 1px solid var(--peek-view-border);
           border-top: none;
           border-bottom: none;
         }
