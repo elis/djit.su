@@ -13,6 +13,9 @@ export const StyledEditor = styled.div`
     }
   }
   .ce-block {
+    width: 55%;
+    margin: auto;
+    border-bottom: 1px solid #dfdfde;
     h1,
     h2,
     h3,
