@@ -87,90 +87,40 @@ export const NotebookHeader = (props) => {
 
   const [showCopy, setShowCopy] = useState(false)
 
-  const CopyModal = () => {
-    const majorGutter = [8, 12]
-    const [indeterminate, setIndeterminate] = React.useState(false)
-    const [checkAll, setCheckAll] = React.useState(true)
-    const defaultCheckedList = [...exports]
-    const [checkedList, setCheckedList] = React.useState(defaultCheckedList)
-    const plainOptions = [...exports]
+  // const CopyModal = () => {
+  const majorGutter = [8, 12]
+  const [indeterminate, setIndeterminate] = React.useState(false)
+  const [checkAll, setCheckAll] = React.useState(true)
+  const defaultCheckedList = [...exports]
+  const [checkedList, setCheckedList] = React.useState(defaultCheckedList)
+  const plainOptions = [...exports]
 
-    const createExportString = () => {
-      let exportsAsString = ''
-      checkedList.forEach((item, i) => {
-        i === exports.length - 1
-          ? (exportsAsString += item)
-          : (exportsAsString += `${item}, `)
-      })
-      return `import { ${exportsAsString} } from '${publishedLocation}'`
-    }
-
-    const onChange = (list) => {
-      console.log(list)
-      setCheckedList(list)
-      setIndeterminate(!!list.length && list.length < plainOptions.length)
-      setCheckAll(list.length === plainOptions.length)
-    }
-
-    const onCheckAllChange = (e) => {
-      setCheckedList(e.target.checked ? plainOptions : [])
-      setIndeterminate(false)
-      setCheckAll(e.target.checked)
-    }
-    return (
-      <>
-        <Modal
-          visible={showCopy}
-          okText={'Copy Code'}
-          cancelText={'Cancel'}
-          title={
-            <>
-              <GlobalOutlined /> <span>Copy Exports Code</span>
-            </>
-          }
-          onOk={() => {
-            copy(createExportString())
-            message.success('Import address copied to clipboard')
-            setShowCopy(false)
-          }}
-          onCancel={() => {
-            setShowCopy(false)
-          }}
-        >
-          <StyledCopyModal>
-            <Row gutter={majorGutter}>
-              <Col flex='auto'>
-                <h1>Select Exports To Copy</h1>
-                <div className='checkboxes'>
-                  <Checkbox
-                    indeterminate={indeterminate}
-                    onChange={onCheckAllChange}
-                    checked={checkAll}
-                  >
-                    {checkAll ? 'Deselect All' : 'Select All'}
-                  </Checkbox>
-                  <Divider />
-                  <CheckboxGroup
-                    options={plainOptions}
-                    value={checkedList}
-                    onChange={onChange}
-                  />
-                </div>
-              </Col>
-            </Row>
-            <Divider />
-            <Row gutter={majorGutter}>
-              <Col flex='auto'>
-                <h3>Import Code:</h3>
-                <code>{createExportString()}</code>
-              </Col>
-            </Row>
-            <div style={{ clear: 'both' }} />
-          </StyledCopyModal>
-        </Modal>
-      </>
-    )
+  const createExportString = () => {
+    let exportsAsString = ''
+    checkedList.forEach((item, i) => {
+      i === exports.length - 1
+        ? (exportsAsString += item)
+        : (exportsAsString += `${item}, `)
+    })
+    return `import { ${exportsAsString} } from '${publishedLocation}'`
   }
+
+  const onChange = (list) => {
+    console.log(list)
+    setCheckedList(list)
+    setIndeterminate(!!list.length && list.length < plainOptions.length)
+    setCheckAll(list.length === plainOptions.length)
+  }
+
+  const onCheckAllChange = (e) => {
+    setCheckedList(e.target.checked ? plainOptions : [])
+    setIndeterminate(false)
+    setCheckAll(e.target.checked)
+  }
+  // return (
+
+  // )
+  // }
 
   const handleLikeClick = async () => {
     setLoading('like', true)
@@ -398,7 +348,57 @@ export const NotebookHeader = (props) => {
   )
   return (
     <>
-      <CopyModal />
+      <>
+        <Modal
+          visible={showCopy}
+          okText={'Copy Code'}
+          cancelText={'Cancel'}
+          title={
+            <>
+              <GlobalOutlined /> <span>Copy Exports Code</span>
+            </>
+          }
+          onOk={() => {
+            copy(createExportString())
+            message.success('Import address copied to clipboard')
+            setShowCopy(false)
+          }}
+          onCancel={() => {
+            setShowCopy(false)
+          }}
+        >
+          <StyledCopyModal>
+            <Row gutter={majorGutter}>
+              <Col flex='auto'>
+                <h1>Select Exports To Copy</h1>
+                <div className='checkboxes'>
+                  <Checkbox
+                    indeterminate={indeterminate}
+                    onChange={onCheckAllChange}
+                    checked={checkAll}
+                  >
+                    {checkAll ? 'Deselect All' : 'Select All'}
+                  </Checkbox>
+                  <Divider />
+                  <CheckboxGroup
+                    options={plainOptions}
+                    value={checkedList}
+                    onChange={onChange}
+                  />
+                </div>
+              </Col>
+            </Row>
+            <Divider />
+            <Row gutter={majorGutter}>
+              <Col flex='auto'>
+                <h3>Import Code:</h3>
+                <code>{createExportString()}</code>
+              </Col>
+            </Row>
+            <div style={{ clear: 'both' }} />
+          </StyledCopyModal>
+        </Modal>
+      </>
       <Row onClick={handleSelfClick}>
         <Col flex='auto' />
         <Col flex='650px'>
