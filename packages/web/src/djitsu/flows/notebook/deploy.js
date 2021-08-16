@@ -1,15 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import {
-  Divider,
-  notification,
-  Steps,
-  Form,
-  Popover,
-  Input,
-  Row,
-  Col
-} from 'antd'
+import { Divider, Steps, Form, Popover, Input, Row, Col, message } from 'antd'
 import { useNotebook } from 'djitsu/providers/notebook'
 import Modal from 'antd/lib/modal/Modal'
 import { GlobalOutlined, InfoCircleOutlined } from '@ant-design/icons'
@@ -17,11 +8,12 @@ import AntIconMDI from 'djitsu/components/anticon-mdi'
 import { mdiPackageUp } from '@mdi/js'
 import useStates from 'djitsu/utils/hooks/use-states'
 
+import styled from 'styled-components'
+
 const { Step } = Steps
 
 export const useDeployFlow = () => {
   const [state, actions] = useNotebook()
-  const [notifications, notificationContext] = notification.useNotification()
   // const [modal, modalContext] = Modal.useModal()
   const [showDeploy, setShowDeploy] = useState(false)
   const [deploying, setDeploying] = useState()
@@ -40,19 +32,19 @@ export const useDeployFlow = () => {
   const deploy = () => {
     const state = getFreshState()
     if (state.currentNotebook.unsavedNotebook) {
-      notifications.error({ message: 'Save before deploying' })
+      message.error('Save and publish  your notebook before deploying', 1.5)
     } else if (!isPublished) {
-      notifications.error({ message: 'Publish notebook before deploying' })
+      message.error('Publish your notebook notebook before deploying', 1.5)
     } else if (
       isPublished &&
       isDeployed &&
       state.currentNotebook.notebook.meta.version ===
         state.currentNotebook.notebook.properties.deployedVersion
     ) {
-      notifications.error({
-        message:
-          'Notebook already deployed - publish a new version to update your deployment'
-      })
+      message.error(
+        'Notebook already deployed - publish a new version to update your deployment',
+        1.5
+      )
     } else {
       const title = state.currentNotebook.notebook.properties.title
 
@@ -73,7 +65,7 @@ export const useDeployFlow = () => {
   }
 
   const beginDeploy = async () => {
-    notifications.info({ message: 'deploy start...' })
+    message.info('Deployment has begun', 1.5)
     setDeploying(true)
 
     const notebookId = state.currentNotebook.notebookId
@@ -84,7 +76,9 @@ export const useDeployFlow = () => {
       hostname + '.djit.me'
     )
     await actions.loadNotebook(notebookId)
-    notifications.success({ message: <>Deplyed v{deployResult}</> })
+
+    console.log(deployResult)
+    message.success('Deployed successfully', 1.5)
     setShowDeploy(false)
   }
 
@@ -173,7 +167,7 @@ export const useDeployFlow = () => {
           if (steps.step > 1) {
             setStep('step', steps.step - 1)
           } else {
-            notifications.warning({ message: 'deploy cancel...' })
+            message.warning('Deployment has been cancelled', 1.5)
             setShowDeploy(false)
           }
         }}
@@ -181,7 +175,7 @@ export const useDeployFlow = () => {
           disabled: !allowProceed
         }}
       >
-        <>
+        <ModalWrapper>
           <Row gutter={majorGutter}>
             <Col flex='auto'>
               <DeploySteps steps={steps} />
@@ -592,19 +586,12 @@ export const useDeployFlow = () => {
             </Col>
           </Row>
           <div style={{ clear: 'both' }} />
-        </>
+        </ModalWrapper>
       </Modal>
     </>
   )
 
-  return [
-    {},
-    { deploy },
-    <>
-      {notificationContext}
-      {modalContext}
-    </>
-  ]
+  return [{}, { deploy }, <>{modalContext}</>]
 }
 
 const DeploySteps = (props) => {
@@ -648,3 +635,7 @@ const DeploySteps = (props) => {
 //   preminor: 'Preminor',
 //   major: 'Major'
 // }
+
+const ModalWrapper = styled.div`
+  height: 200px;
+`
