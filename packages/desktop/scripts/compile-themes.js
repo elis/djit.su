@@ -10,7 +10,7 @@ const ROOT_PATH = path.resolve(__dirname, '../')
 const THEMES_SOURCE = path.join(ROOT_PATH, 'src/themes')
 const THEMES_OUTPUT = path.join(ROOT_PATH, 'src/dist/themes')
 
-const CLEAN_BEFORE_RUN = true
+const CLEAN_BEFORE_RUN = false
 
 const run = async () => {
   const result = await fs.promises.readdir(THEMES_SOURCE)

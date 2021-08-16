@@ -49,9 +49,8 @@ export const DjitsuTheme = props => {
   const [activation] = useState()
 
   useEffect(() => {
-    if (themeInStore) {
+    if (themeInStore && availableThemes.length) {
       themeRef.current = themeInStore
-
       switcher({ theme: themes[themeInStore] })
       const dark = availableThemes.find(({ name }) => name === themeInStore)
         ?.dark
@@ -65,7 +64,7 @@ export const DjitsuTheme = props => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [themeInStore])
+  }, [themeInStore, availableThemes])
 
   useEffect(() => {
     if (activation) {
