@@ -28,6 +28,7 @@ export default function WindowManager(app, config) {
       frame: false,
       titleBarStyle: 'hidden',
       webPreferences: {
+        webviewTag: true,
         devTools: true,
         contextIsolation: false,
         contextIsolationInWorker: false,

@@ -20,7 +20,11 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "allowJs": true
+    "allowJs": true,
+    "baseUrl": "./",
+    "paths": {
+      "#modules/*": ["src/modules/*"]
+    }
   },
   "include": [
     "src"

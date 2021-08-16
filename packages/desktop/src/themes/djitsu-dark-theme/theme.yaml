@@ -1,0 +1,8 @@
+name: djitsu-dark-theme
+title: Djitsu Dark
+version: 1.0.0
+variants:
+  - title: Djitsu Dark
+    less: theme.less
+    type: vsc
+    source: source.json

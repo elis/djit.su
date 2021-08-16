@@ -1,10 +1,8 @@
-import * as React from 'react'
-import styles from './styles.module.css'
+import * as block from './schema/block'
+import * as djot from './schema/djot'
+import * as egraze from './schema/egraze'
+import * as files from './schema/files'
+import * as system from './schema/system'
+import * as theme from './schema/theme'
 
-interface Props {
-  text: string
-}
-
-export const ExampleComponent = ({ text }: Props) => {
-  return <div className={styles.test}>Example Component: {text}</div>
-}
+export default { block, djot, egraze, files, system, theme }

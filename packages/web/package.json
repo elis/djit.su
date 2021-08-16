@@ -81,8 +81,7 @@
     "ssl-express-www": "^3.0.7",
     "ssr-window": "^2.0.0",
     "styled-components": "5.2.0",
-    "vhost": "^3.0.2",
-    "@djitsu/editor": "*"
+    "vhost": "^3.0.2"
   },
   "devDependencies": {
     "@editorjs/editorjs": "https://github.com/codex-team/editor.js#c1f9dd6",

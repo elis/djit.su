@@ -17,6 +17,12 @@ export default {
       options: {
         main: require('../main-process')
       }
+    },
+    {
+      plugin: require('./plugins/egraze-notebooks')
+    },
+    {
+      plugin: require('./plugins/egraze-tray')
     }
   ]
 }

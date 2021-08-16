@@ -16,6 +16,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const launch = async () => {
+  process.env.IS_SSR = 'true'
   const egraze = await main(app, {
     dirname: __dirname
   })
