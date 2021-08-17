@@ -39,6 +39,7 @@ const plukPlugin = (plugin) => {
 }
 
 const plugins = getPlugins(config.plugins || [])
+console.log('🌴 Plugins!', plugins)
 
 // Select plugins
 const getPlugin = (part, what, args) =>

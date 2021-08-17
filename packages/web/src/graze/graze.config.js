@@ -121,17 +121,21 @@ const getPlugins = () => [
 
       const loaded =
         themed === 'dark'
-          ? require('djitsu/theme/themes/dark.less')
-          : require('djitsu/theme/themes/light.less')
+          ? require('djitsu/theme/index-dark.less')
+          : require('djitsu/theme/index-light.less')
 
       return loaded
     }
   },
 
   // * body-class (for antd and dark/light themes support)
+  // {
+  //   module: require('./plugins/graze-body-class'),
+  //   class: 'djs-theme'
+  // },
   {
-    module: require('./plugins/graze-body-class'),
-    class: 'djs-theme'
+    module: require('./plugins/graze-theme').default,
+    exposeName: 'theme'
   }
 ]
 

@@ -1,4 +1,5 @@
 import React from 'react'
+import plugins from '../../'
 
 export default (options) => ({
   client: client(options),
@@ -53,10 +54,22 @@ const server = (options) => ({
     const matched = markup.match(regex)
     const themed = matched?.[1] === 'dark' ? 'dark' : 'light'
 
+    const regex2 = /data-djitsu-theme="([^"]*)"/i
+    const matched2 = markup.match(regex2)
+    // console.log('🌻 Matched:', matched2)
+    const variantName = matched2?.[1]
+
+    console.log('🌹 Plugins.exposed:', plugins.exposed)
+
+    const variant = plugins.exposed.theme.themes[variantName]
+
+    const themeCSS = plugins.exposed.theme?.getCss(variant.staticUrl)
     const dropcss = require('dropcss')
     let cleaned = dropcss({
       html: `<html><body class="djs-theme ${themed}"><div id="root">${markup}</div></body></html>`,
-      css: `${theme}${styled}`
+      css: `${themeCSS}${theme}${styled}`
+      // css: `${themeCSS}`
+      // css: `${theme}${styled}`
     })
 
     return [

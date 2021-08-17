@@ -7,14 +7,15 @@ import React, {
 } from 'react'
 import PropTypes from 'prop-types'
 import Helmet from 'react-helmet'
-import { logEvent, setProperty } from 'djitsu/services/telemetry'
 import { useUser } from 'djitsu/providers/user'
+import { useThemeSwitcher } from './css-theme-switcher'
 
 const ThemeContext = createContext([{ theme: 'light' }, {}])
 
 export const useTheme = () => useContext(ThemeContext)
 
 export const DjitsuTheme = (props) => {
+  const { switcher, themes, currentTheme } = useThemeSwitcher()
   const [user, userActions] = useUser()
   const themeRef = useRef()
   const [themeInStore, setThemeInStore] = useState(props.theme || 'light')
@@ -26,17 +27,22 @@ export const DjitsuTheme = (props) => {
     document?.body?.classList.add(bodyClass === 'dark' ? 'dark' : 'light')
     document?.body?.classList.remove(bodyClass !== 'dark' ? 'dark' : 'light')
   }
+  const setBodyTheme = (theme) => {
+    document.body.attributes
+  }
   const onLight = async () => {
-    logEvent('set_theme', { theme: 'light' })
-    await import('./themes/light.less')
-    setProperty('theme', 'light')
+    // logEvent('set_theme', { theme: 'light' })
+    // await import('./themes/light.less')
+    // setProperty('theme', 'light')
     setBodyClass('light')
+    switcher('djitsu-light-theme')
   }
   const onDark = async () => {
-    logEvent('set_theme', { theme: 'dark' })
-    await import('./themes/dark.less')
-    setProperty('theme', 'dark')
+    // logEvent('set_theme', { theme: 'dark' })
+    // await import('./themes/dark.less')
+    // setProperty('theme', 'dark')
     setBodyClass('dark')
+    switcher('djitsu-dark-theme')
   }
 
   useEffect(() => {
@@ -99,7 +105,10 @@ export const DjitsuTheme = (props) => {
 
   return (
     <ThemeContext.Provider value={context}>
-      <div className={'djs-theme ' + themeInStore}>
+      <div
+        className={'djs-theme ' + themeInStore}
+        data-djitsu-theme={currentTheme}
+      >
         <Helmet>
           <link
             href='https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap'

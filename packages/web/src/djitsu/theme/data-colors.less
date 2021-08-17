@@ -96,12 +96,5 @@
 :root {
   each(@dataColors, {
     --@{key}: @@key;
-    --@{key}-name: @value;
-  })
-}
-:export {
-  each(@dataColors, {
-    @{key}: @@key;
-    @{key}-name: @value;
   })
 }
