@@ -1,8 +1,0 @@
-name: light-beard-theme
-title: Light Beard Theme
-version: 1.0.0
-variants:
-  - title: Light Beard
-    less: theme.less
-    type: vsc
-    source: source.json
