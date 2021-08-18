@@ -56,18 +56,6 @@ const EditorJSAdapter = ({ data, toolProps, onReady }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleChange = args => {
-    console.log(args)
-    if (cloneDeep(debouncedChanges) !== cloneDeep(args)) {
-      console.log('changes found')
-      setDebouncedChanges(args)
-    } else {
-      return
-      console.log('HERE')
-      console.log('📝', 'editor changed!', ...args)
-    }
-  }
-
   return (
     <>
       {!isUpdating ? (
@@ -77,7 +65,6 @@ const EditorJSAdapter = ({ data, toolProps, onReady }) => {
             ...componentTools,
             ...editorTools
           }}
-          // onChange={debounce(handleChange)}
           onReady={editorReadyHandler}
         />
       ) : null}
