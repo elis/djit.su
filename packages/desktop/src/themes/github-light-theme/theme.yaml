@@ -1,0 +1,8 @@
+name: github-light-theme
+title: GitHub Light Theme
+version: 1.0.0
+variants:
+  - title: GitHub Light
+    less: theme.less
+    type: vsc
+    source: source.json
