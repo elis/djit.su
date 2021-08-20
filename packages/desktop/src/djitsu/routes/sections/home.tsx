@@ -26,10 +26,17 @@ export const DjitsuHome: React.FC = props => {
       <Button type="primary" onClick={() => history.push('/notebook/dabc')}>
         Go to Notebook ID
       </Button>
-      <Button type="primary" onClick={() => history.push('/notebook//Users/eli/test.djitsu')}>
+      <Button
+        type="primary"
+        onClick={() => history.push('/notebook//Users/eli/test.djitsu')}
+      >
         Go to /notebook//Users/eli/test.djitsu
       </Button>
       <Button onClick={() => history.push('/djot')}>Djot Something</Button>
+      <Button onClick={() => history.push('/theme-workbench')}>
+        Import Theme
+      </Button>
+
       <Button type="ghost" onClick={() => history.push('/clean')}>
         Clean
       </Button>

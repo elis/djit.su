@@ -13,6 +13,7 @@ import DjitsuRoute from './sections/djitsu'
 import CleanSection from './sections/clean'
 import DjitsuEditor from './sections/notebook'
 import DjitsuHome from './sections/home'
+import ThemeImporter from './sections/theme-import'
 import { useSystem } from '../services/system'
 import { systemCommand, systemLoading } from '../state/atoms/system'
 import { routerReady } from '../state/atoms/router'
@@ -42,9 +43,14 @@ export const DjitsuRoutes: React.FC = () => {
             component={DjitsuRoute}
           />
           <Route
-            path={['/editor', '/notebook/d:notebookId', '/notebook/:filepath(.*)']}
+            path={[
+              '/editor',
+              '/notebook/d:notebookId',
+              '/notebook/:filepath(.*)'
+            ]}
             component={DjitsuEditor}
           />
+          <Route path={['/theme-workbench']} component={ThemeImporter} />
           <Route path="/clean" component={CleanSection} />
           <Route path="/" component={DjitsuHome} />
         </Switch>
