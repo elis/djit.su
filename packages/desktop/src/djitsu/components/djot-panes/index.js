@@ -61,6 +61,7 @@ const StyledCompanionPane = styled.div`
   position: relative;
   > .content {
     position: relative;
+    background: inherit;
     /* height: ${({ offset }) => offset?.scrollHeight ?? 0}px;
     top: ${({ offset }) => offset?.scrollTop ?? 0 * -1}px; */
     height: var(--scroll-height);

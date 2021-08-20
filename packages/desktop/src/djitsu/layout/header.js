@@ -48,6 +48,10 @@ const StyledHeader = styled(Layout.Header)`
       align-items: center;
     }
     > .main-menu {
+      transition: background 0.25s ease-in-out !important;
+      transition: border 0.25s ease-in-out !important;
+      background: inherit;
+      border: inherit;
       flex: 1 1 auto;
     }
     .logo {
