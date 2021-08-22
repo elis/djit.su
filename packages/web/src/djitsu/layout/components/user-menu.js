@@ -15,7 +15,7 @@ import AntIcon, {
 import { useTheme } from 'djitsu/theme'
 // import { ssr } from 'djitsu/utils/ssr'
 import { useSelector } from 'djitsu/store'
-import { mdiMoonWaningCrescent } from '@mdi/js'
+import { mdiMoonWaningCrescent, mdiCogs } from '@mdi/js'
 import Icon from '@mdi/react'
 
 export const UserMenu = () => {
@@ -29,6 +29,9 @@ export const UserMenu = () => {
   const [activationChanging, setActivationChanging] = useState()
 
   const toggleTheme = () => themeActions.switchTheme()
+  const showThemeSettings = () => {
+    console.log('show theme settings')
+  }
   const toggleActivation = async () => {
     setActivationChanging(true)
     await themeActions.setActivation(!themeState.activation)
@@ -41,6 +44,8 @@ export const UserMenu = () => {
     _setVisible(newVisible)
   }
   const goto = (path) => history.push(path)
+
+  const TESTING = false
 
   return !authInitialized || !userState.initialized ? (
     <>
@@ -74,57 +79,88 @@ export const UserMenu = () => {
         //   document.querySelector('.djitter-app .djs-theme')
         // }
         overlay={
-          <StyledSmallMenu style={{ width: 180 }}>
-            <Menu.ItemGroup
-              title={
-                <>
-                  Signed in as <strong>{userState.currentUsername}</strong>
-                </>
-              }
-            />
-            <Menu.Divider title='Hello' />
-            <Menu.ItemGroup title={<>Color Theme</>}>
-              <Menu.Item
-                onClick={toggleActivation}
-                icon={
-                  activationChanging ? (
-                    <LoadingOutlined />
-                  ) : (
-                    <FormatPainterOutlined />
-                  )
-                }
-              >
-                System Theme
-                <span />
-                <Switch
-                  size='small'
-                  checked={themeState.activation}
-                  loading={activationChanging}
+          TESTING ? (
+            <>
+              <Menu style={{width: 180}}>
+                <Menu.ItemGroup
+                  title={
+                    <>
+                      Signed in as <strong>{userState.currentUsername}</strong>
+                    </>
+                  }
                 />
-              </Menu.Item>
-              {!themeState.activation && (
+                <Menu.ItemGroup title={<>Color Theme</>}>
+                  <Menu.Item>
+                    <Button onClick={() => alert('clicked')}>Sup</Button>
+
+                  </Menu.Item>
+                </Menu.ItemGroup>
+              </Menu>
+            </>
+          ) : (
+            <StyledSmallMenu style={{ width: 180 }}>
+              <Menu.ItemGroup
+                title={
+                  <>
+                    Signed in as <strong>{userState.currentUsername}</strong>
+                  </>
+                }
+              />
+              <Menu.Divider title='Hello' />
+              <Menu.ItemGroup title={<>Color Theme</>}>
                 <Menu.Item
-                  onClick={toggleTheme}
+                  onClick={toggleActivation}
                   icon={
-                    <AntIcon
-                      component={() => <Icon path={mdiMoonWaningCrescent} />}
-                    />
+                    activationChanging ? (
+                      <LoadingOutlined />
+                    ) : (
+                      <FormatPainterOutlined />
+                    )
                   }
                 >
-                  Dark Mode
+                  System Theme
                   <span />
-                  <Switch size='small' checked={themeState.theme === 'dark'} />
+                  <Switch
+                    size='small'
+                    checked={themeState.activation}
+                    loading={activationChanging}
+                  />
                 </Menu.Item>
-              )}
-            </Menu.ItemGroup>
-            <Menu.Divider />
-            <Menu.Item
-              onClick={() => goto('/signout')}
-              icon={<LogoutOutlined />}
-            >
-              Sign Out
-            </Menu.Item>
-          </StyledSmallMenu>
+                {!themeState.activation && (
+                  <Menu.Item
+                    onClick={toggleTheme}
+                    icon={
+                      <AntIcon
+                        component={() => <Icon path={mdiMoonWaningCrescent} />}
+                      />
+                    }
+                  >
+                    Dark Mode
+                    <span />
+                    <Switch
+                      size='small'
+                      checked={themeState.theme === 'dark'}
+                    />
+                  </Menu.Item>
+                )}
+
+                <Menu.Item
+                  onClick={showThemeSettings}
+                  icon={<AntIcon component={() => <Icon path={mdiCogs} />} />}
+                >
+                  Theme Settings
+                </Menu.Item>
+              </Menu.ItemGroup>
+
+              <Menu.Divider />
+              <Menu.Item
+                onClick={() => goto('/signout')}
+                icon={<LogoutOutlined />}
+              >
+                Sign Out
+              </Menu.Item>
+            </StyledSmallMenu>
+          )
         }
         trigger={['click']}
         visible={visible}

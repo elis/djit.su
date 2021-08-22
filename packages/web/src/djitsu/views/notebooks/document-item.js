@@ -445,7 +445,8 @@ const StyledDocVis = styled.span`
 const borderRadius = '5px'
 
 const StyledDocumentCard = styled(Card)`
-  --book-background: var(--object-background-color);
+  --book-background: var(--editor-group-background);
+  --book-border: var(--editor-group-border);
   &.ant-card {
     .djs-theme.light &,
     .djs-theme.dark & {
@@ -551,7 +552,7 @@ const StyledDocumentCard = styled(Card)`
         top: 0;
         right: 0;
         left: 6px;
-        border-left: 1px solid var(--tool-outline-color);
+        border-left: 1px solid var(--book-border);
         bottom: 0;
         z-index: 1;
         display: flex;
@@ -619,7 +620,7 @@ const StyledDocumentCard = styled(Card)`
           bottom: 0;
           /* background: var(--tool-background-color); */
           background-color: var(--book-background);
-          border-top: 1px solid var(--tool-outline-color);
+          border-top: 1px solid var(--book-border);
           opacity: 0.85;
         }
       }
@@ -680,7 +681,7 @@ const StyledDocumentCard = styled(Card)`
       top: 0;
       /* background-color: var(--tool-background-color); */
       background-color: var(--book-background);
-      border: 1px solid var(--tool-outline-color);
+      border: 1px solid var(--book-border);
       left: 0;
     }
 

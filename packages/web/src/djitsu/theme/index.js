@@ -88,10 +88,15 @@ export const DjitsuTheme = (props) => {
 
   const state = {
     theme: themeInStore,
+    themes,
     activation
   }
 
   const actions = {
+    setVariant: (variantName) => {
+      console.log('🌸🌼 Variant saving:', variantName)
+    },
+
     setActivation: (on) => {
       userActions.setOption('theme-activation', on)
     },

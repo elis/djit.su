@@ -98,7 +98,7 @@ export const ViewCode = (props) => {
                 <BugTwoTone
                   twoToneColor={[
                     'var(--error-color)',
-                    'var(--tool-outline-color)'
+                    'var(--separator-color)'
                   ]}
                 />
               ) : (

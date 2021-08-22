@@ -164,11 +164,12 @@ const server = (options) => ({
 </script>`
     ]
   },
-  Wrapper: ({ children }) => {
+  Wrapper: ({ children, ...rest }) => {
+    console.log('🌾 rest of props to wrapper', rest)
     return (
       <ThemeSwitcherProvider
         attr='data-djitsu-theme'
-        defaultTheme='djitsu-dark-theme'
+        defaultTheme={'djitsu-dark-theme'}
       >
         {children}
       </ThemeSwitcherProvider>
