@@ -1,3 +1,10 @@
 const { convertTheme } = require('monaco-vscode-textmate-theme-converter')
 
-module.exports = themeSource => convertTheme(themeSource)
+const makeMonaco = themeSource => {
+  const { type } = themeSource
+  const outputTheme = convertTheme(themeSource)
+  outputTheme.inherit = type !== 'light'
+  return outputTheme
+}
+
+module.exports = themeSource => makeMonaco(themeSource)
