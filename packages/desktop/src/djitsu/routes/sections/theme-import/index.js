@@ -7,6 +7,7 @@ import { Button, Divider, message, Tooltip, Input } from 'antd'
 import { useTheme } from '../../../../djitsu/theme'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import themesConfig from '../../../../../src/dist/themes/themes.json'
+import { convertTheme } from 'monaco-vscode-textmate-theme-converter'
 
 const Wrap = styled.div`
   * {
@@ -135,7 +136,9 @@ export default function ThemeImporter() {
         read = e.target.result
         if (IsJsonString(read)) {
           const themeName = file.name.split('.')[0]
-          setNewThemeDetails({ name: themeName, json: JSON.parse(read) })
+          const themeAsJSON = JSON.parse(read)
+          console.log(convertTheme(themeAsJSON))
+          setNewThemeDetails({ name: themeName, json: themeAsJSON })
           setFileDropped(true)
         } else {
           message.error('Not a valid JSON file')
@@ -152,7 +155,6 @@ export default function ThemeImporter() {
       <h3>Import New Theme </h3>
       {!fileDropped ? (
         <>
-          {' '}
           <Divider plain>Import Theme Via JSON</Divider>
           <Dropzone
             onDragEnter={() => (dropzoneRef.current.style.opacity = '0.2')}
