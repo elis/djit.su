@@ -265,12 +265,8 @@ const loadTheme = (() => {
     if (!loaded[theme]) {
       configPaths()
       if (theme in themes) {
-        const { isDark } = themes[theme]
         const variant = themes[theme]
-
         const themeJson = require(`../../../dist/themes/${variant.monaco}`)
-        const { base, inherit } = themeJson
-        if (isDark && base === 'vs-dark' && !inherit) themeJson.inherit = true
 
         await loader.init().then(monaco => {
           if (!jsxConfigured) {
