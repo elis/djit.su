@@ -11,6 +11,7 @@ import { useThemeSwitcher } from './css-theme-switcher'
 import themesConfig from '../../dist/themes/themes.json'
 import { useThemeService } from '../services/theme'
 import { plugin } from '../../egraze'
+import _ from 'lodash'
 
 export const ThemeContext = createContext()
 
@@ -136,6 +137,17 @@ export const DjitsuTheme = props => {
       return true
     },
     getTheme: () => themeRef.current,
+    addTheme: theme => {
+      const themesClone = _.cloneDeep(availableThemes)
+      console.log({ theme })
+      console.log({ themesClone })
+      console.log({ availableThemes })
+      themesClone.push(themesClone[0])
+      setAvailableThemes(themesClone)
+    },
+    removeTheme: theme => {
+      console.log('Removing theme ', theme)
+    },
     getThemes: type =>
       type
         ? availableThemes.filter(({ isDark }) => isDark === (type === 'dark'))
