@@ -1,0 +1,16 @@
+name: one-dark-pro-theme
+title: One Dark Pro Theme
+version: 1.0.0
+variants:
+  - title: One Dark Pro
+    less: theme.less
+    type: vsc
+    source: source.json
+  - title: One Darker
+    less: theme.less
+    type: vsc
+    source: darker.json
+  - title: One Dark Flat
+    less: theme.less
+    type: vsc
+    source: flat.json

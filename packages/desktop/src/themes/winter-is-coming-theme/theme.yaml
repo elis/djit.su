@@ -1,0 +1,8 @@
+name: winter-is-coming-theme
+title: Winter Is Coming Theme
+version: 1.0.0
+variants:
+  - title: Winter Is Coming Dark
+    less: theme.less
+    type: vsc
+    source: source.json
