@@ -48,6 +48,7 @@ const StyledHeader = styled(Layout.Header)`
       align-items: center;
     }
     > .main-menu {
+      border-bottom: 0;
       flex: 1 1 auto;
     }
     .logo {
