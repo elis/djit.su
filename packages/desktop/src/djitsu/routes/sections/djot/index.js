@@ -273,7 +273,11 @@ const LineComponent = (props) => {
       return (
         <ErrorBoundary FallbackComponent={() => <>Error :(</>}>
           {/* {console.log('Typeof:', ReactIs.typeOf(data.result))} */}
-        <ReactJson theme={ReactJsonTheme()} src={data.result} />
+          <ReactJson
+            name={data.sourceNode.expression.name || ''}
+            theme={ReactJsonTheme()}
+            src={data.result}
+          />
         </ErrorBoundary>
       )
   }

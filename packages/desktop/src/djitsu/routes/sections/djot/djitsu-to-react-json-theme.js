@@ -21,12 +21,12 @@ export default function ReactJsonTheme() {
     base06: 'green', // Not sure, might come in debugging
     base07: foreground, // root: [
     base08: 'red', // Not sure, might come in debugging
-    base09: 'blue', // Not sure, might come in debugging
+    base09: foreground, // type and value in an object
     base0A: 'maroon', // Not sure, might come in debugging
     base0B: 'purple', // Not sure, might come in debugging
     base0C: foreground, // index in an array
     base0D: 'orange', // Not sure, might come in debugging
-    base0E: 'blue', // Not sure, might come in debugging
+    base0E: 'white', // Not sure, might come in debugging
     base0F: foreground // type and value in an array
   }
 
