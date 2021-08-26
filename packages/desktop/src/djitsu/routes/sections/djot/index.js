@@ -22,7 +22,9 @@ import { useFileHandler } from './file-handler'
 import { SystemSpinner } from '../../../schema/system'
 import { DjotStatus } from '../../../schema/djot'
 
-export const DjotSection = (props) => {
+import ReactJsonTheme from './djitsu-to-react-json-theme'
+
+export const DjotSection = props => {
   const ipc = useIPCRenderer()
   const history = useHistory()
 
@@ -271,13 +273,11 @@ const LineComponent = (props) => {
       return (
         <ErrorBoundary FallbackComponent={() => <>Error :(</>}>
           {/* {console.log('Typeof:', ReactIs.typeOf(data.result))} */}
-          <ReactJson src={data.result} />
+        <ReactJson theme={ReactJsonTheme()} src={data.result} />
         </ErrorBoundary>
       )
   }
-  return <>
-    &nbsp;
-  </>
+  return <>&nbsp;</>
 }
 
 export default DjotSection
