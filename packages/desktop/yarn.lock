@@ -1199,10 +1199,10 @@
     ajv "^6.12.0"
     ajv-keywords "^3.4.1"
 
-"@editorjs/editorjs@^2.22.1":
-  version "2.22.1"
-  resolved "https://registry.yarnpkg.com/@editorjs/editorjs/-/editorjs-2.22.1.tgz#a55442d7e4d3c44475cccad594caf6477b83a09b"
-  integrity sha512-9vaacsrs45XvMkFKSS0NQM6YxHzp/Z1Li7ZS7TUWkZRxl/eZ/WdNuOtij+CoXFSgZs4w8UbHOjbirIa5wnbH0Q==
+"@editorjs/editorjs@^2.22.2":
+  version "2.22.2"
+  resolved "https://registry.yarnpkg.com/@editorjs/editorjs/-/editorjs-2.22.2.tgz#bf1d10c9fa9dd1dc574c18d8f4b77fef43d8e7f6"
+  integrity sha512-rPCv7Z5LZebreQaaL4DZuWzoVGEqwB+P7BF1dsefGQNBmLyeLF412topeW2b6e+g4l1oQ7t75kCOACNTEyYYIA==
   dependencies:
     codex-notifier "^1.1.2"
     codex-tooltip "^1.0.2"
