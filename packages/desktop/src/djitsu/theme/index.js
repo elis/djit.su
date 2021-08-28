@@ -48,7 +48,12 @@ export const DjitsuTheme = props => {
   )
   const [activation] = useState()
 
+  const [initThemeSet, setInitThemeSet] = useState(false)
+  const [lastSetTheme, setLastSetTheme] = useState(themeInStore)
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
+    if (initThemeSet && themeInStore === lastSetTheme) return
     if (themeInStore && availableThemes.length) {
       themeRef.current = themeInStore
       switcher({ theme: themes[themeInStore] })
@@ -61,10 +66,10 @@ export const DjitsuTheme = props => {
         theme: themeInStore,
         darkMode: !!dark
       }))
+      setInitThemeSet(true)
+      setLastSetTheme(themeInStore)
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [themeInStore, availableThemes])
+  })
 
   useEffect(() => {
     if (activation) {

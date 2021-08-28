@@ -1,0 +1,8 @@
+name: brackets-theme
+title: Brackets Theme
+version: 1.0.0
+variants:
+  - title: Brackets Light
+    less: theme.less
+    type: vsc
+    source: theme.json

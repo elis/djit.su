@@ -73,6 +73,8 @@ export function ThemeSwitcherProvider({
 
   const switcher = React.useCallback(
     ({ theme }: { theme: Record<string, any> }) => {
+      if (!theme) return
+
       if (theme.name === currentTheme) return
 
       if (theme) {

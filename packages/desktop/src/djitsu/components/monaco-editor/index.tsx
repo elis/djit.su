@@ -274,6 +274,7 @@ const loadTheme = (() => {
             jsxConfigured = true
           }
           monaco.editor.defineTheme(theme, themeJson)
+          monaco.editor.setTheme(theme)
           loaded[theme] = true
         })
       }
