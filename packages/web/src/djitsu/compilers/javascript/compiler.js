@@ -39,7 +39,7 @@ export const compile = async (files, options) => {
     if (test) return false
   }
 
-  if (!modules?.length) return {}
+  if (!modules?.length) return
 
   try {
     const compiled = await bundler(
@@ -133,7 +133,9 @@ const bundler = async (
     ...modules
   ]
   const Babel = getDeps?.()?.babel // window.Babel
-
+  if (!Babel) {
+    return
+  }
   // Tranform ES6/jsx code to something we can evaluate
   const transformed = modified.map((mod) => {
     // Transforms the input code according to options
@@ -177,6 +179,9 @@ const bundler = async (
   const codeSplitting = true
   const rollup = getDeps?.()?.rollup // window.rollup
 
+  if (modules.length === 0) {
+    return
+  }
   if (codeSplitting) {
     inputOptions.input = transformed
       .filter((module, index) => index === 0 || module.entry)
@@ -264,6 +269,9 @@ const bundler = async (
 }
 
 const customImporter = (modules) => {
+  if (!modules[0]) {
+    return
+  }
   const moduleById = modules.reduce((acc, module) => {
     return { ...acc, [module.name]: module }
   }, {})
@@ -369,6 +377,9 @@ const collectExports = (ast) => {
 const chunkTransformer = (filename, chunkCode, options = {}, getDeps) => {
   try {
     const Babel = getDeps?.()?.babel // window.Babel
+    if (!Babel) {
+      return {}
+    }
     const output = Babel.transform(chunkCode, {
       filename,
       ...options
@@ -421,19 +432,20 @@ const buildModuleFiles = (getDeps) => ({ ctype, content = [] }) => {
         }
       ]
     }
-
-    const exports = collectExports(output.ast)
-    modules.push({
-      ...chunk,
-      ast: output.ast,
-      code: output.code,
-      exports,
-      // convenience object
-      _exports: exports?.reduce(
-        (acc, c) => ({ ...acc, [c]: chunk.filename }),
-        {}
-      )
-    })
+    if (output) {
+      const exports = collectExports(output.ast)
+      modules.push({
+        ...chunk,
+        ast: output.ast,
+        code: output.code,
+        exports,
+        // convenience object
+        _exports: exports?.reduce(
+          (acc, c) => ({ ...acc, [c]: chunk.filename }),
+          {}
+        )
+      })
+    }
   }
   if (hasWrapper) {
     const chunkModule = modules.find(({ type }) => type === 'chunk')
