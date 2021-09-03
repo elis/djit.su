@@ -1,0 +1,51 @@
+{
+ "version": "1.4.0",
+ "dv": "lion",
+ "themes": [
+  {
+   "name": "ayu-theme",
+   "title": "Ayu Theme",
+   "version": "1.0.0",
+   "base": "ayu-theme",
+   "variants": [
+    {
+     "css": "ayu-theme/ayu-theme.css",
+     "isDark": false,
+     "name": "ayu-theme",
+     "title": "Ayu Light",
+     "monaco": "ayu-theme/ayu-theme.monaco.json"
+    }
+   ]
+  },
+  {
+   "name": "djitsu-dark-theme",
+   "title": "Djitsu Dark",
+   "version": "1.0.0",
+   "base": "djitsu-dark-theme",
+   "variants": [
+    {
+     "css": "djitsu-dark-theme/djitsu-dark-theme.css",
+     "isDark": true,
+     "name": "djitsu-dark-theme",
+     "title": "Djitsu Dark",
+     "monaco": "djitsu-dark-theme/djitsu-dark-theme.monaco.json"
+    }
+   ]
+  },
+  {
+   "name": "djitsu-light-theme",
+   "title": "Djitsu Light",
+   "version": "1.0.0",
+   "base": "djitsu-light-theme",
+   "variants": [
+    {
+     "css": "djitsu-light-theme/djitsu-light-theme.css",
+     "isDark": false,
+     "name": "djitsu-light-theme",
+     "title": "Djitsu Light",
+     "monaco": "djitsu-light-theme/djitsu-light-theme.monaco.json"
+    }
+   ]
+  }
+ ]
+}

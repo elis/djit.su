@@ -305,7 +305,7 @@
   },
   "dependencies": {
     "@babel/standalone": "^7.12.15",
-    "@editorjs/editorjs": "^2.22.1",
+    "@editorjs/editorjs": "^2.22.2",
     "@editorjs/embed": "^2.4.6",
     "@editorjs/header": "^2.6.1",
     "@editorjs/paragraph": "^2.8.0",

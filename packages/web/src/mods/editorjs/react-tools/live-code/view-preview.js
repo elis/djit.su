@@ -268,7 +268,7 @@ const StyledResult = styled.div`
           : graphPaper('%23f0f0f0', '0.95')};
     }
 
-    border: 1px solid var(--tool-outline-color);
+    border: 1px solid var(--separator-color);
     border-left: none;
     border-right: none;
 

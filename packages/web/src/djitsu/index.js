@@ -3,7 +3,7 @@ import Application from './application'
 import Layout from './layout'
 import DjitsuRoutes from './routes'
 import DjitsuProviders from './providers'
-import './style.less'
+// import './style.less'
 import DjitsuManifest from './components/app-manifest'
 
 export const Djitsu = (props) => {

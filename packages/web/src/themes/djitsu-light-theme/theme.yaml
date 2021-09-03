@@ -1,0 +1,7 @@
+name: djitsu-light-theme
+title: Djitsu Light
+version: 1.0.0
+variants:
+  - less: theme.less
+    type: vsc
+    source: source.json

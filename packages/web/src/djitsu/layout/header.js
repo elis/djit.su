@@ -8,11 +8,33 @@ import UserMenu from './components/user-menu'
 import DocumentButton from './components/document-button'
 import { ssr } from 'djitsu/utils/ssr'
 import { LikeFilled } from '@ant-design/icons'
+import { useHistory } from 'djitsu/adapters/routes'
+import { useUser } from 'djitsu/providers/user'
 const { Header: AntHeader } = Layout
 
 export const Header = () => {
+  const [userState] = useUser()
+  const history = useHistory()
+  console.log('history!', history)
   const [theme] = useTheme()
-  const displayItems = <></>
+  const displayItems = userState?.currentUsername ? (
+    <>
+      <Divider type='vertical' />
+      <Button
+        href='/notebooks'
+        type={history.location.pathname === '/notebooks' ? 'primary' : 'link'}
+        onClick={(event) => {
+          event.preventDefault()
+          if (history.location.pathname !== '/notebooks')
+            history.push('/notebooks')
+        }}
+      >
+        Notebooks
+      </Button>
+    </>
+  ) : (
+    <></>
+  )
 
   return (
     <StyledHeader
