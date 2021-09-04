@@ -98,6 +98,11 @@ export const ViewCode = (props) => {
     })
   }
 
+  const clearPrompt = () => {
+    setPromptType('')
+    setPromptValue('')
+  }
+
   const createMonaco = () => {
     editor.current = monaco.editor.create(container.current, {
       value: codeInput,
@@ -222,9 +227,7 @@ export const ViewCode = (props) => {
       forceMoveMarkers: false
     }
     editor.current.executeEdits('my-source', [op, op2])
-
-    setPromptValue('')
-    setPromptType('')
+    clearPrompt()
   }
 
   const showModal = () => {
@@ -255,10 +258,12 @@ export const ViewCode = (props) => {
 
   const addStyledComponent = () => {
     if (promptType !== 'STYLED') return
+    if (promptValue === '') return
+    const compName = promptValue.replace(/\s/g, '')
     const line = editor.current.getPosition()
     const range = new monaco.Range(line.lineNumber, 1, line.lineNumber, 1)
     const id = { major: 1, minor: 1 }
-    const text = `const ${promptValue} = styled.div\`\n\n\``
+    const text = `export const ${compName} = styled.div\`\n\n\``
     const op = {
       identifier: id,
       range: range,
@@ -267,17 +272,17 @@ export const ViewCode = (props) => {
     }
     editor.current.executeEdits('my-source', [op])
     format()
-    setPromptValue('')
-    setPromptType('')
+    clearPrompt()
   }
 
   const addReactComponent = () => {
     if (promptType !== 'REACT') return
-
+    if (promptValue === '') return
+    const compName = promptValue.replace(/\s/g, '')
     const line = editor.current.getPosition()
     const range = new monaco.Range(line.lineNumber, 1, line.lineNumber, 1)
     const id = { major: 1, minor: 1 }
-    const text = `export const ${promptValue} = (props) => {\nreturn<></>\n}`
+    const text = `export const ${compName} = (props) => {\nreturn<></>\n}`
     const op = {
       identifier: id,
       range: range,
@@ -286,8 +291,7 @@ export const ViewCode = (props) => {
     }
     editor.current.executeEdits('my-source', [op])
     format()
-    setPromptValue('')
-    setPromptType('')
+    clearPrompt()
   }
 
   const addReactComponentAdder = () => {
@@ -297,7 +301,7 @@ export const ViewCode = (props) => {
       keybindings: [
         monaco.KeyMod.chord(
           monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_C,
-          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_C
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_R
         )
       ],
       precondition: null,
@@ -317,7 +321,7 @@ export const ViewCode = (props) => {
       label: 'Add Styled component at position',
       keybindings: [
         monaco.KeyMod.chord(
-          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K,
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_C,
           monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S
         )
       ],
@@ -439,20 +443,23 @@ export const ViewCode = (props) => {
     editor.current.focus()
   }
 
-  const closeModal = () => {
+  const runAllPlugins = () => {
     tagWrap()
     addReactComponent()
     addStyledComponent()
+  }
+
+  const closeModal = () => {
+    runAllPlugins()
     setOpenModal(false)
-    setPromptType('')
-    setPromptValue('')
+    clearPrompt()
   }
 
   return (
     <Tool.View
       name='main'
       label='Main Code'
-      description='Main code...'
+      description={`# Main Code \n ## Here is where you write your main code \n ## Plugin HotKeys:\n ### Format JSX: **Ctrl+F+Ctrl+F**\n ### Create React Component at Cursor: **Ctrl+C+Ctrl+R**\n ### Create Styled Component at Curosr:**Ctrl+C+Ctrl+S**\n ### Wrap Selected Text in JSX Element: **Ctrl+B+Ctrl+B**`}
       icon={
         <AntIcon
           component={() => (
@@ -464,7 +471,7 @@ export const ViewCode = (props) => {
         <>
           <Tooltip
             title={
-              (options.debug ? 'Disable ' : 'Enable ') + ' debuggin on block'
+              (options.debug ? 'Disable ' : 'Enable ') + ' debugging on block'
             }
           >
             <VButton onClick={toggleDebugCodeBlock} size='small'>

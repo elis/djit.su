@@ -138,7 +138,7 @@ export const ViewDemoCode = (props) => {
         )
       }
       label='Demo Code'
-      description='Demo code...'
+      description={`# Demo Code\n ## Here is where you **render** your components from the **Main Code Block** above \n ### For example, if you **Main Code Block exports** the following: \n    export const Main = () => {...} \n ### Here you would **render it via**: \n    <Main /> \n **Only named exports will render from the Main Code Block (no default exports)** `}
     >
       <MonacoContainer ref={containerDemo} />
       {annotations ? (
