@@ -64,8 +64,8 @@ export const NotebookHeader = (props) => {
   const [state, actions] = useNotebook()
   const [documentMenuVisible, setDocumentMenuVisible] = useState()
 
-  let exports = []
-  if (notebook.compiled) exports = notebook?.compiled.exports
+  const exports = notebook?.compiled?.exports || []
+  const unSaved = state?.currentNotebook?.unsavedNotebook
 
   const { isPublic, isPublished, createdBy } = notebook?.meta || {}
   const { name: notebookName } = notebook?.properties || {}
@@ -377,7 +377,7 @@ export const NotebookHeader = (props) => {
                     onChange={onCheckAllChange}
                     checked={checkAll}
                   >
-                    {checkAll ? 'Deselect All' : 'Select All'}
+                    All
                   </Checkbox>
                   <Divider />
                   <CheckboxGroup
@@ -455,7 +455,9 @@ export const NotebookHeader = (props) => {
                     }}
                   >
                     <span className='click-to-copy-import-location'>
-                      {exports.length} exports <ExportOutlined />
+                      {exports.length} export{exports.length > 1 ? 's ' : '  '}
+                      <ExportOutlined />
+                      {unSaved ? '  (as of last save)' : ''}
                     </span>
                   </Tooltip>
                 ) : null}
