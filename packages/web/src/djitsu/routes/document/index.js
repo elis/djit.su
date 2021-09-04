@@ -20,7 +20,7 @@ const newDocumentBlocks = [
   {
     type: 'header',
     data: {
-      text: 'Name Your Notebook For Import/Export Here',
+      text: 'Click Here To Give Your Notebook a Name',
       level: 1
     }
   },
