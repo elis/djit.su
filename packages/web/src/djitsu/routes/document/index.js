@@ -38,7 +38,7 @@ const newDocumentBlocks = [
         code: {
           options: { language: 'js' },
           code:
-            "//////////////////////////\n//\n// Write your code here!!\n//\n// \n\nimport React from 'react'\n\n\n\nimport styled from 'styled-components'\n\nexport const Main = () => {\n  return (\n    <Wrap>\n      <h1>Welcome to Djit.su</h1>\n      <h3>this</h3>\n      <h2>is</h2>\n      <h1>awesome!</h1>\n    </Wrap>\n  )\n}\n\nconst Wrap = styled.div`\nbackground: #4285f4;\ndisplay: flex;\nalign-items: center;\nflex-direction: column;\npadding: 15px;\n\nh1 {\n  font-size: 2rem;\n  color: #f1f6ff !important;\n}\n\nh2, h3 {\n  color: #a8c6f9 !important;\n}\n\nh2 {\n  font-size: 1.5rem;\n}\n`\n"
+            "//////////////////////////\n//\n// Write your code here!!\n//\n// \n\nimport React from 'react'\n\nimport styled from 'styled-components'\n\nexport const Main = () => {\n  return (\n    <Wrap>\n      <h1>Welcome to Djit.su</h1>\n      <h3>this</h3>\n      <h2>is</h2>\n      <h1>awesome!</h1>\n    </Wrap>\n  )\n}\n\nconst Wrap = styled.div`\nbackground: #4285f4;\ndisplay: flex;\nalign-items: center;\nflex-direction: column;\npadding: 15px;\n\nh1 {\n  font-size: 2rem;\n  color: #f1f6ff !important;\n}\n\nh2, h3 {\n  color: #a8c6f9 !important;\n}\n\nh2 {\n  font-size: 1.5rem;\n}\n`\n"
         },
         demo: '<Main />',
         preview: ''

@@ -7,6 +7,8 @@ import babylon from 'prettier/parser-babel'
 
 import styled from 'styled-components'
 
+import { Button } from 'antd'
+
 import { Select, Tooltip } from 'antd'
 import {
   mdiCodeBraces,
@@ -27,18 +29,36 @@ import compare from 'react-fast-compare'
 export const ViewCode = (props) => {
   const { baseEditorProps = {}, input, onChange } = props
   const theme = baseEditorProps.theme
+
   const [codeInput, setCodeInput] = useState(input?.code)
   const [options, setOption] = useStates({
     language: 'js',
     ...(input.options || {})
   })
+
   const [annotations, setAnnotations] = useState()
+  const [editorHeight, setEditorHeight] = useState(1)
+  const [openModal, setOpenModal] = useState(false)
+  const [promptType, setPromptType] = useState(null)
+  const [promptValue, setPromptValue] = useState('')
 
   const monaco = useMonaco()
 
   const editor = useRef()
   const glyphs = useRef()
   const container = useRef()
+  const modalInputRef = useRef()
+
+  useEffect(() => {
+    const lines = codeInput.split(/\r\n|\r|\n/).length
+    const lineHeight = 13
+    const minLines = 4
+    const maxLines = 30
+    if (lines < minLines) setEditorHeight(minLines * lineHeight)
+    else if (lines > maxLines) setEditorHeight(maxLines * lineHeight)
+    else setEditorHeight(lines * lineHeight)
+    editor.current ? editor.current.layout() : null
+  }, [codeInput])
 
   const suggestClosingTags = () => {
     monaco.languages.registerCompletionItemProvider('javascript', {
@@ -127,8 +147,8 @@ export const ViewCode = (props) => {
       label: 'Prettierify The Code',
       keybindings: [
         monaco.KeyMod.chord(
-          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K,
-          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_F,
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_F
         )
       ],
       precondition: null,
@@ -168,15 +188,12 @@ export const ViewCode = (props) => {
   }
 
   const tagWrap = () => {
+    if (promptType !== 'TAGS') return
+    const myTag = promptValue
+    if (!myTag || myTag === '') return
     var selection = editor.current.getSelection()
-
     const { endColumn, endLineNumber, startColumn, startLineNumber } = selection
-
     if (startLineNumber === endLineNumber && startColumn === endColumn) return
-
-    const myTag = prompt('Tag?')
-    if (myTag === null) return
-
     const range = new monaco.Range(
       startLineNumber,
       startColumn,
@@ -205,6 +222,14 @@ export const ViewCode = (props) => {
       forceMoveMarkers: false
     }
     editor.current.executeEdits('my-source', [op, op2])
+
+    setPromptValue('')
+    setPromptType('')
+  }
+
+  const showModal = () => {
+    setOpenModal(true)
+    modalInputRef.current.focus()
   }
 
   const addTagWrapper = () => {
@@ -213,7 +238,7 @@ export const ViewCode = (props) => {
       label: 'Add tag around selection',
       keybindings: [
         monaco.KeyMod.chord(
-          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K,
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_B,
           monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_B
         )
       ],
@@ -222,8 +247,87 @@ export const ViewCode = (props) => {
       contextMenuGroupId: 'navigation',
       contextMenuOrder: 1.5,
       run: function () {
-        tagWrap()
-        return null
+        setPromptType('TAGS')
+        showModal()
+      }
+    })
+  }
+
+  const addStyledComponent = () => {
+    if (promptType !== 'STYLED') return
+    const line = editor.current.getPosition()
+    const range = new monaco.Range(line.lineNumber, 1, line.lineNumber, 1)
+    const id = { major: 1, minor: 1 }
+    const text = `const ${promptValue} = styled.div\`\n\n\``
+    const op = {
+      identifier: id,
+      range: range,
+      text: text,
+      forceMoveMarkers: true
+    }
+    editor.current.executeEdits('my-source', [op])
+    format()
+    setPromptValue('')
+    setPromptType('')
+  }
+
+  const addReactComponent = () => {
+    if (promptType !== 'REACT') return
+
+    const line = editor.current.getPosition()
+    const range = new monaco.Range(line.lineNumber, 1, line.lineNumber, 1)
+    const id = { major: 1, minor: 1 }
+    const text = `export const ${promptValue} = (props) => {\nreturn<></>\n}`
+    const op = {
+      identifier: id,
+      range: range,
+      text: text,
+      forceMoveMarkers: true
+    }
+    editor.current.executeEdits('my-source', [op])
+    format()
+    setPromptValue('')
+    setPromptType('')
+  }
+
+  const addReactComponentAdder = () => {
+    editor.current.addAction({
+      id: 'add-react-component',
+      label: 'Add React component at position',
+      keybindings: [
+        monaco.KeyMod.chord(
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_C,
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_C
+        )
+      ],
+      precondition: null,
+      keybindingContext: null,
+      contextMenuGroupId: 'navigation',
+      contextMenuOrder: 1.5,
+      run: function () {
+        setPromptType('REACT')
+        showModal()
+      }
+    })
+  }
+
+  const addStyledAdder = () => {
+    editor.current.addAction({
+      id: 'add-styled-component',
+      label: 'Add Styled component at position',
+      keybindings: [
+        monaco.KeyMod.chord(
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K,
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S
+        )
+      ],
+      precondition: null,
+      keybindingContext: null,
+      contextMenuGroupId: 'navigation',
+      contextMenuOrder: 1.5,
+      run: function () {
+        setPromptType('STYLED')
+        showModal()
       }
     })
   }
@@ -236,6 +340,8 @@ export const ViewCode = (props) => {
       addPrettier()
       setOnChange()
       setGlyphs()
+      addReactComponentAdder()
+      addStyledAdder()
     }
   }, [monaco])
 
@@ -333,6 +439,15 @@ export const ViewCode = (props) => {
     editor.current.focus()
   }
 
+  const closeModal = () => {
+    tagWrap()
+    addReactComponent()
+    addStyledComponent()
+    setOpenModal(false)
+    setPromptType('')
+    setPromptValue('')
+  }
+
   return (
     <Tool.View
       name='main'
@@ -386,7 +501,50 @@ export const ViewCode = (props) => {
         </>
       }
     >
-      <MonacoContainer ref={container} height={`200px`} />
+      <Prompt style={!openModal ? { display: 'none' } : null}>
+        <div>
+          <h3>
+            Enter{' '}
+            {promptType === 'TAGS'
+              ? 'tag type'
+              : promptType === 'REACT'
+              ? 'React component name'
+              : promptType === 'STYLED'
+              ? 'Styled div name'
+              : '😕'}
+          </h3>
+          <input
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                closeModal()
+              }
+              if (e.key === 'Enter') {
+                closeModal()
+              }
+            }}
+            value={promptValue}
+            onChange={(e) => setPromptValue(e.target.value)}
+            ref={modalInputRef}
+            autoFocus={true}
+          />
+          <Button
+            type='primary'
+            onClick={() => {
+              closeModal()
+            }}
+          >
+            OK
+          </Button>
+          <Button
+            onClick={() => {
+              closeModal()
+            }}
+          >
+            Cancel
+          </Button>
+        </div>
+      </Prompt>
+      <MonacoContainer ref={container} height={`${editorHeight}px`} />
       {annotations ? (
         <Error onClick={handleMoveCursor}>
           ⚠️ line {annotations[0].row + 1}: {annotations[0].text}
@@ -405,6 +563,26 @@ const MonacoContainer = styled.div.attrs((props) => ({ props }))`
     background: #ea4639;
     width: 5px !important;
     margin-left: 3px;
+  }
+`
+
+const Prompt = styled.div`
+  height: 100%;
+  width: 100%;
+  z-index: 99999;
+  background: rgba(255, 255, 255, 0.9);
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  div {
+    position: absolute;
+    top: 19%;
+    right: 27%;
+    h3 {
+      color: black !important;
+      font-family: Roboto !important;
+    }
   }
 `
 

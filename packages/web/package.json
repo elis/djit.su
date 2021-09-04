@@ -27,6 +27,7 @@
     "@mdi/js": "^5.3.45",
     "@mdi/react": "^1.4.0",
     "@mdx-js/runtime": "^1.6.11",
+    "@monaco-editor/react": "^4.2.2",
     "@sentry/browser": "^5.18.1",
     "ahooks": "^2.5.0",
     "antd": "4.9.1",
