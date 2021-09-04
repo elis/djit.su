@@ -371,6 +371,9 @@ export const NotebookHeader = (props) => {
             <Row gutter={majorGutter}>
               <Col flex='auto'>
                 <h1>Select Exports To Copy</h1>
+                {unSaved
+                  ? '*exports not current, save your notebook first'
+                  : null}
                 <div className='checkboxes'>
                   <Checkbox
                     indeterminate={indeterminate}
@@ -451,7 +454,11 @@ export const NotebookHeader = (props) => {
                     placement='bottom'
                     title={`Copy Import Location`}
                     onClick={() => {
-                      setShowCopy(true)
+                      unSaved
+                        ? message.warning(
+                            'Save Document To See Current Exports'
+                          )
+                        : setShowCopy(true)
                     }}
                   >
                     <span className='click-to-copy-import-location'>
