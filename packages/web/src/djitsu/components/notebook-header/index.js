@@ -91,7 +91,7 @@ export const NotebookHeader = (props) => {
   const majorGutter = [8, 12]
   const [indeterminate, setIndeterminate] = React.useState(false)
   const [checkAll, setCheckAll] = React.useState(true)
-  const defaultCheckedList = [...exports]
+  const defaultCheckedList = [exports]
   const [checkedList, setCheckedList] = React.useState(defaultCheckedList)
   const plainOptions = [...exports]
 
@@ -117,10 +117,6 @@ export const NotebookHeader = (props) => {
     setIndeterminate(false)
     setCheckAll(e.target.checked)
   }
-  // return (
-
-  // )
-  // }
 
   const handleLikeClick = async () => {
     setLoading('like', true)
@@ -459,6 +455,7 @@ export const NotebookHeader = (props) => {
                             'Save Document To See Current Exports'
                           )
                         : setShowCopy(true)
+                      setCheckedList(exports)
                     }}
                   >
                     <span className='click-to-copy-import-location'>
