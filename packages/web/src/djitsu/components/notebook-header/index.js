@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useMemo, useCallback, useRef, useState, useEffect } from 'react'
 import {
+  Divider,
   message,
   Row,
   Col,
@@ -10,8 +11,12 @@ import {
   Avatar,
   Menu,
   Dropdown,
-  notification
+  notification,
+  Tooltip,
+  Checkbox
 } from 'antd'
+const CheckboxGroup = Checkbox.Group
+import copy from 'copy-to-clipboard'
 import styled from 'styled-components'
 import Helmet from 'react-helmet'
 import {
@@ -34,7 +39,8 @@ import {
   UndoOutlined,
   HeartFilled,
   StarFilled,
-  RocketOutlined
+  RocketOutlined,
+  ExportOutlined
 } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
@@ -44,6 +50,7 @@ import useStates from 'djitsu/utils/hooks/use-states'
 import { usePublishFlow } from 'djitsu/flows/notebook/publish'
 import { useDeployFlow } from 'djitsu/flows/notebook/deploy'
 import { useUser } from 'djitsu/providers/user'
+import Modal from 'antd/lib/modal/Modal'
 import NotebookTags from 'djitsu/components/notebooks/notebook-tags'
 
 export const NotebookHeader = (props) => {
@@ -57,6 +64,9 @@ export const NotebookHeader = (props) => {
   const [state, actions] = useNotebook()
   const [documentMenuVisible, setDocumentMenuVisible] = useState()
 
+  const exports = notebook?.compiled?.exports || []
+  const unSaved = state?.currentNotebook?.unsavedNotebook
+
   const { isPublic, isPublished, createdBy } = notebook?.meta || {}
   const { name: notebookName } = notebook?.properties || {}
   const isOwner = useMemo(() => createdBy === user.currentUsername, [createdBy])
@@ -65,6 +75,8 @@ export const NotebookHeader = (props) => {
   const [, publishActions, publishContext] = usePublishFlow()
   const [, deployActions, deployContext] = useDeployFlow()
 
+  const publishedLocation = isPublished ? `@${createdBy}/${notebookName}` : null
+
   const notebookRef = useRef()
   // const getFreshNotebook = useCallback(() => notebookRef.current, [
   //   notebookRef.current
@@ -72,6 +84,39 @@ export const NotebookHeader = (props) => {
   useEffect(() => {
     notebookRef.current = notebook
   }, [notebook])
+
+  const [showCopy, setShowCopy] = useState(false)
+
+  // const CopyModal = () => {
+  const majorGutter = [8, 12]
+  const [indeterminate, setIndeterminate] = React.useState(false)
+  const [checkAll, setCheckAll] = React.useState(true)
+  const defaultCheckedList = [exports]
+  const [checkedList, setCheckedList] = React.useState(defaultCheckedList)
+  const plainOptions = [...exports]
+
+  const createExportString = () => {
+    let exportsAsString = ''
+    checkedList.forEach((item, i) => {
+      i === exports.length - 1
+        ? (exportsAsString += item)
+        : (exportsAsString += `${item}, `)
+    })
+    return `import { ${exportsAsString} } from '${publishedLocation}'`
+  }
+
+  const onChange = (list) => {
+    console.log(list)
+    setCheckedList(list)
+    setIndeterminate(!!list.length && list.length < plainOptions.length)
+    setCheckAll(list.length === plainOptions.length)
+  }
+
+  const onCheckAllChange = (e) => {
+    setCheckedList(e.target.checked ? plainOptions : [])
+    setIndeterminate(false)
+    setCheckAll(e.target.checked)
+  }
 
   const handleLikeClick = async () => {
     setLoading('like', true)
@@ -291,6 +336,12 @@ export const NotebookHeader = (props) => {
   //   { hasMain, notebook, userProfile, notebookId, isOwner }
   // )
 
+  const copyExports = () => {
+    copy(createExportString())
+    message.success('Import address copied to clipboard')
+    setShowCopy(false)
+  }
+
   const handleSelfClick = useCallback(
     (event) => {
       if (event.metaKey) console.log('📕 Notebook:', notebook)
@@ -298,152 +349,250 @@ export const NotebookHeader = (props) => {
     [notebook]
   )
   return (
-    <Row onClick={handleSelfClick}>
-      <Col flex='auto' />
-      <Col flex='650px'>
-        <StyledPageHeader>
-          <Helmet>
-            <title>{notebook?.properties?.title || notebookId}</title>
-          </Helmet>
-          {contextHolder}
-          {publishContext}
-          {deployContext}
-          <Avatar
-            size={36}
-            src={userProfile?.photoUrl}
-            icon={
-              !userProfile?.photoUrl && (
-                <UserOutlined
-                  style={{
-                    fontSize: '1em',
-                    color: 'var(--tool-background-color)'
-                  }}
-                />
-              )
+    <>
+      <div
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            if (showCopy) setShowCopy(false)
+          }
+          if (e.key === 'Enter') {
+            if (showCopy) {
+              copyExports()
+              setShowCopy(false)
             }
-          />
-          <main>
-            <Space direction='vertical' size='small'>
-              <Space direction='horizontal' size='small'>
-                {userProfile?.displayName && (
-                  <>
-                    <strong>
-                      <Link
-                        className='profile-name'
-                        to={`/@${createdBy || user.currentUsername}`}
-                      >
-                        {userProfile.displayName}
-                      </Link>
-                    </strong>
-                    <span>—</span>
-                  </>
+          }
+        }}
+      >
+        <Modal
+          visible={showCopy}
+          okText={'Copy Code'}
+          cancelText={'Cancel'}
+          title={
+            <>
+              <GlobalOutlined /> <span>Copy Exports Code</span>
+            </>
+          }
+          onOk={() => {
+            copyExports()
+          }}
+          onCancel={() => {
+            setShowCopy(false)
+          }}
+        >
+          <StyledCopyModal>
+            <Row gutter={majorGutter}>
+              <Col flex='auto'>
+                <h1>Select Exports To Copy</h1>
+                {unSaved
+                  ? '*exports not current, save your notebook first'
+                  : null}
+                <div className='checkboxes'>
+                  <Checkbox
+                    indeterminate={indeterminate}
+                    onChange={onCheckAllChange}
+                    checked={checkAll}
+                  >
+                    All
+                  </Checkbox>
+                  <Divider />
+                  <CheckboxGroup
+                    options={plainOptions}
+                    value={checkedList}
+                    onChange={onChange}
+                  />
+                </div>
+              </Col>
+            </Row>
+            <Divider />
+            <Row gutter={majorGutter}>
+              <Col flex='auto'>
+                <h3>Import Code:</h3>
+                <code>{createExportString()}</code>
+              </Col>
+            </Row>
+            <div style={{ clear: 'both' }} />
+          </StyledCopyModal>
+        </Modal>
+      </div>
+      <Row onClick={handleSelfClick}>
+        <Col flex='auto' />
+        <Col flex='650px'>
+          <StyledPageHeader>
+            <Helmet>
+              <title>{notebook?.properties?.title || notebookId}</title>
+            </Helmet>
+            {contextHolder}
+            {publishContext}
+            {deployContext}
+            <Avatar
+              size={36}
+              src={userProfile?.photoUrl}
+              icon={
+                !userProfile?.photoUrl && (
+                  <UserOutlined
+                    style={{
+                      fontSize: '1em',
+                      color: 'var(--tool-background-color)'
+                    }}
+                  />
+                )
+              }
+            />
+            <main>
+              <Space direction='vertical' size='small'>
+                <Space direction='vertical' size='small'>
+                  {userProfile?.displayName && (
+                    <>
+                      <strong>
+                        <Link
+                          className='profile-name'
+                          to={`/@${createdBy || user.currentUsername}`}
+                        >
+                          {userProfile.displayName}
+                        </Link>
+                      </strong>
+                      <span>—</span>
+                    </>
+                  )}
+                  <Link
+                    className='profile-username'
+                    to={`/@${createdBy || user.currentUsername}`}
+                  >
+                    @{createdBy || user.currentUsername}
+                  </Link>
+                </Space>
+                {isPublished && exports.length > 0 ? (
+                  <Tooltip
+                    placement='bottom'
+                    title={`Copy Import Location`}
+                    onClick={() => {
+                      unSaved
+                        ? message.warning(
+                            'Save Document To See Current Exports'
+                          )
+                        : setShowCopy(true)
+                      setCheckedList(exports)
+                    }}
+                  >
+                    <span className='click-to-copy-import-location'>
+                      {exports.length} export{exports.length > 1 ? 's ' : '  '}
+                      <ExportOutlined />
+                      {unSaved ? '  (as of last save)' : ''}
+                    </span>
+                  </Tooltip>
+                ) : null}
+                {userProfile?.url && (
+                  <a
+                    className='profile-link'
+                    href={userProfile.url}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    {userProfile.url
+                      .replace(/^https?:\/\//i, '')
+                      .replace(/\/$/, '')}
+                  </a>
                 )}
-                <Link
-                  className='profile-username'
-                  to={`/@${createdBy || user.currentUsername}`}
-                >
-                  @{createdBy || user.currentUsername}
-                </Link>
               </Space>
-              {userProfile?.url && (
-                <a
-                  className='profile-link'
-                  href={userProfile.url}
-                  target='_blank'
-                  rel='noopener noreferrer'
+            </main>
+            <nav>
+              <Button.Group>
+                <Button
+                  type='ghost'
+                  disabled={!notebook.meta?.created || loading.like}
+                  onClick={handleLikeClick}
                 >
-                  {userProfile.url
-                    .replace(/^https?:\/\//i, '')
-                    .replace(/\/$/, '')}
-                </a>
-              )}
-            </Space>
-          </main>
-          <nav>
-            <Button.Group>
-              <Button
-                type='ghost'
-                disabled={!notebook.meta?.created || loading.like}
-                onClick={handleLikeClick}
-              >
-                {loading.like ? (
-                  <LoadingOutlined />
-                ) : notebook.meta?.isLiked ? (
-                  <HeartFilled style={{ color: 'var(--error-color)' }} />
-                ) : (
-                  <HeartOutlined />
-                )}
-                {notebook?.stats?.like ? <> {notebook?.stats?.like}</> : <></>}
-              </Button>
-              <Button
-                type='ghost'
-                disabled={!notebook.meta?.created || loading.star}
-                onClick={handleStarClick}
-              >
-                {loading.star ? (
-                  <LoadingOutlined />
-                ) : notebook.meta?.isStarred ? (
-                  <StarFilled style={{ color: 'var(--warning-color)' }} />
-                ) : (
-                  <StarOutlined />
-                )}
-                {notebook?.stats?.star ? <> {notebook?.stats?.star}</> : <></>}
-              </Button>
-              <Button
-                type='ghost'
-                disabled={
-                  !notebook.meta?.created || loading.fork || loading.forkReady
-                }
-                onClick={handleForkClick}
-              >
-                {loading.fork ? (
-                  <LoadingOutlined />
-                ) : loading.forkReady ? (
-                  <CheckOutlined />
-                ) : notebook.meta?.isForked ? (
-                  <ForkOutlined style={{ color: 'var(--primary-color)' }} />
-                ) : (
-                  <ForkOutlined />
-                )}
-                {notebook?.stats?.fork ? <> {notebook?.stats?.fork}</> : <></>}
-              </Button>
-              <Dropdown
-                overlay={documentMenu}
-                placement='bottomRight'
-                disabled={!notebook.meta?.created}
-                trigger={['click']}
-                visible={documentMenuVisible}
-                onVisibleChange={(visible) => setDocumentMenuVisible(visible)}
-              >
-                <Button type='ghost'>
-                  <MoreOutlined />
+                  {loading.like ? (
+                    <LoadingOutlined />
+                  ) : notebook.meta?.isLiked ? (
+                    <HeartFilled style={{ color: 'var(--error-color)' }} />
+                  ) : (
+                    <HeartOutlined />
+                  )}
+                  {notebook?.stats?.like ? (
+                    <> {notebook?.stats?.like}</>
+                  ) : (
+                    <></>
+                  )}
                 </Button>
-              </Dropdown>
-            </Button.Group>
-          </nav>
-          <aside>
-            <VersionStatus notebook={notebook} publicView={publicView} />
-            <span />
-            {(notebook?.meta?.revision || isOwner) && (
-              <RevisionStatus
-                publicView={publicView}
-                notebook={notebook}
-                isOwner={isOwner}
-              />
-            )}
-          </aside>
-          {!!notebook?.meta?.forkOf && (
+                <Button
+                  type='ghost'
+                  disabled={!notebook.meta?.created || loading.star}
+                  onClick={handleStarClick}
+                >
+                  {loading.star ? (
+                    <LoadingOutlined />
+                  ) : notebook.meta?.isStarred ? (
+                    <StarFilled style={{ color: 'var(--warning-color)' }} />
+                  ) : (
+                    <StarOutlined />
+                  )}
+                  {notebook?.stats?.star ? (
+                    <> {notebook?.stats?.star}</>
+                  ) : (
+                    <></>
+                  )}
+                </Button>
+                <Button
+                  type='ghost'
+                  disabled={
+                    !notebook.meta?.created || loading.fork || loading.forkReady
+                  }
+                  onClick={handleForkClick}
+                >
+                  {loading.fork ? (
+                    <LoadingOutlined />
+                  ) : loading.forkReady ? (
+                    <CheckOutlined />
+                  ) : notebook.meta?.isForked ? (
+                    <ForkOutlined style={{ color: 'var(--primary-color)' }} />
+                  ) : (
+                    <ForkOutlined />
+                  )}
+                  {notebook?.stats?.fork ? (
+                    <> {notebook?.stats?.fork}</>
+                  ) : (
+                    <></>
+                  )}
+                </Button>
+                <Dropdown
+                  overlay={documentMenu}
+                  placement='bottomRight'
+                  disabled={!notebook.meta?.created}
+                  trigger={['click']}
+                  visible={documentMenuVisible}
+                  onVisibleChange={(visible) => setDocumentMenuVisible(visible)}
+                >
+                  <Button type='ghost'>
+                    <MoreOutlined />
+                  </Button>
+                </Dropdown>
+              </Button.Group>
+            </nav>
             <aside>
-              <ForkStatus notebook={notebook} />
+              <VersionStatus notebook={notebook} publicView={publicView} />
+              <span />
+              {(notebook?.meta?.revision || isOwner) && (
+                <RevisionStatus
+                  publicView={publicView}
+                  notebook={notebook}
+                  isOwner={isOwner}
+                />
+              )}
             </aside>
-          )}
-          <aside>
-            <NotebookTags notebook={notebook} editable={isOwner} />
-          </aside>
-        </StyledPageHeader>
-      </Col>
-      <Col flex='auto' />
-    </Row>
+            {!!notebook?.meta?.forkOf && (
+              <aside>
+                <ForkStatus notebook={notebook} />
+              </aside>
+            )}
+            <aside>
+              <NotebookTags notebook={notebook} editable={isOwner} />
+            </aside>
+          </StyledPageHeader>
+        </Col>
+        <Col flex='auto' />
+      </Row>
+    </>
   )
 }
 
@@ -569,6 +718,17 @@ const ForkStatus = ({ notebook = {} }) => {
   )
 }
 
+const StyledCopyModal = styled.div`
+  .ant-checkbox-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ant-divider {
+    margin: 5px;
+  }
+`
+
 const StyledPageHeader = styled(PageHeader)`
   &.ant-page-header {
     padding-left: 0;
@@ -576,6 +736,17 @@ const StyledPageHeader = styled(PageHeader)`
     background: transparent;
     .ant-page-header-heading-sub-title {
       /* margin-right: 0; */
+    }
+
+    .click-to-copy-import-location {
+      cursor: pointer;
+      font-weight: 300;
+      transition: all 300ms;
+
+      &:hover {
+        transition: all 300ms;
+        color: var(--primary-color);
+      }
     }
     .ant-page-header-content {
       display: grid;
