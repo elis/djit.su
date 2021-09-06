@@ -336,6 +336,12 @@ export const NotebookHeader = (props) => {
   //   { hasMain, notebook, userProfile, notebookId, isOwner }
   // )
 
+  const copyExports = () => {
+    copy(createExportString())
+    message.success('Import address copied to clipboard')
+    setShowCopy(false)
+  }
+
   const handleSelfClick = useCallback(
     (event) => {
       if (event.metaKey) console.log('📕 Notebook:', notebook)
@@ -344,7 +350,19 @@ export const NotebookHeader = (props) => {
   )
   return (
     <>
-      <>
+      <div
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            if (showCopy) setShowCopy(false)
+          }
+          if (e.key === 'Enter') {
+            if (showCopy) {
+              copyExports()
+              setShowCopy(false)
+            }
+          }
+        }}
+      >
         <Modal
           visible={showCopy}
           okText={'Copy Code'}
@@ -355,9 +373,7 @@ export const NotebookHeader = (props) => {
             </>
           }
           onOk={() => {
-            copy(createExportString())
-            message.success('Import address copied to clipboard')
-            setShowCopy(false)
+            copyExports()
           }}
           onCancel={() => {
             setShowCopy(false)
@@ -397,7 +413,7 @@ export const NotebookHeader = (props) => {
             <div style={{ clear: 'both' }} />
           </StyledCopyModal>
         </Modal>
-      </>
+      </div>
       <Row onClick={handleSelfClick}>
         <Col flex='auto' />
         <Col flex='650px'>
