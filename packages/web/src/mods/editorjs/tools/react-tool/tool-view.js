@@ -11,14 +11,9 @@ export const ToolView = ({
   description,
   icon,
   children,
-  className,
-  type,
-  size,
-  updateSize
+  className
 }) => {
   const [tos, toa] = useTool()
-
-  console.log('🤯', { type, size, updateSize })
 
   useEffect(() => {
     const teardown = toa.setView(name, {
@@ -34,22 +29,8 @@ export const ToolView = ({
   const vf = tos.viewOptions[name] || {}
   const { hidden } = vf
 
-  const handleClick = (e) => {
-    if (!type === 'draggable') return
-    console.log('CLCIK', e)
-  }
-
-  const handleDrag = (e) => {
-    if (!type === 'draggable') return
-    console.log('drag', e)
-  }
-
   return (
-    <StyledToolView
-      onClick={handleClick}
-      onDrag={handleDrag}
-      className={`tool-view ${className || ''}`}
-    >
+    <StyledToolView className={`tool-view ${className || ''}`}>
       <Collapse activeKey={hidden ? '' : '1'}>
         <Collapse.Panel key='1'>
           {children}
