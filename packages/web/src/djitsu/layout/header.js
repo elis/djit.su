@@ -15,7 +15,7 @@ const { Header: AntHeader } = Layout
 export const Header = () => {
   const [userState] = useUser()
   const history = useHistory()
-  console.log('history!', history)
+  // console.log('history!', history)
   const [theme] = useTheme()
   const displayItems = userState?.currentUsername ? (
     <>

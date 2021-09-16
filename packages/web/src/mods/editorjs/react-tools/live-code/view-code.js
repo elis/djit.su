@@ -459,6 +459,9 @@ export const ViewCode = (props) => {
     <Tool.View
       name='main'
       label='Main Code'
+      type='draggable'
+      size={editorHeight}
+      updateSize={setEditorHeight}
       description={`# Main Code \n ## Here is where you write your main code \n ## Plugin HotKeys:\n ### Format JSX: **Ctrl+F+Ctrl+F**\n ### Create React Component at Cursor: **Ctrl+C+Ctrl+R**\n ### Create Styled Component at Curosr:**Ctrl+C+Ctrl+S**\n ### Wrap Selected Text in JSX Element: **Ctrl+B+Ctrl+B**`}
       icon={
         <AntIcon
