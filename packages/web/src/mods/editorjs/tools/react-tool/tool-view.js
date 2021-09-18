@@ -11,9 +11,12 @@ export const ToolView = ({
   description,
   icon,
   children,
-  className
+  className,
+  onTop = false
 }) => {
   const [tos, toa] = useTool()
+
+  console.log('🍎', onTop)
 
   useEffect(() => {
     const teardown = toa.setView(name, {
@@ -30,12 +33,18 @@ export const ToolView = ({
   const { hidden } = vf
 
   return (
-    <StyledToolView className={`tool-view ${className || ''}`}>
+    <StyledToolView
+      className={
+        !onTop
+          ? `tool-view ${className || ''}`
+          : `tool-view ${className || ''} on-top`
+      }
+    >
       <Collapse activeKey={hidden ? '' : '1'}>
         <Collapse.Panel key='1'>
           {children}
           {label && (
-            <ViewMeta actions={actions}>
+            <ViewMeta className={onTop ? 'on-top' : null} actions={actions}>
               {icon}
               {icon && <>&nbsp;</>}
               {label}
@@ -75,6 +84,9 @@ const StyledToolView = styled.section`
         }
       }
     }
+  }
+  .on-top {
+    z-index: 9999999999999999999999999999999;
   }
 `
 
