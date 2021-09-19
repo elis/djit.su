@@ -11,8 +11,7 @@ export const ToolView = ({
   description,
   icon,
   children,
-  className,
-  onTop = false
+  className
 }) => {
   const [tos, toa] = useTool()
 
@@ -31,18 +30,12 @@ export const ToolView = ({
   const { hidden } = vf
 
   return (
-    <StyledToolView
-      className={
-        !onTop
-          ? `tool-view ${className || ''}`
-          : `tool-view ${className || ''} on-top`
-      }
-    >
+    <StyledToolView className={`tool-view ${className || ''}`}>
       <Collapse activeKey={hidden ? '' : '1'}>
         <Collapse.Panel key='1'>
           {children}
           {label && (
-            <ViewMeta className={onTop ? 'on-top' : null} actions={actions}>
+            <ViewMeta actions={actions}>
               {icon}
               {icon && <>&nbsp;</>}
               {label}
