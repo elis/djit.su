@@ -76,9 +76,6 @@ const StyledToolView = styled.section`
       }
     }
   }
-  .on-top {
-    z-index: 9999999999999999999999999999999;
-  }
 `
 
 export default ToolView
