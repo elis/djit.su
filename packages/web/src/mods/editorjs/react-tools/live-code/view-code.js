@@ -61,7 +61,6 @@ export const ViewCode = (props) => {
   }
 
   useEffect(() => {
-    if (!monaco) return
     resizeBasedOnLines()
   }, [codeInput, monaco])
 
