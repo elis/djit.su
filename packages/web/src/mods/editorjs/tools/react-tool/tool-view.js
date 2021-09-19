@@ -16,8 +16,6 @@ export const ToolView = ({
 }) => {
   const [tos, toa] = useTool()
 
-  console.log('🍎', onTop)
-
   useEffect(() => {
     const teardown = toa.setView(name, {
       label,

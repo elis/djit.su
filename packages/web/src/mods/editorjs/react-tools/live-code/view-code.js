@@ -49,16 +49,21 @@ export const ViewCode = (props) => {
   const container = useRef()
   const modalInputRef = useRef()
 
-  useEffect(() => {
+  const resizeBasedOnLines = () => {
     const lines = codeInput.split(/\r\n|\r|\n/).length
     const lineHeight = 13
     const minLines = 4
-    const maxLines = 30
+    const maxLines = 20
     if (lines < minLines) setEditorHeight(minLines * lineHeight)
     else if (lines > maxLines) setEditorHeight(maxLines * lineHeight)
     else setEditorHeight(lines * lineHeight)
     editor.current ? editor.current.layout() : null
-  }, [codeInput])
+  }
+
+  useEffect(() => {
+    if (!monaco) return
+    resizeBasedOnLines()
+  }, [codeInput, monaco])
 
   const suggestClosingTags = () => {
     monaco.languages.registerCompletionItemProvider('javascript', {
@@ -478,7 +483,7 @@ export const ViewCode = (props) => {
   window.onmouseup = handleDragEnd
 
   const handleDoubleClick = () => {
-    setEditorHeight(375)
+    resizeBasedOnLines()
   }
   return (
     <Tool.View
