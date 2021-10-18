@@ -49,16 +49,20 @@ export const ViewCode = (props) => {
   const container = useRef()
   const modalInputRef = useRef()
 
-  useEffect(() => {
+  const resizeBasedOnLines = () => {
     const lines = codeInput.split(/\r\n|\r|\n/).length
     const lineHeight = 13
     const minLines = 4
-    const maxLines = 30
+    const maxLines = 20
     if (lines < minLines) setEditorHeight(minLines * lineHeight)
     else if (lines > maxLines) setEditorHeight(maxLines * lineHeight)
     else setEditorHeight(lines * lineHeight)
     editor.current ? editor.current.layout() : null
-  }, [codeInput])
+  }
+
+  useEffect(() => {
+    resizeBasedOnLines()
+  }, [codeInput, monaco])
 
   const suggestClosingTags = () => {
     monaco.languages.registerCompletionItemProvider('javascript', {
@@ -455,8 +459,34 @@ export const ViewCode = (props) => {
     clearPrompt()
   }
 
+  const [isDragging, setIsDragging] = useState(false)
+  const [initY, setInitY] = useState(0)
+
+  const handleDragStart = (e) => {
+    setInitY(e.clientY)
+    setIsDragging(true)
+  }
+
+  const handleDrag = (e) => {
+    if (!isDragging) return
+    if (editorHeight - (initY - e.clientY) > 140)
+      setEditorHeight(editorHeight - (initY - e.clientY))
+    setInitY(e.clientY)
+  }
+  window.onmousemove = handleDrag
+
+  const handleDragEnd = (e) => {
+    if (!isDragging) return
+    setIsDragging(false)
+  }
+  window.onmouseup = handleDragEnd
+
+  const handleDoubleClick = () => {
+    resizeBasedOnLines()
+  }
   return (
     <Tool.View
+      onTop={true}
       name='main'
       label='Main Code'
       description={`# Main Code \n ## Here is where you write your main code \n ## Plugin HotKeys:\n ### Format JSX: **Ctrl+F+Ctrl+F**\n ### Create React Component at Cursor: **Ctrl+C+Ctrl+R**\n ### Create Styled Component at Curosr:**Ctrl+C+Ctrl+S**\n ### Wrap Selected Text in JSX Element: **Ctrl+B+Ctrl+B**`}
@@ -557,11 +587,25 @@ export const ViewCode = (props) => {
           ⚠️ line {annotations[0].row + 1}: {annotations[0].text}
         </Error>
       ) : null}
+      <ResizeHandle
+        onMouseDown={handleDragStart}
+        onDoubleClick={handleDoubleClick}
+      />
     </Tool.View>
   )
 }
 
 export default ViewCode
+
+const ResizeHandle = styled.div`
+  background: transparent;
+  width: 100%;
+  height: 2px;
+  position: relative;
+  top: 22px;
+  cursor: ns-resize;
+  z-index: 9999999;
+`
 
 const MonacoContainer = styled.div.attrs((props) => ({ props }))`
   height: ${(props) => props.height};

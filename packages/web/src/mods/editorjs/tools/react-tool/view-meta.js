@@ -71,6 +71,7 @@ const Divi = styled(Divider)`
         transition: all 90ms ease-in;
 
         > .ant-divider-inner-text {
+          z-index: 9999999999999999999;
           align-items: center;
           display: flex;
           font-size: 11px;
