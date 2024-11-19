@@ -39,7 +39,7 @@
     "estree-walker": "^2.0.1",
     "express": "^4.17.1",
     "find-line-column": "^0.5.2",
-    "firebase": "^7.15.5",
+    "firebase": "^10.9.0",
     "git": "^0.1.5",
     "html-to-react": "^1.4.3",
     "html2canvas": "^1.0.0-rc.7",
